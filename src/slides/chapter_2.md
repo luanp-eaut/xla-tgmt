@@ -32,27 +32,11 @@ paginate: true
 
 <!-- _class: section -->
 
-# Giới thiệu học phần
+# BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
 ---
 
-# XỬ LÝ ẢNH & THỊ GIÁC MÁY TÍNH - Chương 2. Biến đổi hình ảnh
-
-KHOA CÔNG NGHỆ THÔNG TIN
-
----
-
-# Nội dung
-
-- Biến đổi trong miền không gian
-- Biến đổi cường độ
-- Lọc không gian
-- Xử lý Histogram
-- Biến đổi trong miền tần số
-
----
-
-# TỔNG QUAN BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
+# TỔNG QUAN
 
 - **Miền không gian**: Là chính mặt phẳng ảnh, nơi các phương pháp xử lý dựa trên thao tác trực tiếp lên các pixel.
 - **Công thức tổng quát**: $g(x, y) = T[f(x, y)]$
@@ -94,7 +78,11 @@ KHOA CÔNG NGHỆ THÔNG TIN
     - **Cắt mức xám (Gray-level slicing)**: Làm nổi bật một dải mức xám cụ thể (ví dụ: khối u trong ảnh y tế).
     - **Trích xuất bit (Bit-plane slicing)**: Phân tích sự đóng góp của từng bit trong byte biểu diễn pixel.
 
-_Bài tập thực hành:_ Viết code Python sử dụng OpenCV để tạo ảnh âm bản và biến đổi Gamma.
+---
+
+# Biến đổi cường độ - Bài tập thực hành
+
+- Viết code Python sử dụng OpenCV để tạo ảnh âm bản và biến đổi Gamma.
 
 ```python
 import cv2
@@ -166,22 +154,68 @@ plt.show()
 
 ---
 
-# Ví dụ Gaussian Kernel
+# Ví dụ Gaussian Kernel (here)
 
 - **Kernel Gaussian $3 \times 3$ với $\sigma = 1$**:
   - $G(x, y) = e^{-(x^2 + y^2) / 2}$
   - Tính giá trị tại các điểm:
-    - Tâm $(0,0)$: $e^0 = 1$
+
+  <div class="columns">
+  <div>
+
+  <ul>
+
+  - Tâm $(0,0)$: $e^0 = 1$
+    
+  </ul>
+
+  </div>
+  <div class="col-2">
+
+  <ul>
+
     - Cạnh $(1,0), (0,1), ...$: $e^{-1/2} \approx 0.6065$
     - Góc $(1,1), ...$: $e^{-1} \approx 0.3679$
+
+  </ul>
+  </div>
+  </div>
+  <div class="columns">
+  <div>
+
   - Ma trận chưa chuẩn hoá:
-    $\begin{bmatrix} 0.3679 & 0.6065 & 0.3679 \\ 0.6065 & 1 & 0.6065 \\ 0.3679 & 0.6065 & 0.3679 \end{bmatrix}$
+
+  <div style="padding-bottom: 10px!important;padding-top: 10px!important">
+
+  $$
+  \begin{bmatrix} 0.3679 & 0.6065 & 0.3679 \\ 0.6065 & 1 & 0.6065 \\ 0.3679 & 0.6065 & 0.3679 \end{bmatrix}
+  $$
+
+  </div>
+
   - Tổng trọng số: $S = 4 \times 0.3679 + 4 \times 0.6065 + 1 = 4.8976$
+
+  </div>
+  <div>
+  
   - Chuẩn hoá (chia cho S):
-    $\begin{bmatrix} 0.075 & 0.124 & 0.075 \\ 0.124 & 0.204 & 0.124 \\ 0.075 & 0.124 & 0.075 \end{bmatrix}$
+
+  <div style="padding-bottom: 10px!important;padding-top: 10px!important">
+
+    $$
+    \begin{bmatrix} 0.075 & 0.124 & 0.075 \\ 0.124 & 0.204 & 0.124 \\ 0.075 & 0.124 & 0.075 \end{bmatrix}
+    $$
+
+  </div>
+
   - Thường được làm tròn để dễ tính toán.
 
+  </div>
+  </div>
+  
+
 ---
+<!--_class: text-xs-->
 
 # Tổng hợp các bộ lọc làm mịn
 
