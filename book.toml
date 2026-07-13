@@ -1,0 +1,13 @@
+[book]
+title = "Xử lý ảnh và Thị giác máy tính"
+authors = ["Nguyễn Phồn Lữa"]
+language = "en"
+
+[output.html]
+additional-css = ["custom.css"]
+
+[output.html.search]
+enable = false
+
+[output.html.print]
+enable = false

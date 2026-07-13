@@ -1,0 +1,52 @@
+name: Deploy mdBook to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Hoặc đổi thành master nếu nhánh chính của bạn là master
+
+# Cấp quyền cho GitHub Actions để đẩy bản build lên GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Tránh việc chạy đè nhiều bản build cũ cùng lúc nếu push liên tục
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# ... (các dòng phía trên giữ nguyên)
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # Sửa dấu ":" thành dấu "." ở đây
+    runs-on: ubuntu-latest
+# ... (các dòng phía dưới giữ nguyên)
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install mdBook
+        run: |
+          # Tự động tải và cài đặt phiên bản mdBook mới nhất
+          MDBOOK_VERSION=$(curl -s https://api.github.com/repos/rust-lang/mdBook/releases/latest | jq -r '.tag_name')
+          curl -sSL https://github.com/rust-lang/mdBook/releases/download/${MDBOOK_VERSION}/mdbook-${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          sudo mv mdbook /usr/local/bin/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build mdBook
+        run: mdbook build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          # Mặc định mdBook build ra thư mục 'book'
+          path: './book'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
