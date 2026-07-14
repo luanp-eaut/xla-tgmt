@@ -146,15 +146,15 @@ plt.show()
 
 - **Mean Kernel $3 \times 3$**:
   - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{9}$
-  - Kernel:
-    $\begin{bmatrix} 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \end{bmatrix}$
+  - Kernel:<span>
+    $\begin{bmatrix} 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \end{bmatrix}$</span>
 - **Mean Kernel $5 \times 5$**:
   - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{25} = 0.04$
   - Kernel: Ma trận $5 \times 5$ với mỗi phần tử là $0.04$.
 
 ---
 
-# Ví dụ Gaussian Kernel (here)
+# Ví dụ Gaussian Kernel
 
 - **Kernel Gaussian $3 \times 3$ với $\sigma = 1$**:
   - $G(x, y) = e^{-(x^2 + y^2) / 2}$
@@ -184,29 +184,14 @@ plt.show()
   <div>
 
   - Ma trận chưa chuẩn hoá:
-
-  <div style="padding-bottom: 10px!important;padding-top: 10px!important">
-
-  $$
-  \begin{bmatrix} 0.3679 & 0.6065 & 0.3679 \\ 0.6065 & 1 & 0.6065 \\ 0.3679 & 0.6065 & 0.3679 \end{bmatrix}
-  $$
-
-  </div>
-
+  <span>$\begin{bmatrix} 0.3679 & 0.6065 & 0.3679 \\ 0.6065 & 1 & 0.6065 \\ 0.3679 & 0.6065 & 0.3679 \end{bmatrix}$</span>
   - Tổng trọng số: $S = 4 \times 0.3679 + 4 \times 0.6065 + 1 = 4.8976$
 
   </div>
   <div>
   
   - Chuẩn hoá (chia cho S):
-
-  <div style="padding-bottom: 10px!important;padding-top: 10px!important">
-
-    $$
-    \begin{bmatrix} 0.075 & 0.124 & 0.075 \\ 0.124 & 0.204 & 0.124 \\ 0.075 & 0.124 & 0.075 \end{bmatrix}
-    $$
-
-  </div>
+    <span>$\begin{bmatrix} 0.075 & 0.124 & 0.075 \\ 0.124 & 0.204 & 0.124 \\ 0.075 & 0.124 & 0.075 \end{bmatrix}$</span>
 
   - Thường được làm tròn để dễ tính toán.
 
@@ -254,7 +239,7 @@ plt.show()
   - Đạo hàm được xấp xỉ bằng sai phân hữu hạn: $f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}$
   - Từ phép xấp xỉ này để tính kernel Laplace.
   - Kernel Laplacian cơ bản $3 \times 3$:
-    $\begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$ hoặc $\begin{bmatrix} 1 & 1 & 1 \\ 1 & -8 & 1 \\ 1 & 1 & 1 \end{bmatrix}$
+    <span>$\begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$ hoặc $\begin{bmatrix} 1 & 1 & 1 \\ 1 & -8 & 1 \\ 1 & 1 & 1 \end{bmatrix}$</span>
 
 ---
 
@@ -266,8 +251,11 @@ plt.show()
   - Ta thường cộng (hoặc trừ, tùy dấu của tâm kernel) ảnh gốc với ảnh kết quả của bộ lọc Laplacian:
     $g(x, y) = f(x, y) + c * \nabla^2 f(x, y)$ , $c = \pm 1$
   - Nếu tâm kernel là số âm ($-4$), ta cộng ($c = -1$). Nếu tâm là số dương ($4$), ta trừ ($c = 1$).
+---
 
-_Bài tập thực hành:_ Làm nét ảnh bằng Laplacian trong OpenCV.
+# Bộ lọc Laplacian - Bài tập thực hành
+
+Làm nét ảnh bằng Laplacian trong OpenCV.
 
 ```python
 import cv2
@@ -289,9 +277,9 @@ sharpened = np.clip(sharpened, 0, 255).astype(np.uint8)
 
 - **Nguyên lý**: Sử dụng đạo hàm bậc một để tính toán độ dốc (độ lớn) của cường độ: $\nabla f(x, y) = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right]^T$
 - **Toán tử Sobel**:
-  - Sử dụng hai kernel để tính đạo hàm theo 2 hướng ngang ($G_x$) và dọc ($G_y$).
+  - Sử dụng hai kernel để tính đạo hàm theo 2 hướng ngang $(G_x)$ và dọc $(G_y)$.
   - Sobel Kernel:
-    $G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}$, $G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$
+    <span>$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}$, $G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$</span>
 - **Độ lớn của gradient** (độ mạnh của biên):
   - $M(x, y) = \sqrt{G_x^2 + G_y^2}$ hoặc xấp xỉ $|G_x| + |G_y|$
 
@@ -303,8 +291,11 @@ sharpened = np.clip(sharpened, 0, 255).astype(np.uint8)
 2. Tính đạo hàm theo hướng dọc $G_y$ bằng kernel Sobel/Prewitt tương ứng.
 3. Tính độ lớn gradient $M(x, y) = \sqrt{G_x^2 + G_y^2}$.
 4. (Tùy chọn) Cộng độ lớn gradient này vào ảnh gốc để làm nét: $g(x, y) = f(x, y) + c \cdot M(x, y)$.
+---
 
-_Bài tập thực hành:_ Phát hiện biên với Sobel.
+# Bài tập thực hành
+
+Phát hiện biên với Sobel.
 
 ```python
 import cv2
@@ -347,6 +338,7 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
   - Giúp kiểm soát mức độ làm nét, kết quả tự nhiên hơn so với Laplacian.
 
 ---
+<!--_class: text-2xs-->
 
 # Tổng hợp các bộ lọc làm nét
 
@@ -358,7 +350,11 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 | **Highboost**        | Mở rộng của USM, nhân thành phần tần số cao với hệ số A > 1. | Làm nét mạnh; điều chỉnh từ tự nhiên đến siêu nét.        | Dễ tạo quầng sáng/nhiễu nếu A quá lớn.                       | Ảnh viễn thám, thiên văn, y tế.              |
 
 ---
+<!--_class: section-->
 
+# Xử lý Histogram
+
+---
 # Histogram là gì?
 
 - **Định nghĩa**: Biểu đồ thể hiện tần suất xuất hiện của các mức cường độ trong ảnh.
@@ -392,8 +388,11 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
   - Có thể làm nổi bật nhiễu nền.
   - Không phải lúc nào cũng tạo ra histogram phẳng hoàn hảo do làm tròn số nguyên.
   - Đôi khi làm mất chi tiết ở các vùng có tần suất xuất hiện cao.
+---
 
-_Bài tập thực hành:_ Cân bằng histogram với OpenCV.
+# Bài tập thực hành
+
+Cân bằng histogram với OpenCV.
 
 ```python
 import cv2
@@ -436,12 +435,16 @@ plt.show()
 - **Lưu ý**: Cách này tốn nhiều tài nguyên tính toán hơn so với cân bằng toàn cục.
 
 ---
+<!--_class: section-->
 
 # BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
-- **Giới thiệu**:
-  - Ngoài việc xử lý trực tiếp trên các pixel (miền không gian), chúng ta có thể chuyển ảnh sang miền tần số để thực hiện các phép lọc phức tạp hơn.
-  - Miền tần số cung cấp một cái nhìn khác về ảnh, dựa trên các thành phần tần số thay vì vị trí pixel.
+---
+
+# Giới thiệu
+
+- Ngoài việc xử lý trực tiếp trên các pixel (miền không gian), chúng ta có thể chuyển ảnh sang miền tần số để thực hiện các phép lọc phức tạp hơn.
+- Miền tần số cung cấp một cái nhìn khác về ảnh, dựa trên các thành phần tần số thay vì vị trí pixel.
 
 ---
 
@@ -562,8 +565,11 @@ plt.show()
   - Là một thuật toán đột phá làm giảm độ phức tạp xuống còn $O(N \log_2 N)$.
   - Cơ chế: Dựa trên phương pháp "Chia để trị" (Divide and Conquer). Chia nhỏ bài toán DFT lớn thành các DFT nhỏ hơn, tính toán chúng, rồi kết hợp lại.
 - **Tầm quan trọng**: FFT là "xương sống" của hầu hết các công nghệ xử lý ảnh hiện đại, từ nén ảnh (JPEG) cho đến lọc nhiễu trong video thời gian thực.
+---
 
-_Bài tập thực hành:_ Biến đổi ảnh sang miền tần số và lọc thông thấp.
+# Bài tập thực hành
+
+Biến đổi ảnh sang miền tần số và lọc thông thấp.
 
 ```python
 import cv2

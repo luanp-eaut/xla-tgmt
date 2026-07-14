@@ -30,33 +30,11 @@ paginate: true
 
 <!-- _class: section -->
 
-# Giới thiệu học phần
-
----
-
-# XỬ LÝ ẢNH & THỊ GIÁC MÁY TÍNH
-
-- **Chương 3. Nén ảnh**
-- KHOA CÔNG NGHỆ THÔNG TIN
-
----
-
-# Nội dung
-
-- Giới thiệu về nén dữ liệu
-- Nén không tổn thất (Lossless)
-- Nén có tổn thất (Lossy)
-
----
-
-# NÉN ẢNH
-
-- Phần này trình bày các kỹ thuật và thuật toán cốt lõi để giảm dung lượng tệp ảnh.
-- Bao gồm các phương pháp nén giữ nguyên dữ liệu gốc và nén chấp nhận mất mát một phần thông tin để đạt tỷ lệ nén cao.
-
----
-
 # GIỚI THIỆU VỀ NÉN DỮ LIỆU
+
+---
+
+# NÉN DỮ LIỆU
 
 - **Khái niệm:** Nén ảnh là quá trình giảm dung lượng (số bit) cần thiết để biểu diễn một bức ảnh, sao cho ảnh sau khi nén vẫn đảm bảo chất lượng chấp nhận được theo mục đích sử dụng.
 - **Ví dụ:** Một bức ảnh màu 10 megapixel. Nếu lưu dạng thô, mỗi pixel gồm 3 kênh (R, G, B), mỗi kênh 8 bit.
@@ -65,7 +43,7 @@ paginate: true
 
 ---
 
-# Tại sao cần nén ảnh?
+# Tại sao cần nén dữ liệu?
 
 - **Tiết kiệm bộ nhớ lưu trữ:** Giảm dung lượng chiếm dụng trên ổ cứng, thẻ nhớ, hoặc cloud.
 - **Tăng tốc truyền tải:** Giúp việc gửi ảnh qua mạng, tải trang web, hoặc gọi video diễn ra nhanh chóng hơn.
@@ -99,8 +77,9 @@ paginate: true
 - **Entropy của nguồn:** $H = -\sum_{k=0}^{L-1} p(r_k) \log_2 p(r_k)$ (với $L$ là số mức cường độ).
 - **Ý nghĩa:** Ảnh càng đồng đều, ít quy luật thì entropy càng cao. Ảnh có nhiều vùng lặp lại thì entropy thấp.
 - **Định lý Shannon 1:** Không thể mã hóa nguồn với số bit trung bình nhỏ hơn entropy $H$.
+---
 
-**Bài tập thực hành:** Tính Entropy của ảnh.
+# Thực hành Tính Entropy của ảnh.
 
 ```python
 import math
@@ -125,8 +104,9 @@ print(f"Entropy của ảnh: {calculate_entropy(probs):.4f} bits/pixel")
   - **RMSE (Root Mean Square Error):** Đo mức sai khác trung bình. $e_{rms} = \sqrt{\frac{1}{MN} \sum \sum (f(x,y) - \hat{f}(x,y))^2}$. RMSE càng nhỏ, ảnh càng gần gốc.
   - **SNR (Signal-to-Noise Ratio):** Tỷ lệ tín hiệu trên nhiễu. SNR càng cao, chất lượng ảnh càng tốt.
 - **Đánh giá chủ quan:** Đánh giá bằng mắt thường (Thang điểm 1-6: Excellent đến Unusable).
+---
 
-**Bài tập thực hành:** Tính RMSE và SNR.
+# Thực hành Tính RMSE và SNR.
 
 ```python
 import numpy as np
@@ -173,8 +153,13 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
   - **Inverse Mapper:** Biến đổi ngược để khôi phục ảnh.
 
 ---
+<!--_class: section-->
 
 # NÉN KHÔNG TỔN THẤT (LOSSLESS)
+
+---
+
+# Định nghĩa
 
 - Các thuật toán và kỹ thuật nén ảnh bảo toàn toàn vẹn dữ liệu gốc.
 - Đảm bảo ảnh giải nén giống hệt 100% so với ảnh trước khi nén.
@@ -210,8 +195,9 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
   3. Xây dựng cây Huffman bằng cách gộp 2 nút có tần suất nhỏ nhất.
   4. Gán bit 0 cho nhánh trái, 1 cho nhánh phải.
   5. Đọc đường đi từ gốc đến lá để ra mã của từng ký tự.
+---
 
-**Bài tập thực hành:** Xây dựng cây Huffman và mã hóa chuỗi.
+# Thực hành Xây dựng cây Huffman và mã hóa chuỗi.
 
 ```python
 import heapq
@@ -288,8 +274,9 @@ print("Mã Huffman:", codes)
   1. Đọc các bit cho đến khi gặp bit 1 đầu tiên. Số lượng bit 0 đếm được chính là Thương ($q$).
   2. Đọc tiếp $k$ bit tiếp theo để lấy Số dư ($r$).
   3. Khôi phục giá trị gốc: $N = q \times 2^k + r$.
+---
 
-**Bài tập thực hành:** Mã hóa và giải mã Golomb-Rice.
+# Thực hành Mã hóa và giải mã Golomb-Rice.
 
 ```python
 def golomb_rice_encode(n, k):
@@ -350,8 +337,9 @@ print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
   3. Kiểm tra xem con số giải mã nằm trong khoảng con của ký tự nào $\rightarrow$ Xuất ký tự đó.
   4. Thu hẹp khoảng hiện tại thành đúng khoảng con vừa tìm được.
   5. Lặp lại cho đến khi giải mã đủ số lượng ký tự.
+---
 
-**Bài tập thực hành:** Mã hóa số học.
+# Thực hành Mã hóa số học.
 
 ```python
 def arithmetic_encode(message, probs):
@@ -413,8 +401,9 @@ print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
      - _TH1:_ Mã đã có $\rightarrow$ Xuất chuỗi. Thêm vào từ điển `Chuỗi_trước` + Ký tự đầu của chuỗi hiện tại.
      - _TH2 (Đặc biệt):_ Mã chưa có $\rightarrow$ Thêm `Chuỗi_trước` + Ký tự đầu của `Chuỗi_trước`, sau đó xuất chuỗi này.
   4. Cập nhật `Chuỗi_trước` = chuỗi vừa xuất. Lặp lại.
+---
 
-**Bài tập thực hành:** Nén LZW.
+# Thực hành Nén LZW.
 
 ```python
 def lzw_compress(text):
@@ -467,8 +456,13 @@ print("Mã LZW:", lzw_compress(text))
 - **Giải mã:** Dịch chuyển (shift) các bit của từng mặt phẳng nhị phân về lại đúng vị trí, thực hiện phép toán OR (|) để ghép $m$ mặt phẳng thành ảnh gốc.
 
 ---
+<!--_class: section-->
 
 # NÉN CÓ TỔN THẤT (LOSSY)
+
+---
+
+# Định nghĩa
 
 - Các phương pháp nén chấp nhận loại bỏ một phần thông tin để đạt tỷ lệ nén cao.
 - Tận dụng các đặc điểm của hệ thống thị giác con người (HVS) để loại bỏ thông tin ít nhạy cảm.
@@ -540,8 +534,9 @@ print("Mã LZW:", lzw_compress(text))
   2. Tính giá trị dự đoán $\hat{f}(n)$ từ các pixel đã giải nén trước đó.
   3. Khôi phục pixel gốc: $f(n) = \hat{f}(n) + e(n)$.
   4. Lưu $f(n)$ vào bộ nhớ đệm để làm dữ liệu dự đoán cho pixel $n+1$.
+---
 
-**Bài tập thực hành:** Mã hóa và giải mã DPCM.
+# Thực hành mã hóa và giải mã DPCM.
 
 ```python
 def dpcm_encode(signal):
