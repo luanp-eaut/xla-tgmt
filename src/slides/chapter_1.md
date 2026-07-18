@@ -705,7 +705,7 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 <div class="columns">
 <div class="col-2">
 
-- Phần mềm cần cài đặt:
+- Phần mềm:
   - Python 3.11+
   - VSCode
   - pip/pipenv
@@ -727,7 +727,7 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 </div>
 <div class="col-3">
 
-- Tổ chức dự án
+- Tổ chức dự án:
 
 ```text
 projects/
@@ -742,8 +742,9 @@ projects/
 </div>
 </div>
 
-- Cài đặt thư viện
+- Cài đặt thư viện:
 ```bash
+pipx install pipenv
 pipenv shell
 pipenv install numpy opencv-python matplotlib scikit-image pillow ipykernel
 ```
