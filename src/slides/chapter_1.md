@@ -142,11 +142,24 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Lịch sử hình thành xử lý ảnh số
 
+<div class="columns">
+<div class="col-5">
+
 - **Thập niên 1920:** Ứng dụng sớm nhất trong ngành báo chí. Hệ truyền ảnh qua cáp Bartlane (London - New York) giúp giảm thời gian truyền ảnh từ >1 tuần xuống <3 giờ (chưa sử dụng máy tính số).
 - **Thập niên 1960:** Đánh dấu sự ra đời của máy tính số đủ mạnh và chương trình không gian.
   - Mốc quan trọng: Năm 1964, Phòng thí nghiệm Sức đẩy Phản lực (JPL) xử lý ảnh mặt trăng từ tàu Ranger 7 để hiệu chỉnh biến dạng.
 - **Thập niên 1970:** Ứng dụng đột phá trong y tế.
   - Phát minh ra chụp cắt lớp vi tính (CT scan) bởi Sir Godfrey N. Hounsfield và Allan M. Cormack (Giải Nobel Y học 1979).
+
+</div>
+<div class ="col-2">
+<br/>
+
+![](images/1.1.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -155,36 +168,89 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 - **Ảnh tia Gamma:** Y học hạt nhân (PET scan, quét xương), thiên văn học (vụ nổ sao).
 - **Ảnh tia X:** Chẩn đoán y tế (chụp X-quang), kiểm tra công nghiệp, thiên văn học.
 - **Ảnh tia cực tím (UV):** Kính hiển vi huỳnh quang, thiên văn học.
+
+<div class="columns">
+<div class="col-2">
+
 - **Ảnh vùng Khả kiến & Hồng ngoại (IR):**
   - Kính hiển vi quang học.
   - Viễn thám (vệ tinh LANDSAT, dự báo thời tiết).
   - Kiểm tra tự động trong công nghiệp (phát hiện lỗi, đếm sản phẩm).
   - An ninh (nhận dạng vân tay, biển số xe).
+
+</div>
+<div>
+
+![](images/1.3.png)
+
+</div>
+</div>
+<div class="columns">
+<div>
+
 - **Các nguồn khác:** Ảnh siêu âm (y tế), ảnh kính hiển vi điện tử.
+
+</div>
+<div class="col-2">
+
+![width:800](images/1.2.png)
+
+</div>
+</div>
 
 ---
 
 # Quy trình xử lý ảnh số (1)
 
+<div class="columns">
+<div class="col-5">
+
 1. **Thu nhận ảnh (Image Acquisition):** Tiền xử lý như thay đổi kích thước, chuyển đổi định dạng.
 2. **Tăng cường ảnh (Image Enhancement):** Làm ảnh phù hợp hơn cho ứng dụng cụ thể (mang tính chủ quan). Ví dụ: làm sáng ảnh tối.
 3. **Khôi phục ảnh (Image Restoration):** Cải thiện chất lượng ảnh dựa trên mô hình toán học/xác suất của sự suy giảm (mang tính khách quan).
 4. **Xử lý ảnh màu (Color Image Processing):** Trích xuất đặc trưng, phân vùng dựa trên màu sắc.
+
+</div>
+<div class="col-4">
+<br/>
+
+![](images/1.4.png)
+
+</div>
+</div>
+
 5. **Wavelets & Đa phân giải:** Nén dữ liệu và biểu diễn ảnh ở các độ phân giải khác nhau.
 
 ---
+<!--_class: text-sm-->
 
 # Quy trình xử lý ảnh số (2)
+
+<div class="columns">
+<div class="col-5">
 
 6. **Nén ảnh (Compression):** Giảm dung lượng lưu trữ và băng thông truyền tải (Ví dụ: JPEG, PNG).
 7. **Xử lý hình thái học (Morphological Processing):** Trích xuất các thành phần ảnh hữu ích cho biểu diễn và mô tả hình dạng (dựa trên lý thuyết tập hợp).
 8. **Phân vùng ảnh (Segmentation):** Chia ảnh thành các phần hoặc đối tượng cấu thành. Đây là bước khó nhất và quan trọng nhất để nhận dạng tự động.
 9. **Trích xuất đặc trưng (Feature Extraction):** Phát hiện và mô tả định lượng các đặc trưng của đối tượng (ví dụ: góc, cạnh, hướng, diện tích).
+
+</div>
+<div class="col-4">
+<br/>
+
+![](images/1.5.png)
+</div>
+</div>
+
 10. **Phân loại mẫu ảnh (Image Pattern Classification):** Gán nhãn cho đối tượng dựa trên các đặc trưng đã trích xuất.
 
 ---
+<!--_class: text-sm-->
 
 # Các thành phần của hệ thống xử lý ảnh
+
+<div class="columns">
+<div class="col-5">
 
 1. **Cảm biến ảnh & Bộ số hóa:** Chuyển đổi năng lượng vật lý thành tín hiệu điện và sau đó thành dữ liệu số.
 2. **Phần cứng chuyên dụng:** ALU (xử lý song song tốc độ cao), GPU (tính toán ma trận, deep learning), Frame buffers.
@@ -192,8 +258,17 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 4. **Phần mềm:** Các module chuyên biệt (Ví dụ: MATLAB Image Processing Toolbox, OpenCV).
 5. **Lưu trữ lớn:** Ngắn hạn (RAM), Trực tuyến (Ổ cứng/SSD), Dài hạn (Băng từ, Cloud).
 6. **Hiển thị ảnh:** Màn hình màu, thiết bị in ấn (laser, film).
-7. **Mạng & Điện toán đám mây:** Truyền tải dữ liệu ảnh (yêu cầu băng thông lớn, nén ảnh là bắt buộc).
 
+
+</div>
+<div class="col-3">
+
+![](images/1.6.png)
+
+</div>
+</div>
+
+7. **Mạng & Điện toán đám mây:** Truyền tải dữ liệu ảnh (yêu cầu băng thông lớn, nén ảnh là bắt buộc).
 ---
 
 <!-- _class: section -->
@@ -204,13 +279,26 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Thị giác con người và ánh sáng
 
+<div class="columns">
+<div class="col-4">
+
 - **Cấu tạo mắt người:**
   - **Giác mạc (Cornea):** Mô trong suốt, bảo vệ bề mặt trước của mắt.
   - **Màng cứng (Sclera):** Màng đục bao bọc phần còn lại của mắt.
   - **Màng mạch (Choroid):** Chứa mạch máu, giảm tán xạ ánh sáng.
   - **Mống mắt (Iris):** Điều chỉnh lượng ánh sáng vào mắt thông qua đồng tử (2-8mm).
   - **Thủy tinh thể (Lens):** Hội tụ ánh sáng lên võng mạc.
-  - **Võng mạc (Retina):** Chứa thụ thể ánh sáng:
+  
+
+</div>
+<div class="col-2">
+
+![](images/1.7.png)
+
+</div>
+</div>
+
+- **Võng mạc (Retina):** Chứa thụ thể ánh sáng:
     - **Tế bào hình nón (Cones):** Nhìn màu, chi tiết cao, hoạt động tốt ở ánh sáng mạnh.
     - **Tế bào hình que (Rods):** Nhìn sáng yếu, không phân biệt màu sắc.
 
@@ -218,34 +306,77 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Sự thích nghi và phân biệt độ sáng
 
+<div class="columns">
+<div class="col-3">
+
 - **Thích nghi độ sáng:** Mắt người có thể thích nghi với dải cường độ ánh sáng rất rộng (~$10^{10}$), nhưng không thể hoạt động trên toàn bộ dải này cùng một lúc.
 - **Tỷ lệ Weber (Weber Ratio):** $\Delta I_c / I$. Giá trị càng nhỏ thì khả năng phân biệt độ sáng càng tốt. Khả năng này kém ở vùng ánh sáng yếu (do tế bào que) và tốt ở vùng ánh sáng mạnh (do tế bào nón).
 - **Hiện tượng quang học:**
   - **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
-  - **Tương phản đồng thời:** Độ sáng cảm nhận của một vùng phụ thuộc vào nền xung quanh nó.
+
+</div>
+<div>
+
+![](images/1.8.png)
+
+</div>
+</div>
+<ul>
+
+- **Tương phản đồng thời:** Độ sáng cảm nhận của một vùng phụ thuộc vào nền xung quanh nó.
+
+</ul>
 
 ---
 
 # Ánh sáng và phổ điện từ
 
 - **Phổ điện từ (EM):** Bao gồm sóng vô tuyến, vi sóng, hồng ngoại, ánh sáng khả kiến, tử ngoại, tia X, tia gamma.
+
+<div class="columns">
+<div class="col-5">
+
 - **Công thức cơ bản:**
   - Bước sóng ($\lambda$) và Tần số ($\nu$): $\lambda \nu = c$ (với $c \approx 3 \times 10^8$ m/s).
   - Năng lượng photon: $E = h\nu$.
 - **Ánh sáng khả kiến:** Khoảng từ ~0.43 $\mu m$ (tím) đến ~0.79 $\mu m$ (đỏ).
+
+</div>
+<div  class="col-5">
+
+![](images/1.9.png)
+
+</div>
+</div>
+
 - **Thuật ngữ:**
   - **Đơn sắc (Monochromatic):** Chỉ có cường độ (mức xám).
-  - **Đa sắc (Chromatic):** Có 3 đặc tính: Bức xạ (Radiance), Độ chói (Luminance), Độ sáng (Brightness - mô tả chủ quan).
+  - **Đa sắc (Chromatic):** Có 3 đặc tính: Bức xạ (Radiance - tổng năng lượng), Độ chói (Luminance - năng lượng cảm nhận được), Độ sáng (Brightness - mô tả chủ quan).
 
 ---
 
 # Mô hình thu nhận ảnh
 
+<div class="columns">
+<div>
+
 - **Nguyên lý:** Dựa trên nguồn chiếu sáng và sự phản xạ/hấp thụ của vật thể.
 - **3 phương pháp cảm biến chính:**
   1. **Phần tử cảm biến đơn (Single sensor):** Cần chuyển động cơ học theo 2 chiều (x, y) để quét. Ví dụ: Máy quét phim.
   2. **Dải cảm biến (Sensor strip):** Cảm biến 1 chiều, chuyển động cơ học 1 chiều. Ví dụ: Máy scan phẳng, chụp ảnh hàng không, CT scan.
+
+</div>
+<div>
+
+![](images/1.10.png)
+
+</div>
+</div>
+<ul>
+
   3. **Mảng cảm biến (Sensor array):** Mảng 2D (ví dụ: CCD, CMOS trong camera kỹ thuật số). Không cần chuyển động cơ học, thu nhận ảnh toàn phần ngay lập tức.
+
+</ul>
 
 ---
 
