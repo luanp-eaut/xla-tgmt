@@ -52,6 +52,10 @@ paginate: true
 # Biến đổi cường độ (1)
 
 - **Định nghĩa**: Là kỹ thuật xử lý ảnh theo điểm (point processing), giá trị của một pixel tại vị trí $(x, y)$ trong ảnh đầu ra chỉ phụ thuộc vào giá trị của chính pixel đó tại vị trí $(x, y)$ trong ảnh đầu vào.
+
+<div class="columns">
+<div class="col-4">
+
 - **Công thức tổng quát**: $s = T(r)$
   - $r$: Cường độ đầu vào.
   - $s$: Cường độ đầu ra.
@@ -59,24 +63,69 @@ paginate: true
 - **Các phương pháp phổ biến**:
   - **Ảnh âm bản (Image Negatives)**: $s = L - 1 - r$
     - Ứng dụng: Tăng cường chi tiết màu trắng/xám trong vùng tối (ví dụ: ảnh chụp X-quang, y tế).
+
+</div>
+<div class="col-2">
+
+![](images/2.1.png)
+
+</div>
+</div>
+<ul>
+
   - **Biến đổi Log (Log Transformations)**: $s = c \log(1 + r)$
     - Ứng dụng: Mở rộng dải giá trị pixel tối, nén dải giá trị pixel sáng. Thường dùng để hiển thị phổ Fourier.
 
+</ul>
+
 ---
+<!--_class: text-2xs-->
 
 # Biến đổi cường độ (2)
+
+<div class="columns">
+<div>
 
 - **Biến đổi Lũy thừa/Gamma**: $s = c r^\gamma$
   - $\gamma < 1$: Mở rộng vùng tối, nén vùng sáng.
   - $\gamma > 1$: Nén vùng tối, mở rộng vùng sáng.
   - $\gamma = 1$: Biến đổi tuyến tính.
-  - Ứng dụng: Hiệu chỉnh Gamma cho màn hình CRT, LCD, máy in.
+
+</div>
+<div class="col-2">
+
+![](images/2.2.png)
+
+</div>
+</div>
+<div class="columns">
+<div class="col-2">
+<ul>
+
+- Ứng dụng: Hiệu chỉnh Gamma cho màn hình CRT, LCD, máy in.
+
+</ul>
+
 - **Biến đổi hàm bậc thang (Piecewise-Linear Transformation)**:
   - Chia dải giá trị pixel thành các đoạn tuyến tính khác nhau, cho phép điều chỉnh độ tương phản theo từng khoảng mức xám cụ thể.
   - 3 phương pháp chính:
     - **Tăng độ tương phản**: Làm nổi bật sự khác biệt giữa các mức xám.
     - **Cắt mức xám (Gray-level slicing)**: Làm nổi bật một dải mức xám cụ thể (ví dụ: khối u trong ảnh y tế).
-    - **Trích xuất bit (Bit-plane slicing)**: Phân tích sự đóng góp của từng bit trong byte biểu diễn pixel.
+
+</div>
+<div>
+
+![width:300px](images/2.3.png)
+
+</div>
+</div>
+<ul>
+<ul>
+
+- **Trích xuất bit (Bit-plane slicing)**: Phân tích sự đóng góp của từng bit trong byte biểu diễn pixel.
+
+</ul>
+</ul>
 
 ---
 
@@ -116,6 +165,10 @@ plt.show()
 # Lọc không gian (Spatial Filtering)
 
 - **Định nghĩa**: Là kỹ thuật thay đổi giá trị của một pixel dựa trên giá trị của các pixel lân cận xung quanh nó. Là công cụ chủ chốt để làm mịn ảnh hoặc làm nét ảnh.
+
+<div class="columns">
+<div>
+
 - **Cơ chế hoạt động**:
   - Sử dụng một mặt nạ nhỏ (Kernel) "trượt" qua từng pixel của ảnh gốc.
   - Giá trị pixel mới $g(x, y)$ tại vị trí $(x, y)$:
@@ -123,7 +176,29 @@ plt.show()
   - $f$: Ảnh đầu vào.
   - $w$: Các trọng số trong Kernel.
   - $a, b$: Các tham số xác định kích thước Kernel (ví dụ với Kernel $3 \times 3$, $a = b = 1$).
+
+</div>
+<div>
+
+![](images/2.4.png)
+
+</div>
+</div>
+
 - **Lưu ý**: Kích thước mặt nạ thường là lẻ ($3 \times 3, 5 \times 5, 7 \times 7, ...$) để có một pixel trung tâm xác định.
+
+---
+
+# Phân loại bộ lọc không gian
+
+- Bộ lọc làm mịn (Smoothing Filters)
+  - **Tên gọi khác**: Bộ lọc thông thấp (Low-pass filters).
+  - **Mục đích**: Làm mờ ảnh (blurring) và **giảm nhiễu** (noise reduction).
+  - **Đặc điểm**: Làm giảm các chuyển tiếp đột ngột về mức xám, giúp ảnh mượt hơn nhưng cũng làm mất đi các chi tiết sắc nét.
+- Bộ lọc làm nét (Sharpening Filters)
+  - **Tên gọi khác**: Bộ lọc thông cao (High-pass filters).
+  - **Mục đích**: Làm nổi bật các chi tiết nhỏ, **tăng cường biên** (edges) và làm rõ các chi tiết đã bị mờ.
+  - **Đặc điểm**: Làm tăng độ tương phản ở các vùng có sự thay đổi đột ngột về cường độ sáng (biên của đối tượng).
 
 ---
 
@@ -146,11 +221,31 @@ plt.show()
 
 - **Mean Kernel $3 \times 3$**:
   - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{9}$
-  - Kernel:<span>
-    $\begin{bmatrix} 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \end{bmatrix}$</span>
+  - Kernel:
+  <span>
+  
+  $$
+  \begin{bmatrix} 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \end{bmatrix}
+  $$
+  
+  </span>
 - **Mean Kernel $5 \times 5$**:
   - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{25} = 0.04$
   - Kernel: Ma trận $5 \times 5$ với mỗi phần tử là $0.04$.
+
+<span>
+
+$$
+\begin{bmatrix}
+0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
+0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
+0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
+0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
+0.04 & 0.04 & 0.04 & 0.04 & 0.04
+\end{bmatrix}
+$$
+
+</span>
 
 ---
 
@@ -215,7 +310,7 @@ plt.show()
 
 ---
 
-# Bộ lọc làm nét (Sharpening/Highpass Filters)
+# Bộ lọc làm nét (Sharpening/Highpass Filters) (here)
 
 - **Mục đích**: Làm nổi bật các cạnh và các chi tiết sắc nét trong ảnh.
 - **Cơ sở toán học**:
