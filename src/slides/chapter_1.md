@@ -382,9 +382,21 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Mô hình hình thành ảnh đơn giản
 
+<div class="columns">
+<div class="col-2">
+
 - **Hàm ảnh 2D:** $f(x, y) = i(x, y) \times r(x, y)$
   - $i(x, y)$: Thành phần chiếu sáng (Illumination) - $0 \le i(x, y) < \infty$.
   - $r(x, y)$: Thành phần phản xạ (Reflectance) - $0 \le r(x, y) \le 1$.
+
+</div>
+<div class="col-3">
+
+![](images/1.11.png)
+
+</div>
+</div>
+
 - **Ví dụ thực tế:**
   - Ánh sáng văn phòng: ~1000 lm/m².
   - Phản xạ của tuyết: ~0.93 (gần như phản xạ toàn phần).
@@ -394,11 +406,23 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Lấy mẫu và lượng tử hóa
 
+<div class="columns">
+<div class="col-3">
+
 - **Lấy mẫu (Sampling):** Quá trình số hóa tọa độ không gian (x, y). Bước này quyết định độ phân giải không gian (Spatial Resolution) của ảnh.
 - **Lượng tử hóa (Quantization):** Quá trình số hóa biên độ cường độ sáng. Bước này quyết định độ phân giải cường độ (Intensity Resolution).
 - **Biểu diễn ảnh số:** Dưới dạng ma trận kích thước $M \times N$.
   - Tọa độ $(x, y)$ với $x \in [0, M-1]$, $y \in [0, N-1]$.
   - Gốc tọa độ (0,0) thường ở góc trên bên trái.
+
+</div>
+<div class="col-2">
+
+![](images/1.12.png)
+
+</div>
+</div>
+
 - **Số bit lưu trữ:** $b = M \times N \times k$ (với $L = 2^k$ là số mức xám).
 
 ---
@@ -422,6 +446,12 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 - **Láng giềng chéo ($N_D(p)$):** $(x+1, y+1), (x+1, y-1), (x-1, y+1), (x-1, y-1)$.
 - **8-láng giềng ($N_8(p)$):** $N_4(p) \cup N_D(p)$.
 
+<div style="margin-top: 20px">
+
+![width:450](images/1.13.png)
+
+</div>
+
 ---
 
 # Tính kề và liên thông
@@ -431,6 +461,12 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 - **8-kề nhau:** $q \in N_8(p)$ và $p, q \in V$. (Có thể gây mơ hồ về đường đi).
 - **m-kề nhau (Mixed adjacency):** $q \in N_4(p)$ hoặc $q \in N_D(p)$ và $N_4(p) \cap N_4(q)$ không chứa điểm nào có giá trị thuộc $V$. $\rightarrow$ Loại bỏ sự mơ hồ của 8-kề nhau.
 - **Đường đi (Path):** Dãy các điểm kề nhau. Độ dài đường đi là số bước.
+
+<div style="margin-top:20px">
+
+![width:600px](images/1.14.png)
+
+</div>
 
 ---
 
@@ -459,12 +495,42 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # Phép toán trên ảnh
 
+<div class="columns">
+<div class="col-2">
+
 - **Phép toán theo phần tử (Elementwise):** Cộng, trừ, nhân, chia từng cặp điểm ảnh tương ứng.
   - **Cộng ảnh (Averaging):** Giảm nhiễu. Trung bình $k$ ảnh nhiễu $\rightarrow$ phương sai nhiễu giảm $k$ lần.
   - **Trừ ảnh (Subtraction):** Phát hiện thay đổi, trừ nền.
   - **Nhân/Chia ảnh:** Hiệu chỉnh độ sáng không đều (Shading correction), tạo mặt nạ vùng quan tâm (ROI Masking).
 - **Phép toán Logic:** AND, OR, NOT, XOR (chủ yếu dùng cho ảnh nhị phân/mask).
-- **Ví dụ:** Trung bình nhiều ảnh bị nhiễu Gaussian sẽ giúp khử nhiễu hiệu quả, ảnh càng rõ nét khi số lượng ảnh càng lớn.
+- **Ví dụ ứng dụng:** Trung bình nhiều ảnh bị nhiễu Gaussian sẽ giúp khử nhiễu hiệu quả, ảnh càng rõ nét khi số lượng ảnh càng lớn.
+
+</div>
+<div>
+
+![](images/1.15.png)
+
+</div>
+</div>
+
+---
+
+# Ví dụ ứng dụng phép toán trên ảnh
+
+<div class="columns">
+<div class="col-2">
+
+- Hình ảnh của cặp thiên hà NGC 3314 bị nhiễu Gaussian cộng thêm.
+- Các hình (b)-(f) là kết quả trung bình của 5, 10, 20, 50 và 1.000 hình ảnh bị nhiễu, tương ứng.
+
+</div>
+<div class="col-5">
+
+![](images/1.16.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -511,12 +577,23 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 # OpenCV- Open Computer Vision Library
 
+<div class="columns">
+<div class="col-2">
+
 - **OpenCV** là thư viện xử lý ảnh và Computer Vision mã nguồn mở hàng đầu.
 - **Mục đích:** Phục vụ các ứng dụng Computer Vision thời gian thực (real-time).
 - **Lịch sử:** Được phát triển bởi Intel, hiện duy trì bởi Open Source Vision Foundation.
 - **Quy mô:** Chứa hơn 2500 thuật toán tối ưu.
 - **Hỗ trợ đa ngôn ngữ:** Python, C++, C, Java, MATLAB.
 - **Đa nền tảng:** Chạy trên Windows, Linux, macOS, Android, iOS.
+
+</div>
+<div>
+
+![width:350px](images/1.17.png)
+
+</div>
+</div>
 
 ---
 
@@ -620,3 +697,53 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
   - Slice arrays để crop (cắt) ảnh.
   - Create masks cho các phép toán masked operations.
   - Biến đổi ma trận ảnh nhanh chóng.
+
+---
+
+# Cài đặt môi trường thực hành
+
+<div class="columns">
+<div class="col-2">
+
+- Phần mềm cần cài đặt:
+  - Python 3.11+
+  - VSCode
+  - pip/pipenv
+- VSCode extensions:
+  - Python (Microsoft)
+  - Jupyter (Microsoft)
+
+</div>
+<div  class="col-2">
+
+- Python packages:
+  - numpy
+  - opencv-python
+  - matplotlib
+  - scikit-image
+  - pillow
+  - ipykernel
+
+</div>
+<div class="col-3">
+
+- Tổ chức dự án
+
+```text
+projects/
+│
+├── images/           # Ảnh đầu vào
+├── output/           # Kết quả xử lý
+├── notebooks/        # Jupyter Notebook
+├── src/              # Mã nguồn Python
+└── requirements.txt  # Danh sách thư viện
+```
+
+</div>
+</div>
+
+- Cài đặt thư viện
+```bash
+pipenv shell
+pipenv install numpy opencv-python matplotlib scikit-image pillow ipykernel
+```
