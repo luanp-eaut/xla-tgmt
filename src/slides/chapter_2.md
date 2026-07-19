@@ -819,9 +819,7 @@ $F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-j 2\pi (\frac{ux}
 - **Tầm quan trọng**: FFT là "xương sống" của hầu hết các công nghệ xử lý ảnh hiện đại, từ nén ảnh (JPEG) cho đến lọc nhiễu trong video thời gian thực.
 ---
 
-# Bài tập thực hành
-
-Biến đổi ảnh sang miền tần số và lọc thông thấp.
+# Thực hành - Biến đổi ảnh sang miền TS và lọc thông thấp.
 
 ```python
 import cv2
