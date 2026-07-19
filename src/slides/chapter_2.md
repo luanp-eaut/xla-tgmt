@@ -295,7 +295,7 @@ $$
   
 
 ---
-<!--_class: text-xs-->
+<!--_class: text-2xs-->
 
 # Tổng hợp các bộ lọc làm mịn
 
@@ -307,17 +307,31 @@ $$
 | **Nhược điểm**     | Làm mờ tất cả chi tiết, nhạy với nhiễu muối tiêu. | Vẫn làm mờ biên, tốn thời gian hơn.                     | Không hiệu quả với nhiễu Gaussian, độ phức tạp cao. |
 | **Nhiễu tốt nhất** | Nhiễu Gaussian (mịn, nhẹ)                         | Nhiễu Gaussian (tự nhiên nhất)                          | Nhiễu muối tiêu (chấm trắng/đen)                    |
 | **Tác động biên**  | Làm mờ biên mạnh                                  | Làm mờ biên vừa phải                                    | Hầu như giữ nguyên biên                             |
+| **Ứng dụng**  | Tiền xử lý nhanh; làm mờ chủ ý.                                  | Làm mờ trong nhiếp ảnh; tạo không gian tỉ lệ.                                    | Khử nhiễu ảnh y tế, văn bản, ảnh scan.                            |
 
 ---
 
-# Bộ lọc làm nét (Sharpening/Highpass Filters) (here)
+# Bộ lọc làm nét (Sharpening/Highpass Filters)
 
+<div class="columns">
+  <div class="col-3">
+    
 - **Mục đích**: Làm nổi bật các cạnh và các chi tiết sắc nét trong ảnh.
 - **Cơ sở toán học**:
   - **Đạo hàm bậc 1**:
     - Bằng 0 ở vùng cường độ không đổi.
     - Khác 0 tại điểm bắt đầu/kết thúc của bước nhảy (step) hoặc dốc (ramp).
     - Khác 0 dọc theo vùng dốc $\rightarrow$ Tạo ra cạnh dày.
+
+  </div>
+  <div class="col-2">
+  <br/>
+    
+    ![](images/2.6.png)
+
+  </div>
+</div>
+
   - **Đạo hàm bậc 2**:
     - Bằng 0 ở vùng cường độ không đổi.
     - Khác 0 tại điểm bắt đầu và kết thúc của bước nhảy/dốc.
@@ -329,12 +343,28 @@ $$
 
 - **Nguyên lý**:
   - Nếu coi ảnh là một bề mặt độ sáng: Vùng đồng nhất $\rightarrow$ độ sáng thay đổi rất ít. Vùng biên $\rightarrow$ độ sáng thay đổi đột ngột.
-  - Bộ lọc Laplace đo mức độ thay đổi này bằng đạo hàm bậc hai: $\nabla^2 f(x, y)$
+  - Bộ lọc Laplace đo mức độ thay đổi này bằng đạo hàm bậc hai: $\nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}$
+
 - **Trong ảnh số**:
   - Đạo hàm được xấp xỉ bằng sai phân hữu hạn: $f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}$
   - Từ phép xấp xỉ này để tính kernel Laplace.
-  - Kernel Laplacian cơ bản $3 \times 3$:
-    <span>$\begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$ hoặc $\begin{bmatrix} 1 & 1 & 1 \\ 1 & -8 & 1 \\ 1 & 1 & 1 \end{bmatrix}$</span>
+
+<div class="columns">
+<div>
+<ul>
+  
+- Kernel Laplacian cơ bản $3 \times 3$:
+  <span>$\begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$ hoặc $\begin{bmatrix} 1 & 1 & 1 \\ 1 & -8 & 1 \\ 1 & 1 & 1 \end{bmatrix}$</span>
+
+</ul>
+</div>
+<div>
+  
+  ![](images/2.7.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -343,9 +373,21 @@ $$
 - **Phát hiện biên bằng Laplace**:
   - Nếu chỉ lấy kết quả Laplace: $g(x, y) = \nabla^2 f(x, y)$ ta thu được ảnh biên (các đường viền mảnh).
 - **Làm nét ảnh**:
-  - Ta thường cộng (hoặc trừ, tùy dấu của tâm kernel) ảnh gốc với ảnh kết quả của bộ lọc Laplacian:
-    $g(x, y) = f(x, y) + c * \nabla^2 f(x, y)$ , $c = \pm 1$
-  - Nếu tâm kernel là số âm ($-4$), ta cộng ($c = -1$). Nếu tâm là số dương ($4$), ta trừ ($c = 1$).
+  - Ta thường cộng (hoặc trừ, tùy dấu của tâm kernel) ảnh gốc với ảnh kết quả của bộ lọc Laplacian:     $g(x, y) = f(x, y) + c * \nabla^2 f(x, y)$ , $c = \pm 1$
+  - Nếu tâm kernel là số âm ($-4$), cộng ($c = -1$). Nếu tâm là số dương ($4$), trừ ($c = 1$).
+
+<div style="margin-top:20px">
+
+![width:600px](images/2.8.png)
+
+</div>
+
+---
+
+# Các bước làm sắc nét ảnh với bộ lọc Laplace
+
+![width:1000px](images/2.9.png)
+
 ---
 
 # Bộ lọc Laplacian - Bài tập thực hành
@@ -411,26 +453,51 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 
 # Unsharp Masking & Highboost Filtering
 
+<div class="columns">
+<div>
+
 - **Định nghĩa**: Là kỹ thuật làm nét ảnh dựa trên nguyên tắc tạo mặt nạ từ ảnh làm mờ và cộng lại với ảnh gốc.
 - **Quy trình cổ điển trong nhiếp ảnh**:
   1. Làm mờ ảnh gốc: $f_{blur}$
   2. Tạo mặt nạ (mask): $mask = f - f_{blur}$ (Phần chi tiết bị mất đi do làm mờ)
   3. Cộng mặt nạ trở lại ảnh gốc: $g = f + k \cdot mask$
+
+</div>
+<div>
+  
+  ![](images/2.10.png)
+
+</div>
+</div>
+
 - **Phân loại**:
   - Nếu $k = 1$: **Unsharp masking** (Làm nét tiêu chuẩn).
   - Nếu $k > 1$: **Highboost filtering** (Tăng cường độ làm nét mạnh hơn).
 
 ---
 
-# Làm nét ảnh với Unsharp Masking & Highboost Filtering
+# Làm nét ảnh với Unsharp Masking & Highboost Filtering (here)
+
+<div class="columns">
+<div>
 
 - **Công thức tổng quát**:
   $g(x, y) = f(x, y) + k \cdot (f(x, y) - f_{blur}(x, y))$
   $g(x, y) = (1 + k) f(x, y) - k \cdot f_{blur}(x, y)$
 - **Đặc điểm**:
-  - Unsharp Masking ($k=1$): $g = 2f - f_{blur}$
-  - Highboost Filtering ($k>1$): $g = A \cdot f - f_{blur}$ (với $A = 1 + k > 2$)
+  - Unsharp Masking
+   ($k=1$): $g = 2f - f_{blur}$
+  - Highboost Filtering
+   ($k>1$): $g = A \cdot f - f_{blur}$ (với $A = 1 + k > 2$)
   - Giúp kiểm soát mức độ làm nét, kết quả tự nhiên hơn so với Laplacian.
+
+</div>
+<div class="col-3">
+
+![](images/2.11.png)
+
+</div>
+</div>
 
 ---
 <!--_class: text-2xs-->
