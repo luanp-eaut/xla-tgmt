@@ -476,14 +476,14 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 
 ---
 
-# Làm nét ảnh với Unsharp Masking & Highboost Filtering (here)
+# Làm nét ảnh với Unsharp Masking & Highboost Filtering
+
+- **Công thức tổng quát**: $g(x, y) = f(x, y) + k \cdot (f(x, y) - f_{blur}(x, y))$
+  $g(x, y) = (1 + k) f(x, y) - k \cdot f_{blur}(x, y)$
 
 <div class="columns">
-<div>
+<div class="col-2">
 
-- **Công thức tổng quát**:
-  $g(x, y) = f(x, y) + k \cdot (f(x, y) - f_{blur}(x, y))$
-  $g(x, y) = (1 + k) f(x, y) - k \cdot f_{blur}(x, y)$
 - **Đặc điểm**:
   - Unsharp Masking
    ($k=1$): $g = 2f - f_{blur}$
@@ -517,7 +517,11 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 # Xử lý Histogram
 
 ---
+
 # Histogram là gì?
+
+<div class="columns">
+<div class="col-2">
 
 - **Định nghĩa**: Biểu đồ thể hiện tần suất xuất hiện của các mức cường độ trong ảnh.
   - $h(r_k) = n_k$: Số lượng pixel có mức cường độ $r_k$.
@@ -527,6 +531,15 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
   - **Ảnh sáng**: Histogram tập trung ở phía phải (giá trị cao).
   - **Ảnh tương phản thấp**: Histogram hẹp, tập trung ở giữa.
   - **Ảnh tương phản cao**: Histogram trải rộng và phân bố đều.
+
+</div>
+<div>
+
+![](images/2.12.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -539,8 +552,11 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 ---
 
 # Cân bằng Histogram (Histogram Equalization)
-
 - **Mục tiêu**: Tự động tạo ra ảnh có histogram phân bố đều (uniform), từ đó tăng cường tương phản toàn cục.
+
+<div class="columns">
+<div class="col-2">
+
 - **Công thức rời rạc**:
   $s_k = T(r_k) = (L - 1) \sum_{j=0}^{k} p(r_j)$
   - $s_k$: Mức cường độ đầu ra.
@@ -550,6 +566,15 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
   - Có thể làm nổi bật nhiễu nền.
   - Không phải lúc nào cũng tạo ra histogram phẳng hoàn hảo do làm tròn số nguyên.
   - Đôi khi làm mất chi tiết ở các vùng có tần suất xuất hiện cao.
+
+</div>
+<div>
+
+![](images/2.13.png)
+
+</div>
+</div>
+
 ---
 
 # Bài tập thực hành
@@ -577,24 +602,51 @@ plt.show()
 # Khớp Histogram (Histogram Matching/Specification)
 
 - **Mục tiêu**: Biến đổi ảnh đầu vào để có histogram gần giống với một histogram mục tiêu được chỉ định trước.
+
+<div class="columns">
+<div>
+
 - **Quy trình**:
   1. Cân bằng histogram ảnh đầu vào $f$ để được $s$.
   2. Cân bằng histogram mục tiêu $z$ để được $v$.
   3. Ánh xạ ngược từ $s$ sang $z$ sao cho $v \approx s$ (tìm giá trị $z$ gần nhất với $s$).
 - **Ứng dụng**: Rất hữu ích khi cần chuẩn hóa ảnh theo một mẫu chuẩn, ví dụ trong xử lý ảnh y tế hoặc vệ tinh.
 
+</div>
+<div>
+
+![](images/2.14.png)
+
+</div>
+</div>
+
 ---
 
 # Xử lý Histogram cục bộ (Local Histogram Processing)
 
 - **Vấn đề**: Cân bằng toàn cục (global) có thể làm hỏng chi tiết ở các vùng nhỏ hoặc làm sáng quá mức các vùng vốn đã sáng.
+
+<div class="columns">
+<div class="col-3">
+
 - **Giải pháp**:
   - Di chuyển một cửa sổ lân cận (ví dụ $3 \times 3$, $5 \times 5$) khắp ảnh.
   - Tính histogram cục bộ và áp dụng biến đổi cho pixel trung tâm.
+
+</div>
+<div class="col-4">
+<br/>
+
+![width:600px](images/2.15.png)
+
+</div>
+</div>
+
 - **Thống kê Histogram**:
   - Sử dụng **Mean (trung bình)** và **Variance (phương sai)** cục bộ để phát hiện vùng tối/thấp tương phản.
   - Chỉ tăng cường những vùng đó (tránh khuếch đại nhiễu ở vùng sáng).
 - **Lưu ý**: Cách này tốn nhiều tài nguyên tính toán hơn so với cân bằng toàn cục.
+
 
 ---
 <!--_class: section-->
@@ -617,20 +669,32 @@ plt.show()
 - **Miền tần số**: Ảnh là tổng hợp của các sóng sin và cosin với các tần số, biên độ và pha khác nhau.
 - **Biến đổi Fourier (FT)**: Công cụ toán học chuyển tín hiệu từ miền không gian/thời gian sang miền tần số.
 - **Công thức toán học biến đổi Fourier rời rạc 2D (2D DFT)**:
-  $F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-j 2\pi (\frac{ux}{M} + \frac{vy}{N})}$
+$F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-j 2\pi (\frac{ux}{M} + \frac{vy}{N})}$
   - $f(x, y)$: Giá trị pixel tại vị trí $(x, y)$ (miền không gian).
   - $F(u, v)$: Giá trị phức tại tần số $(u, v)$ (miền tần số).
+  - $M, N$: Kích thước ảnh
 
 ---
 
 # Ý nghĩa của phổ Fourier (Kết quả sau biến đổi)
-
 - Khi thực hiện biến đổi Fourier trên một ảnh sẽ nhận được phổ Fourier, thường được biểu diễn dưới dạng một ảnh khác.
+
+<div class="columns">
+<div class="col-5">
+
 - **Tâm của ảnh phổ**: Đại diện cho tần số thấp nhất (0) – tức là độ sáng trung bình của toàn bộ ảnh (thành phần DC). Điểm này thường rất sáng.
 - **Càng xa tâm**: Đại diện cho tần số càng cao. Các điểm sáng ở xa tâm thể hiện các chi tiết sắc nét, các cạnh, đường biên hoặc nhiễu.
 - **Hai thành phần quan trọng**:
   - **Phổ biên độ (Magnitude Spectrum)**: Cho biết các tần số nào có mặt và "mạnh" đến mức nào.
   - **Phổ pha (Phase Spectrum)**: Cho biết vị trí của các tần số đó trong ảnh. (Pha cực kỳ quan trọng, nếu mất pha sẽ không khôi phục được ảnh gốc).
+
+</div>
+<div>
+
+![](images/2.16.png)
+
+</div>
+</div>
 
 ---
 
@@ -660,6 +724,10 @@ plt.show()
 # Lọc thông thấp (Lowpass Filters - LPF)
 
 - **Mục đích**: Giữ lại thành phần tần số thấp, thường dùng để làm mịn, làm mờ và giảm nhiễu trong ảnh.
+
+<div class="columns">
+<div class="col-2">
+
 - **Các loại bộ lọc**:
   - **Ideal LPF (ILPF)**: Cắt đột ngột tại $D_0$. Nhược điểm: Gây hiện tượng rung (ringing) nghiêm trọng do biến đổi ngược là hàm sinc.
   - **Gaussian LPF (GLPF)**: $H(u, v) = e^{-D^2(u,v) / 2D_0^2}$. Mượt mà, không gây rung.
@@ -668,9 +736,22 @@ plt.show()
   - $D(u, v)$: Khoảng cách từ điểm $(u, v)$ đến tâm phổ.
   - $D_0$: Bán kính ngưỡng, bao nhiêu tần số được giữ lại.
 
+</div>
+<div>
+
+![width:230](images/2.18.png)
+
+![width:350](images/2.17.png)
+
+</div>
+</div>
+
 ---
 
 # Lọc thông cao (Highpass Filters - HPF)
+
+<div class="columns">
+<div>
 
 - **Mục đích**: Làm sắc nét (sharpening), nổi bật biên (edge enhancement).
 - **Công thức chung**: $H_{HP}(u, v) = 1 - H_{LP}(u, v)$.
@@ -678,6 +759,15 @@ plt.show()
 - **Lưu ý quan trọng**:
   - HPF loại bỏ thành phần DC (giá trị trung bình), làm ảnh đầu ra tối đen.
   - $\rightarrow$ Cần cộng thêm hằng số (Offset) hoặc sử dụng kỹ thuật High-frequency-emphasis để giữ lại độ sáng tổng thể.
+
+</div>
+<div>
+
+![](images/2.19.png)
+
+</div>
+</div>
+
 
 ---
 
