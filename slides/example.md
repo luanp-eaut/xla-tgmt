@@ -58,7 +58,7 @@ paginate: true
 # Cú pháp khai báo
 
 - **Cú pháp khai báo class**: Một Class trong C++ bao gồm **Thuộc tính** (Dữ liệu) và **Phương thức** (Hàm xử lý).
-
+<gap style="--size: 10px;"></gap>
 <div class="columns">
 <div class="col-2">
 

@@ -104,14 +104,15 @@ print(f"Entropy của ảnh: {calculate_entropy(probs):.4f} bits/pixel")
   - **RMSE (Root Mean Square Error):** Đo mức sai khác trung bình. $e_{rms} = \sqrt{\frac{1}{MN} \sum \sum (f(x,y) - \hat{f}(x,y))^2}$. RMSE càng nhỏ, ảnh càng gần gốc.
   - **SNR (Signal-to-Noise Ratio):** Tỷ lệ tín hiệu trên nhiễu. SNR càng cao, chất lượng ảnh càng tốt.
 - **Đánh giá chủ quan:** Đánh giá bằng mắt thường (Thang điểm 1-6: Excellent đến Unusable).
-
-<br/>
+<gap></gap>
 
 ![width:900](images/3.1.png)
 
 ---
 
 # Thực hành Tính RMSE và SNR.
+
+<gap></gap>
 
 ```python
 import numpy as np
@@ -148,6 +149,7 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
 
 # Mô hình hệ thống nén ảnh tổng quát
 
+- Hệ thống nén ảnh thường được chia thành hai khối chính: bộ mã hóa và bộ giải mã. Bộ mã hóa biến ảnh gốc thành dạng dữ liệu ngắn gọn hơn để lưu trữ hoặc truyền đi, còn bộ giải mã khôi phục lại ảnh từ dữ liệu đã nén.
 - **Bộ mã hóa (Encoder):**
   - **Mapper:** Giảm dư thừa không gian/thời gian (biến đổi ảnh sang dạng thuận lợi hơn).
   - **Quantizer:** Giảm thông tin không liên quan (chỉ có trong nén lossy). Làm tròn/gộp giá trị để giảm số mức biểu diễn.
@@ -173,6 +175,9 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
 
 # Mã Huffman
 
+<div class="columns">
+<div class="col-2">
+
 - **Khái niệm:** Phương pháp mã hóa độ dài thay đổi. Ký tự xuất hiện càng nhiều thì mã càng ngắn, ký tự hiếm mã càng dài. Giúp giảm số bit trung bình cần dùng.
 - **Quy trình xây dựng cây Huffman:**
   1. Sắp xếp các ký tự theo xác suất (tần suất).
@@ -181,6 +186,13 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
   4. Gán bit cho các nhánh (ví dụ: trái = 0, phải = 1).
 - **Ứng dụng:** Mã hóa các pixel theo giá trị mức xám (0-255).
 
+</div>
+<div>
+
+![](images/3.2.png)
+</div>
+</div>
+
 ---
 
 # Ví dụ mã Huffman (1)
@@ -188,22 +200,45 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
 - **Chuỗi cần mã hoá:** "Cộng hoà xã hội chủ nghĩa"
 - **Trước mã hoá:** Chuỗi ký tự ASCII tiêu chuẩn (mỗi ký tự 8 bit).
 - **Sau mã hoá:** Chuỗi bit được rút gọn đáng kể nhờ các ký tự xuất hiện nhiều (như dấu cách, chữ 'a', 'o', 'h') được gán mã ngắn.
+
+<gap></gap>
+
+![width:900](images/3.3.png)
+
+<gap></gap>
+
 - _Lưu ý:_ Cây Huffman hoặc bảng mã cần được lưu kèm hoặc gửi kèm ở phần đầu file nén để bộ giải mã có thể hiểu được.
 
 ---
 
 # Ví dụ mã Huffman (2)
 
+<div class="columns">
+<div class="col-2">
+
 - **Các bước thực hiện:**
   1. Tính tần suất xuất hiện của từng ký tự.
   2. Sắp xếp theo xác suất giảm dần.
   3. Xây dựng cây Huffman bằng cách gộp 2 nút có tần suất nhỏ nhất.
-  4. Gán bit 0 cho nhánh trái, 1 cho nhánh phải.
-  5. Đọc đường đi từ gốc đến lá để ra mã của từng ký tự.
+
+</div>
+<div class="col-5">
+
+![](images/3.4.png)
+
+</div>
+</div>
+<ul>
+
+4. Gán bit 0 cho nhánh trái, 1 cho nhánh phải.
+5. Đọc đường đi từ gốc đến lá để ra mã của từng ký tự.
+
+</ul>
+
 ---
 
 # Thực hành Xây dựng cây Huffman và mã hóa chuỗi.
-
+<gap></gap>
 ```python
 import heapq
 
@@ -261,6 +296,9 @@ print("Mã Huffman:", codes)
 
 # Mã Golomb & Golomb-Rice
 
+<div class="columns">
+<div>
+
 - **Mã Golomb:**
   - _Ý tưởng:_ Mã hóa số nguyên $N$ bằng cách chia cho $M$.
   - Thương (Quotient) mã hóa phần đầu, Số dư (Remainder) mã hóa phần sau.
@@ -269,6 +307,16 @@ print("Mã Huffman:", codes)
   - Trường hợp đặc biệt khi $M = 2^k$.
   - Phép chia trở thành phép dịch bit (rất nhanh).
   - Thương = dịch phải $k$ bit. Số dư = $k$ bit thấp hơn.
+
+</div>
+<div>
+<gap style="--size:20px"></gap>
+
+![](images/3.5.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -282,7 +330,7 @@ print("Mã Huffman:", codes)
 ---
 
 # Thực hành Mã hóa và giải mã Golomb-Rice.
-
+<gap></gap>
 ```python
 def golomb_rice_encode(n, k):
     M = 2 ** k
@@ -312,14 +360,28 @@ print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
 
 # Mã số học (Arithmetic Coding)
 
+<div class="columns">
+<div class="col-2">
+
 - **Khác biệt với Huffman:** Không ánh xạ 1-1 giữa ký tự và mã. Một chuỗi ký tự dài được ánh xạ vào một khoảng số thực duy nhất trong $[0, 1)$.
 - **Ý tưởng:** Mỗi ký tự làm thu hẹp dần một khoảng. Sau khi xử lý hết chuỗi, chỉ cần chọn một số nằm trong khoảng cuối cùng.
 - **Ưu điểm:** Vượt qua giới hạn 1 bit/ký tự của Huffman, tiệm cận giới hạn Entropy của Shannon.
+
+</div>
+<div>
+
+![](images/3.6.png)
+</div>
+</div>
+
 - **Mở rộng:** Mô hình xác suất thích nghi theo ngữ cảnh (Adaptive Context-Dependent), xác suất thay đổi theo ngữ cảnh trước đó giúp tăng hiệu quả nén.
 
 ---
 
 # Ví dụ mã số học
+
+<div class="columns">
+<div class="col-2">
 
 - **Giả sử bảng xác suất:** A = 0.5, B = 0.3, C = 0.2.
 - **Các khoảng tương ứng:**
@@ -327,8 +389,21 @@ print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
   - B: $[0.5, 0.8)$
   - C: $[0.8, 1.0)$
 - **Mã hóa chuỗi "AB":**
+
+</div>
+<div class="col-5">
+
+![](images/3.7.png)
+
+</div>
+</div>
+<ul>
+
   1. Ký tự 'A' (khoảng $[0.0, 0.5)$): Thu hẹp khoảng hiện tại thành $[0.0, 0.5)$.
   2. Ký tự 'B' (chiếm 30% khoảng): Chia khoảng $[0.0, 0.5)$ thành 3 phần. 'B' nằm ở khoảng $[0.5 \times 0.5, 0.8 \times 0.5) = [0.25, 0.4)$.
+
+</ul>
+
 - **Kết quả:** Bất kỳ số nào trong khoảng $[0.25, 0.4)$ (ví dụ: 0.3) đều đại diện cho chuỗi "AB".
 
 ---
@@ -345,6 +420,7 @@ print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
 ---
 
 # Thực hành Mã hóa số học.
+<gap></gap>
 
 ```python
 def arithmetic_encode(message, probs):
@@ -383,6 +459,9 @@ print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
 
 # Ví dụ mã hoá với LZW
 
+<div class="columns">
+<div>
+
 - **Mã hoá chuỗi:** "ABAABABA"
 - **Từ điển ban đầu:** A: 65, B: 66 (Mã ASCII)
 - **Các mã mới bắt đầu từ 256.**
@@ -390,9 +469,21 @@ print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
   - Đọc 'A': có trong từ điển.
   - Đọc 'AB': chưa có $\rightarrow$ Xuất mã của 'A' (65), thêm 'AB' vào từ điển (mã 256).
   - Đọc 'B': có.
+
+</div>
+<div>
+
+![](images/3.8.png)
+
+</div>
+</div>
+<ul>
+
   - Đọc 'BA': chưa có $\rightarrow$ Xuất mã 'B' (66), thêm 'BA' (257).
   - Đọc 'AAB': chưa có $\rightarrow$ Xuất mã 'A' (65), thêm 'AA' (258).
   - ... Tiếp tục cho đến hết chuỗi.
+
+</ul>
 
 ---
 
@@ -409,6 +500,7 @@ print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
 ---
 
 # Thực hành Nén LZW.
+<gap></gap>
 
 ```python
 def lzw_compress(text):
@@ -437,10 +529,27 @@ print("Mã LZW:", lzw_compress(text))
 
 # Mã hóa độ dài Run (Run-Length Encoding - RLE)
 
+<div class="columns">
+<div>
+
 - **Nguyên lý:** Thay thế chuỗi các pixel giống hệt nhau bằng cặp (Giá trị, Độ dài).
 - **Chuẩn CCITT Group 3 & 4:** Dùng cho ảnh nhị phân (Fax).
   - Group 4 sử dụng mã hóa 2D (READ) tham chiếu dòng trước đó để nén tốt hơn.
+
+</div>
+<div>
+<gap></gap>
+
+![](images/3.9.png)
+
+</div>
+</div>
+
 - **Giải mã:** Đọc từng cặp (Giá trị, Độ dài) và ghi liên tiếp Giá trị đó vào ảnh với số lượng bằng Độ dài.
+
+<gap></gap>
+
+![width:1000](images/3.10.png)
 
 ---
 
@@ -449,14 +558,32 @@ print("Mã LZW:", lzw_compress(text))
 - **Nguyên lý:** Tạo từ điển các ký hiệu (ví dụ: ký tự 'a', 'b', hoặc các mẫu lặp lại).
 - **Cách hoạt động:** Thay thế các vùng giống nhau trong ảnh bằng tọa độ và token tham chiếu đến từ điển.
 - **Ví dụ:** Dữ liệu đầu vào là ảnh quét của chuỗi "banana".
+<gap></gap>
+
+![width:900](images/3.11.png)
+
+<gap></gap>
+
 - **Giải mã:** Giải nén từ điển ký hiệu và luồng tọa độ, sau đó "dán" (paste) các mẫu ký hiệu lên đúng vị trí (X, Y) trên nền trang trắng. Rất hiệu quả cho tài liệu văn bản quét.
 
 ---
 
 # Mã hoá bit-plane
 
+<div class="columns">
+<div class="col-4">
+
 - **Khái niệm:** Biểu diễn một ảnh $m$-bit bằng cách tách nó thành $m$ ảnh nhị phân riêng biệt. Mỗi mặt phẳng bit chứa một bit tại cùng vị trí của tất cả pixel.
 - **Ví dụ:** Với ảnh 8 bit, bit cao nhất chứa cấu trúc cường độ chính, các bit thấp hơn mô tả chi tiết tinh và dễ bị nhiễu hơn.
+
+</div>
+<div class="col-5">
+
+![](images/3.12.png)
+
+</div>
+</div>
+
 - **Xử lý:** Các bit-plane có thể được nén hoặc xử lý riêng tùy theo mức độ quan trọng.
 - **Giải mã:** Dịch chuyển (shift) các bit của từng mặt phẳng nhị phân về lại đúng vị trí, thực hiện phép toán OR (|) để ghép $m$ mặt phẳng thành ảnh gốc.
 
@@ -482,14 +609,28 @@ print("Mã LZW:", lzw_compress(text))
   2. **Biến đổi (Transform):** Chuyển đổi giá trị pixel thành hệ số tần số (phổ biến nhất là DCT - Discrete Cosine Transform).
   3. **Lượng tử hóa (Quantization):** Làm tròn các hệ số, loại bỏ thông tin ít quan trọng.
   4. **Mã hóa (Coding):** Mã hóa các hệ số đã lượng tử hóa (thường dùng Zigzag + RLE + Huffman).
+
+![](images/3.13.png)
+
 - **Phân bổ Bit:** Zonal Coding (giữ hệ số có phương sai lớn nhất) hoặc Threshold Coding (giữ N hệ số có độ lớn tuyệt đối lớn nhất).
 
 ---
 
 # Minh hoạ mã hoá khối
 
+<div class="columns">
+<div class="col-3">
+
 - **Đầu vào:** Một khối pixel 8x8.
 - **Biến đổi DCT:** Chuyển từ miền không gian sang miền tần số. Hệ số DC (góc trái trên) đại diện cho thành phần tần số thấp (thông tin nền), các hệ số AC đại diện cho tần số cao (chi tiết, biên).
+
+</div>
+<div class="col-5">
+
+![](images/3.14.png)
+</div>
+</div>
+
 - **Lượng tử hóa:** Chia các hệ số cho ma trận lượng tử hóa (Q-table) và làm tròn. Nhiều hệ số tần số cao trở thành 0.
 - **Mã hóa:** Quét zigzag để gom các số 0 lại, sau đó dùng RLE và Huffman để mã hóa.
 
@@ -500,8 +641,8 @@ print("Mã LZW:", lzw_compress(text))
 - **Quy trình:**
   1. **Giải mã Entropy:** Dùng Huffman/Arithmetic để giải mã luồng bit, khôi phục các hệ số DCT.
   2. **Giải lượng tử hóa (Inverse Quantization):** Nhân từng hệ số với giá trị tương ứng trong Ma trận lượng tử. (Lưu ý: Bước này gây tổn thất vĩnh viễn, các số 0 không thể khôi phục chính xác).
-  3. **Biến đổi ngược DCT (IDCT):** Áp dụng IDCT lên khối 8x8 để chuyển ngược về miền không gian.
-  4. **Ghép khối:** Đặt các khối 8x8 về đúng vị trí để tạo thành bức ảnh hoàn chỉnh.
+  3. **Biến đổi ngược DCT (IDCT):** Áp dụng IDCT lên khối $8\times8$ để chuyển ngược về miền không gian.
+  4. **Ghép khối:** Đặt các khối $8\times8$ về đúng vị trí để tạo thành bức ảnh hoàn chỉnh.
 
 ---
 
@@ -542,7 +683,7 @@ print("Mã LZW:", lzw_compress(text))
 ---
 
 # Thực hành mã hóa và giải mã DPCM.
-
+<gap></gap>
 ```python
 def dpcm_encode(signal):
     encoded = [signal[0]]
@@ -575,7 +716,21 @@ print("Giải mã DPCM:", dpcm_decode(encoded))
   - Biểu diễn đa phân giải (multiresolution).
   - Hỗ trợ cả nén lossless và lossy.
   - Cho phép truyền ảnh tiến triển (progressive).
+
+<div class="columns">
+<div>
+
 - **Chuẩn tiêu biểu:** JPEG 2000.
+
+</div>
+<div class="col-3">
+<gap></gap>
+
+![](images/3.15.png)
+
+</div>
+</div>
+
 - **Các bước:**
   1. Biến đổi DWT: Ảnh $\rightarrow$ các băng con hệ số.
   2. Lượng tử hóa: Chia mỗi hệ số cho bước lượng tử.
