@@ -33,21 +33,19 @@ paginate: true
 # GIỚI THIỆU VỀ NÉN DỮ LIỆU
 
 ---
+<!--_class: text-sm-->
 
-# NÉN DỮ LIỆU
+# GIỚI THIỆU
 
 - **Khái niệm:** Nén ảnh là quá trình giảm dung lượng (số bit) cần thiết để biểu diễn một bức ảnh, sao cho ảnh sau khi nén vẫn đảm bảo chất lượng chấp nhận được theo mục đích sử dụng.
 - **Ví dụ:** Một bức ảnh màu 10 megapixel. Nếu lưu dạng thô, mỗi pixel gồm 3 kênh (R, G, B), mỗi kênh 8 bit.
   - Tổng dung lượng: $10M \times 3 \times 8 = 240.000.000$ bit $\approx 30$ MB.
   - Nén ảnh giúp giảm kích thước này xuống còn vài MB hoặc vài trăm KB mà mắt thường khó phân biệt được sự khác biệt.
 
----
-
-# Tại sao cần nén dữ liệu?
-
-- **Tiết kiệm bộ nhớ lưu trữ:** Giảm dung lượng chiếm dụng trên ổ cứng, thẻ nhớ, hoặc cloud.
-- **Tăng tốc truyền tải:** Giúp việc gửi ảnh qua mạng, tải trang web, hoặc gọi video diễn ra nhanh chóng hơn.
-- **Giảm băng thông:** Yếu tố cực kỳ quan trọng trong các ứng dụng streaming video, hội nghị truyền hình thời gian thực.
+- **Tại sao cần nén dữ liệu?**
+  - **Tiết kiệm bộ nhớ lưu trữ:** Giảm dung lượng chiếm dụng trên ổ cứng, thẻ nhớ, hoặc cloud.
+  - **Tăng tốc truyền tải:** Giúp việc gửi ảnh qua mạng, tải trang web, hoặc gọi video diễn ra nhanh chóng hơn.
+  - **Giảm băng thông:** Yếu tố cực kỳ quan trọng trong các ứng dụng streaming video, hội nghị truyền hình thời gian thực.
 
 ---
 
@@ -57,8 +55,10 @@ paginate: true
 - **Thông tin (Information):** Nội dung thực sự cần truyền tải.
 - **Nén dữ liệu:** Giảm số bit dùng để biểu diễn dữ liệu nhưng vẫn giữ được thông tin quan trọng.
 - **Dư thừa dữ liệu (Redundancy - R):** Đo phần dữ liệu không cần thiết. Nếu $C$ là tỷ lệ nén $\Rightarrow R = 1 - \frac{1}{C}$. $R$ càng lớn, dữ liệu càng có nhiều phần có thể loại bỏ hoặc mã hóa hiệu quả.
-- **Tỷ lệ nén (Compression Ratio - C):** $C = \frac{b}{b'}$ (với $b$ là số bit gốc, $b'$ là số bit sau nén).
-  - _Ví dụ:_ $C = 10:1 \Rightarrow R = 0.9$ (90% dữ liệu là dư thừa).
+- **Tỷ lệ nén (Compression Ratio - C):** $C = \frac{b}{b'}$, với: 
+  - $b$ là số bit gốc, 
+  - $b'$ là số bit sau nén.
+- _Ví dụ:_ $C = 10:1 \Rightarrow R = 0.9$ (90% dữ liệu là dư thừa).
 
 ---
 
@@ -104,6 +104,11 @@ print(f"Entropy của ảnh: {calculate_entropy(probs):.4f} bits/pixel")
   - **RMSE (Root Mean Square Error):** Đo mức sai khác trung bình. $e_{rms} = \sqrt{\frac{1}{MN} \sum \sum (f(x,y) - \hat{f}(x,y))^2}$. RMSE càng nhỏ, ảnh càng gần gốc.
   - **SNR (Signal-to-Noise Ratio):** Tỷ lệ tín hiệu trên nhiễu. SNR càng cao, chất lượng ảnh càng tốt.
 - **Đánh giá chủ quan:** Đánh giá bằng mắt thường (Thang điểm 1-6: Excellent đến Unusable).
+
+<br/>
+
+![width:900](images/3.1.png)
+
 ---
 
 # Thực hành Tính RMSE và SNR.
