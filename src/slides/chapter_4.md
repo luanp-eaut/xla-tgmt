@@ -316,6 +316,7 @@ plt.show()
 ```
 
 ---
+<!--_class: text-sm-->
 
 # NỐI CÁC ĐIỂM BIÊN
 

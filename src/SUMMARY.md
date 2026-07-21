@@ -12,7 +12,6 @@
   - [Bài tập thực hành chương 3](labs/chapter_3.md)
   - [Bài tập thực hành chương 4](labs/chapter_4.md)
   - [Bài tập thực hành chương 5](labs/chapter_5.md)
-  - [Câu hỏi trắc nghiệm](labs/quiz.md)
 - [Thi kết thúc học phần](exam.md)
   - [Danh sách đề tài](exam/topics.md)
   - [Đáp án](exam/scoring.md)

@@ -1,79 +1,161 @@
-# Hệ quản trị CSDL với Oracle
+<div class="guideline">
+
+# XỬ LÝ ẢNH & THỊ GIÁC MÁY TÍNH
 
 ---
 
-## 📚 Tổng quan khóa học
+## Tổng quan khóa học
 
-Khóa học bao gồm 4 chương, bao gồm các nội dung sau đây:
+Khóa học bao gồm 5 chương, bao gồm các nội dung sau đây:
 
-- [Chương 1. Giới thiệu tổng quan, cài đặt môi trường](slides/chapter_1_intro.html)
-- [Chương 2. Ngôn ngữ SQL trong Oracle](slides/chapter_2_sql.html)
-- [Chương 3. Lập trình PL/SQL](slides/chapter_3_plsql.html)
-- [Chương 4. Kiến trúc và Quản trị hệ thống](slides/chapter_4_admin.html)
+- [**Chương 1**: Giới thiệu tổng quan](slides/chapter_1.md)
+- [**Chương 2**: Biến đổi ảnh](slides/chapter_2.md)
+- [**Chương 3**: Nén ảnh](slides/chapter_3.md)
+- [**Chương 4**: Phát hiện biên & phân vùng](slides/chapter_4.md)
+- [**Chương 5**: Thị giác máy tính](slides/chapter_5.md)
 
 ---
 
-## 📖 Nội dung các chương
+## Nội dung các chương
 
 ### Chương 1: Giới thiệu tổng quan
 
-- Giới thiệu về cơ sở dữ liệu và các mô hình CSDL
-- Hệ quản trị CSDL (DBMS) và so sánh các hệ quản trị phổ biến
-- Giới thiệu Oracle Database và các phiên bản (XE, SE, EE)
-- Kiến trúc Multitenant (`CDB`/`PDB`) trong Oracle 19c
-- **Thực hành:** Cài đặt Oracle 19c, thiết lập môi trường, tạo cơ sở dữ liệu mẫu `EMP/DEPT`
+- Giới thiệu về ảnh số: Định nghĩa ảnh, pixel, cường độ sáng, mức xám
+- Phân cấp xử lý ảnh: Mức thấp, trung bình và cao
+- Các lĩnh vực ứng dụng: Y tế, công nghiệp, an ninh, viễn thám
+- Mô hình hình thành ảnh: Thành phần chiếu sáng và phản xạ
+- Lấy mẫu và lượng tử hóa: Độ phân giải không gian và cường độ
+- Các khái niệm về kề và liên thông: 4-láng giềng, 8-láng giềng, m-kề nhau
+- Công cụ toán học cơ bản: Phép toán trên ảnh, biến đổi hình học
 
 ---
 
-### Chương 2: SQL trong Oracle
+### Chương 2: Biến đổi ảnh
 
-- Tổng quan về `SQL` và các nhóm lệnh (`DDL`, `DML`, `DCL`, `TCL`)
-- **DDL:** `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `RENAME`
-- **DML:** `INSERT`, `UPDATE`, `DELETE`, `SELECT`
-- **DCL:** `GRANT`, `REVOKE` - Quản lý quyền truy cập
-- **TCL:** `COMMIT`, `ROLLBACK`, `SAVEPOINT` - Quản lý giao dịch
-- **Thực hành:** Xây dựng và thao tác với bảng `PROJECT`, `ASSIGNMENT`; quản lý user và role
+**Biến đổi cường độ (Point Processing):**
+  - Ảnh âm bản: $s = L - 1 - r$
+  - Biến đổi Log: $s = c·log(1 + r)$
+  - Biến đổi Gamma: $s = c·r^γ$
+  - Biến đổi hàm bậc thang: Tăng tương phản, cắt mức xám, trích xuất bit
 
----
+**Lọc không gian (Spatial Filtering):**
+  - Lọc làm mịn: Mean filter, Gaussian filter, Median filter
+  - Lọc làm nét: Laplacian (đạo hàm bậc 2), Sobel (đạo hàm bậc 1)
+  - Unsharp Masking và Highboost Filtering
 
-### Chương 3: Ngôn ngữ `PL/SQL`
+**Xử lý Histogram:**
+  - Cân bằng histogram (Histogram Equalization)
+  - Khớp histogram (Histogram Matching)
+  - Xử lý histogram cục bộ
 
-- Tổng quan về `PL/SQL` và cấu trúc khối lệnh
-- Các thành phần `PL/SQL`: Biến, Hằng, Kiểu dữ liệu (Scalar, Reference, Record, Collection)
-- Cấu trúc điều khiển: `IF`, `CASE`, `LOOP`, `WHILE`, `FOR`
-- **Cursor:** Explicit, Implicit, Parameterized, `FOR UPDATE`
-- Xử lý ngoại lệ (Exception Handling): Predefined, User-defined, `RAISE_APPLICATION_ERROR`
-- **Stored Procedure & Function:** Tạo, tham số, overloading
-- **Package:** Specification, Body, Ứng dụng
-- **Trigger:** `BEFORE`/`AFTER`, Row/Statement, `INSTEAD OF`
-- **Thực hành:** Viết các thủ tục, hàm, trigger phục vụ quản lý nhân sự và dự án
-
----
-
-### Chương 4: Kiến trúc và Quản trị Oracle
-
-- **Kiến trúc Oracle:** Instance (SGA, Background Processes) và Database (Data files, Control files, Redo log files)
-- Multitenant Architecture: `CDB`, `PDB`, Common/Local User
-- **Quản trị Tablespace và lưu trữ:** Permanent, Temporary, Undo, Bigfile, OMF
-- **Schema Objects:** Table, Index, View, Materialized View, Sequence, Synonym
-- **Data Dictionary:** `DBA*`, `ALL*`, `USER_`, `V$` views
-- **Quản trị người dùng và bảo mật:** User, Privilege, Role, Profile, Quota
-- **Sao lưu và phục hồi:** `RMAN`, Backup Strategies (Full, Incremental, Cold/Hot), Restore & Recovery
-- **Thực hành:** Quản trị tablespace, tạo user/role, backup với `RMAN`
+**Biến đổi trong miền tần số:**
+  - Biến đổi Fourier rời rạc (2D DFT) và FFT
+  - Lọc thông thấp, thông cao, chặn dải, Notch
+  - Bộ lọc Laplacian và High-frequency-emphasis trong miền tần số
 
 ---
 
-## 🛠️ Công nghệ sử dụng
+### Chương 3: Nén ảnh
 
-- **Oracle Database 19c** - Phiên bản Long Term Release
-- **Oracle SQL Developer** - Công cụ GUI chính
-- **SQL\*Plus** - Công cụ dòng lệnh
-- **Visual Studio Code** - Với Oracle Developer Tools Extension
+**Giới thiệu về nén dữ liệu:**
+  - Dữ liệu, thông tin, tỷ lệ nén, các loại dư thừa
+  - Entropy và Định lý Shannon
+  - Đánh giá chất lượng: RMSE, SNR
+
+**Nén không tổn thất (Lossless):**
+  - Mã Huffman: Xây dựng cây, mã hóa và giải mã
+  - Mã Golomb và Golomb-Rice
+  - Mã số học (Arithmetic Coding)
+  - Mã LZW (Lempel-Ziv-Welch): Từ điển động
+  - Mã hóa độ dài Run (RLE)
+  - Mã hóa Symbol-based (JBIG2)
+  - Mã hóa Bit-plane
+
+**Nén có tổn thất (Lossy):**
+  - Mã hóa biến đổi khối: DCT, lượng tử hóa, Zigzag, mã hóa entropy (JPEG)
+  - Mã hóa dự đoán DPCM
+  - Mã hóa Wavelet: DWT, JPEG 2000, EZW/SPIHT/EBCOT
 
 ---
 
-## 📝 Ghi chú
+### Chương 4: Phát hiện biên và phân vùng ảnh
 
-- Các ví dụ trong tài liệu sử dụng cơ sở dữ liệu mẫu **EMP/DEPT** và **PROJECT/ASSIGNMENT**.
-- Để thực hành tốt, nên tạo user riêng (`thuchanh`) và tablespace độc lập (`ts_thuchanh`).
-- Các câu lệnh SQL và `PL/SQL` có thể được thực thi trực tiếp trong SQL Developer hoặc VS Code.
+**Phát hiện điểm, đường và biên:**
+  - Phát hiện điểm biệt lập: Mặt nạ Laplacian, ngưỡng R > T
+  - Phát hiện đường: Mặt nạ theo hướng (ngang, dọc, chéo)
+  - Phát hiện biên: Gradient (đạo hàm bậc 1) và Laplacian (đạo hàm bậc 2)
+
+**Các toán tử gradient:**
+  - Roberts: Mặt nạ 2×2, nhanh, nhạy nhiễu
+  - Prewitt: Mặt nạ 3×3, trọng số bằng nhau
+  - Sobel: Mặt nạ 3×3, trọng số cao ở tâm, ổn định
+
+**Phát hiện biên Canny:**
+  - Làm mịn bằng Gaussian
+  - Tính gradient (độ lớn và hướng)
+  - Nén không cực đại (Non-maximum Suppression)
+  - Ngưỡng kép (Double Thresholding)
+  - Nối biên theo độ trễ (Hysteresis)
+  - Nối các điểm biên: Xử lý cục bộ, Hough Transform
+
+**Phân ngưỡng (Thresholding):**
+  - Toàn cục: Otsu tự động tìm ngưỡng tối ưu
+  - Cục bộ (Adaptive): Ngưỡng thay đổi theo vùng
+  - Đa ngưỡng: Nhiều ngưỡng cho nhiều đối tượng
+
+**Phân đoạn dựa trên vùng:**
+  - Phát triển vùng (Region Growing)
+  - Chia tách và hợp nhất (Split & Merge)
+
+**Phân đoạn sử dụng phân cụm và Superpixels:**
+  - K-Means: Gom pixel vào K cụm
+  - Superpixel SLIC: Vector $[l,a,b,x,y]$, khoảng cách D
+
+---
+
+### Chương 5: Thị giác máy tính (Computer Vision)
+
+- **Định nghĩa và mục tiêu của CV:** Máy tính "nhìn" và hiểu thế giới từ ảnh/video
+- **So sánh CV và Xử lý ảnh:** Mục đích, trọng tâm, kỹ thuật, độ phức tạp
+
+**Các bài toán cơ bản trong CV:**
+  - Phân loại ảnh (Image Classification)
+  - Phát hiện đối tượng (Object Detection) - Bounding box
+  - Phân đoạn ảnh (Segmentation): Semantic, Instance, Panoptic
+  - Phát hiện và mô tả điểm đặc trưng (Keypoint Detection)
+  - Nhận dạng và đọc chữ (OCR)
+  - Tái tạo 3D từ ảnh (3D Reconstruction)
+
+**Tiến hóa của CV:**
+  - Cổ điển (trước 2012): SIFT, HOG, SVM, Haar Cascade
+  - Deep Learning (2012 đến nay): CNN, ResNet, YOLO, Mask R-CNN, ViT
+
+**Các mô hình Deep Learning điển hình:**
+  - Phân loại: ResNet, EfficientNet, Vision Transformer (ViT)
+  - Phát hiện: YOLO (v8, v9, v10), Faster R-CNN, DETR
+  - Phân đoạn: U-Net, Mask R-CNN, DeepLab
+  - Keypoint: OpenPose, HRNet
+  - OCR: CRNN + CTC, TrOCR
+
+**Quy trình phát triển ứng dụng CV:**
+  1. Xác định bài toán
+  2. Thu thập dữ liệu
+  3. Gán nhãn dữ liệu
+  4. Tiền xử lý (Resize, chuẩn hóa, augmentation)
+  5. Xây dựng mô hình (chọn kiến trúc, huấn luyện)
+  6. Đánh giá (Accuracy, Precision, Recall, F1)
+  7. Triển khai và bảo trì
+
+---
+
+## Công nghệ sử dụng
+
+- **Python 3.11+** - Ngôn ngữ lập trình chính
+- **OpenCV** - Thư viện xử lý ảnh và CV thời gian thực (hơn 2500 thuật toán)
+- **NumPy** - Xử lý mảng đa chiều, nền tảng cho các thư viện ảnh
+- **scikit-image** - Thuật toán học thuật cho nghiên cứu
+- **Pillow/PIL** - Thao tác ảnh cơ bản, thân thiện
+- **Matplotlib** - Hiển thị và trực quan hóa ảnh
+- **Jupyter Notebook** - Môi trường thực hành tương tác
+
+</div>
