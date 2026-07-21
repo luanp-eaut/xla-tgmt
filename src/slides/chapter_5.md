@@ -20,10 +20,21 @@ paginate: true
 
 # Định nghĩa Thị giác máy tính(Computer Vision- CV)
 
+<div class="columns">
+<div>
+
 - **Khái niệm:** Computer Vision (CV) là khoa học giúp máy tính "nhìn" và hiểu thế giới từ ảnh/video.
 - **Đầu vào:** Pixel (ma trận số).
 - **Đầu ra:** Thông tin có nghĩa (nhãn, vị trí, mô tả).
 - **Mục tiêu tổng quát:** "Xây dựng hệ thống thị giác nhân tạo mạnh mẽ như con người".
+
+</div>
+<div class="col-2">
+
+![](images/5.1.png)
+
+</div>
+</div>
 
 ---
 
@@ -61,9 +72,8 @@ paginate: true
 | **Độ phức tạp**    | Rất phức tạp, đòi hỏi huấn luyện trên tập dữ liệu lớn.       | Trung bình, dựa trên quy tắc hoặc thuật toán.            |
 
 ---
-<!--_class: text-sm-->
 
-# Các bài toán cơ bản
+# Các bài toán cơ bản (1)
 
 **1. Phân loại ảnh (Image Classification)**
 
@@ -71,38 +81,80 @@ paginate: true
 - **Đầu ra:** Một nhãn duy nhất (từ tập các lớp xác định trước).
 - **Ví dụ:** Ảnh chó → "Chó"; Ảnh mèo → "Mèo".
 
+![width:1000](images/5.2.png)
+
+---
+
+# Các bài toán cơ bản (2)
+
 **2. Phát hiện đối tượng (Object Detection)**
 
 - **Đầu vào:** Một ảnh.
 - **Đầu ra:** Danh sách các đối tượng kèm vị trí (thường là bounding box) và nhãn.
 - **Ví dụ:** Phát hiện người, xe đạp, ô tô trong ảnh giao thông.
 
+<gap></gap>
+
+![height:400](images/5.3.png)
+
+---
+
+# Các bài toán cơ bản (3)
+
 **3. Phân đoạn ảnh (Image Segmentation)**
+
+<div class="columns">
+<div class="col-4">
 
 - **Phân đoạn ngữ nghĩa (Semantic Segmentation):** Gán nhãn cho từng pixel theo lớp đối tượng (ví dụ: pixel thuộc "đường", "vỉa hè").
 - **Phân đoạn thể hiện (Instance Segmentation):** Phân biệt các thể hiện khác nhau của cùng một lớp (ví dụ: người A khác người B).
 - **Phân đoạn toàn cảnh (Panoptic Segmentation):** Mở rộng của Instance Segmentation, bao gồm cả vật vô định hình (background).
+
+</div>
+<div class="col-5">
+
+![](images/5.4.png)
+
+</div>
+</div>
+
 ---
 
-# Các bài toán cơ bản (tiếp)
+# Các bài toán cơ bản (4)
 
 **4. Phát hiện và mô tả điểm đặc trưng (Keypoint Detection & Description)**
 
 - **Khái niệm:** Phát hiện các điểm đặc biệt (góc, cạnh, chấm) và xây dựng "dấu vân tay" (descriptor) cho điểm đó.
 - **Ứng dụng:** Ghép ảnh (panorama), tái tạo 3D, theo dõi đối tượng.
 
-**Bài tập thực hành:** Phát hiện và ghép nối điểm đặc trưng sử dụng ORB trong OpenCV.
+<gap></gap>
+
+![height:350](images/5.5.png)
+
+---
+
+# Các bài toán cơ bản (5)
 
 **5. Nhận dạng và đọc chữ (OCR - Optical Character Recognition)**
 
 - **Khái niệm:** Chuyển đổi văn bản trong ảnh thành mã ký tự có thể chỉnh sửa.
 - **Ví dụ:** Đọc biển số xe, số hóa tài liệu, trích xuất thông tin từ hóa đơn.
+<gap></gap>
+
+![height:450](images/5.6.png)
+
+---
+
+# Các bài toán cơ bản (6)
 
 **6. Tái tạo 3D từ ảnh (3D Reconstruction)**
 
 - **Khái niệm:** Xây dựng mô hình 3D của vật thể/cảnh từ nhiều ảnh chụp từ các góc khác nhau.
 - **Kỹ thuật chính:** Structure from Motion (SfM), Multi-view Stereo (MVS).
 - **Ứng dụng:** Lập bản đồ 3D, di sản số (số hóa di tích), phim ảnh, thực tế ảo (VR/AR).
+<gap></gap>
+
+![height:350](images/5.7.png)
 
 ---
 <!--_class: text-sm-->
