@@ -37,20 +37,30 @@ paginate: true
 ---
 
 # Khái niệm
-
 - **Vùng ảnh (Region):** Tập hợp các điểm ảnh (pixel) có cùng chung các thuộc tính về một đối tượng trong ảnh (ví dụ: cùng màu sắc, độ sáng, kết cấu).
 - **Phân đoạn ảnh (Image Segmentation):** Chia một bức ảnh thành các phần hoặc vùng riêng biệt dựa trên các đặc điểm đặc trưng.
+- **Định nghĩa toán học:** Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 điều kiện:
 
----
+<div class="columns">
+<div class="col-3">
+<ul>
 
-# Định nghĩa toán học
-Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 điều kiện:
+  1. $\bigcup_{i=1}^{n} R_i = R$ (Phân đoạn phải đầy đủ).
+  2. Mỗi $R_i$ là một tập hợp liên thông.
+  3. $R_i ∩ R_j = ∅$ với mọi $i ≠ j$ (Các vùng phải rời rạc).
+  4. $Q(R_i) = TRUE$ (Các pixel trong cùng một vùng thỏa mãn một vị từ $Q$).
+  5. $Q(R_i ∪ R_j) = FALSE$ với hai vùng lân cận (Hai vùng kề nhau phải khác biệt).
 
-1. $\bigcup_{i=1}^{n} R_i = R$ (Phân đoạn phải đầy đủ).
-2. Mỗi $R_i$ là một tập hợp liên thông.
-3. $R_i ∩ R_j = ∅$ với mọi $i ≠ j$ (Các vùng phải rời rạc).
-4. $Q(R_i) = TRUE$ (Các pixel trong cùng một vùng thỏa mãn một vị từ $Q$).
-5. $Q(R_i ∪ R_j) = FALSE$ với hai vùng lân cận (Hai vùng kề nhau phải khác biệt).
+</ul>
+</div>
+<div class="col-2">
+
+![](images/4.1.png)
+
+</div>
+</div>
+
+
 ---
 
 # Ứng dụng thực tiễn
@@ -59,6 +69,10 @@ Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 đ
 - **Xe tự hành:** Phân vùng làn đường, vỉa hè, người đi bộ, biển báo.
 - **Thị giác máy tính:** Tiền xử lý cho Nhận diện đối tượng, Phân đoạn ngữ nghĩa.
 - **Công nghiệp:** Phát hiện lỗi trên dây chuyền sản xuất vi mạch, dệt may.
+<gap></gap>
+
+![](images/4.2.png)
+
 ---
 
 # Các hướng tiếp cận chính
@@ -76,17 +90,25 @@ Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 đ
 ---
 
 # Khái niệm
+<div class="columns">
+<div class="col-2">
 
 - **Điểm (Point):** Một pixel có cường độ khác biệt rõ rệt so với các pixel lân cận.
+  - Thường xuất hiện như một "đốm" sáng/tối nổi bật trên nền xung quanh.
 - **Đường (Line):** Một dãy điểm có xu hướng thẳng hàng theo một hướng nhất định.
+  - Cho thấy cấu trúc kéo dài theo một hướng, như mép vật thể hoặc vệt sáng.
+
+</div>
+<div>
+<gap></gap>
+
+![](images/4.4.png)
+
+</div>
+</div>
+
 - **Biên (Edge):** Vị trí có sự thay đổi đột ngột về cường độ ảnh.
-
-**Ý nghĩa của từng loại**
-
-- **Point:** Thường xuất hiện như một "đốm" sáng/tối nổi bật trên nền xung quanh.
-- **Line:** Cho thấy cấu trúc kéo dài theo một hướng, như mép vật thể hoặc vệt sáng.
-- **Edge:** Dấu hiệu quan trọng nhất vì nó biểu thị ranh giới giữa hai vùng ảnh khác nhau.
-  Các đối tượng này thường được phát hiện bằng những toán tử phát hiện thay đổi cục bộ trên lân cận pixel.
+  - Dấu hiệu quan trọng nhất vì nó biểu thị ranh giới giữa hai vùng ảnh khác nhau.
 
 ---
 
@@ -100,6 +122,9 @@ Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 đ
 
 - Dùng mặt nạ Laplacian để đo độ thay đổi cục bộ quanh mỗi pixel.
 - **Mặt nạ Laplacian:** Hệ số trung tâm dương lớn (8), các lân cận mang giá trị âm (-1).
+<gap></gap>
+$$L(x) = \begin{bmatrix} -1 & -1 & -1 \\ -1 & 8 & -1 \\ -1 & -1 & -1 \end{bmatrix}$$
+<gap></gap>
 - Khi pixel trung tâm khác hẳn xung quanh, đáp ứng R sẽ lớn.
 
 **Điều kiện phát hiện**
@@ -126,7 +151,7 @@ Chia không gian ảnh R thành n vùng con $R_1, R_2,..., R_n$ thỏa mãn 5 đ
 - Để phát hiện đường ngang, dùng mặt nạ nhấn mạnh sự thay đổi theo chiều dọc:
 <span>
   $$
-  \begin{bmatrix}
+  L(x) = \begin{bmatrix}
   -1 & -1 & -1 \\
   2 & 2 & 2 \\
   -1 & -1 & -1
@@ -179,6 +204,9 @@ $$
 
 # CÁC TOÁN TỬ GRADIENT
 
+<div class="columns">
+<div class="col-3">
+
 **Các toán tử phổ biến**
 
 - **Toán tử Roberts:** Dùng mặt nạ $2 × 2$, phát hiện biên rất nhanh nhưng nhạy với nhiễu.
@@ -186,6 +214,14 @@ $$
 - **Toán tử Sobel:** Tương tự Prewitt nhưng trọng số lớn hơn ở tâm, nên ổn định hơn và giảm nhiễu tốt hơn.
 
 **Nguyên lý hoạt động**
+
+</div>
+<div class="col-2">
+
+![](images/4.5.png)
+
+</div>
+</div>
 
 - $G_x$ phát hiện thay đổi theo chiều ngang, $G_y$ phát hiện thay đổi theo chiều dọc.
 - Độ lớn gradient thường được tính từ $G_x$ và $G_y$, từ đó xác định vị trí biên.
@@ -208,10 +244,10 @@ $$
 - Phân ngưỡng giúp loại bỏ những đáp ứng yếu do nhiễu hoặc biến thiên nhỏ.
 - Kết quả ảnh biên rõ hơn và gọn hơn.
 
-**Cách chọn ngưỡng T**
+**Cách chọn ngưỡng $T$**
 
 - **Thủ công:** Chọn theo kinh nghiệm, phù hợp khi ảnh khá ổn định.
-- **Tự động:** Dùng các phương pháp như Otsu, dựa trên histogram của M(x, y) để tìm ngưỡng tách hai nhóm giá trị tốt nhất.
+- **Tự động:** Dùng các phương pháp như Otsu, dựa trên histogram của $M(x, y)$ để tìm ngưỡng tách hai nhóm giá trị tốt nhất.
 ---
 
 # Thực hành: Phát hiện biên với toán tử Sobel và phân ngưỡng
@@ -240,12 +276,11 @@ plt.show()
 ```
 
 ---
+<!--_class: text-sm-->
 
 # KỸ THUẬT PHÁT HIỆN BIÊN NÂNG CAO
 
-**Khắc phục nhạy cảm với nhiễu**
-
-- Làm mịn ảnh trước khi lấy đạo hàm (ví dụ: dùng bộ lọc Gauss).
+**Khắc phục nhạy cảm với nhiễu**: Làm mịn ảnh trước khi lấy đạo hàm (ví dụ: dùng bộ lọc Gauss).
 
 **Bộ phát hiện biên Marr-Hildreth (LoG)**
 
@@ -261,7 +296,10 @@ plt.show()
 4. **Ngưỡng kép (Double Thresholding):** Phân loại pixel thành biên mạnh, biên yếu và không phải biên.
 5. **Nối biên theo dõi độ trễ (Hysteresis):** Nối các biên yếu với biên mạnh nếu chúng liên kết với nhau.
 
-**Bài tập thực hành: Phát hiện biên Canny**
+---
+
+# Bài tập thực hành: Phát hiện biên Canny
+<gap></gap>
 
 ```python
 import cv2
@@ -311,22 +349,42 @@ plt.show()
 # Khái niệm
 
 - Phân ngưỡng là kỹ thuật chuyển ảnh đa cấp xám thành ảnh nhị phân.
-- Mỗi pixel được so sánh với ngưỡng T để quyết định thuộc đối tượng (1) hay nền (0).
+- Mỗi pixel được so sánh với ngưỡng $T$ để quyết định thuộc đối tượng (1) hay nền (0).
+
+<div class="columns">
+<div class="col-5">
 
 **Nền tảng**
 
 - Giả sử ảnh có vật thể sáng trên nền tối.
 - Histogram thường có hai đỉnh: một đỉnh cho nền tối, một đỉnh cho vật thể sáng.
-- Ta chọn ngưỡng T nằm giữa hai đỉnh để tách hai lớp ảnh.
+- Ta chọn ngưỡng $T$ nằm giữa hai đỉnh để tách hai lớp ảnh.
 
 **Các yếu tố ảnh hưởng**
 
 - **Nhiễu:** Làm xuất hiện các giá trị cường độ không mong muốn, làm mất tính hai đỉnh của histogram. Giải pháp: làm mịn ảnh trước khi phân ngưỡng.
 - **Chiếu sáng và phản xạ:** Chiếu sáng không đều làm biến dạng histogram. Giải pháp: hiệu chỉnh chiếu sáng hoặc dùng phân ngưỡng thích nghi.
+</div>
+<div>
+
+![width:150](images/4.6.png)
+
+</div>
+
+<div>
+
+![width:150](images/4.7.png)
+
+</div>
+</div>
+
 
 ---
 
 # PHÂN NGƯỠNG TOÀN CỤC VÀ CỤC BỘ
+
+<div class="columns">
+<div class="col-4">
 
 **Phân ngưỡng toàn cục**
 
@@ -342,10 +400,21 @@ plt.show()
 - Ngưỡng $T$ phụ thuộc vào vùng hoặc lân cận quanh điểm ảnh.
 - Phù hợp với ảnh có nền sáng tối thay đổi, vì mỗi vùng sẽ có ngưỡng riêng.
 - Thường được gọi là phân ngưỡng biến đổi hoặc phân ngưỡng thích nghi.
+
+</div>
+<div class="col-3">
+
+![](images/4.8.png)
+![](images/4.9.png)
+
+
+</div>
+</div>
+
 ---
 
 # Thực hành: So sánh phân ngưỡng toàn cục và cục bộ
-
+<gap></gap>
 ```python
 import cv2
 
@@ -394,10 +463,23 @@ cv2.waitKey(0)
 - Khi ảnh có hơn hai đối tượng hoặc histogram có nhiều nhóm mức xám, cần dùng nhiều ngưỡng thay vì chỉ một.
 - Ảnh được chia thành các khoảng: $g(x, y) = k$ nếu $T_{k-1} < f(x, y) ≤ T_k$.
 
+<div class="columns">
+<div class="col-4">
+
 **Đặc điểm**
 
 - Ngưỡng không còn là một số duy nhất mà là một vector ngưỡng.
 - Có thể xem là mở rộng của Otsu cho bài toán nhiều lớp (Multi-class Otsu).
+
+</div>
+<div class="col-3">
+<gap></gap>
+
+![](images/4.10.png)
+
+</div>
+</div>
+
 - Mục tiêu: tìm các ngưỡng sao cho các vùng sau khi tách ra khác nhau rõ nhất về mặt thống kê.
 
 **Nhược điểm**
@@ -419,6 +501,8 @@ cv2.waitKey(0)
   1. **Phát triển vùng (Region Growing):** Bắt đầu từ các điểm hạt giống và mở rộng ra các vùng lân cận.
   2. **Chia tách và hợp nhất (Split & Merge):** Chia ảnh thành các vùng nhỏ, sau đó hợp nhất các vùng lân cận có tính chất tương đồng.
 
+  ![width:700](images/4.11.png)
+
 ---
 
 # PHÂN ĐOẠN BẰNG PHÁT TRIỂN VÙNG (REGION GROWING)
@@ -426,7 +510,20 @@ cv2.waitKey(0)
 **Ý tưởng**
 
 - Bắt đầu từ một tập hợp các điểm hạt giống (seed points).
+
+<div class="columns">
+<div class="col-3">
+
 - Phát triển thành vùng bằng cách thêm vào các pixel lân cận có tính chất giống với hạt (cường độ sáng, màu sắc, kết cấu).
+
+</div>
+<div class="col-4">
+
+![](images/4.12.png)
+
+</div>
+</div>
+
 - Hữu ích khi đối tượng cần tách có sự đồng nhất cục bộ.
 
 **Thuật toán**
@@ -440,8 +537,8 @@ cv2.waitKey(0)
 4. **Gán nhãn:** Mỗi thành phần liên thông được gán một nhãn khác nhau.
 ---
 
-# Bài tập thực hành: Thuật toán Region Growing đơn giản
-
+# Thực hành: Thuật toán Region Growing đơn giản
+<gap></gap>
 ```python
 import numpy as np
 import cv2
@@ -506,14 +603,10 @@ cv2.waitKey(0)
 
 ---
 
-# Tổng quan
-
-- Sử dụng các thuật toán học máy không giám sát (như K-Means) hoặc các kỹ thuật gom nhóm pixel thông minh (Superpixels) để phân vùng ảnh.
-- Giúp giảm độ phức tạp tính toán và tận dụng được thông tin không gian, màu sắc.
-
----
-
 # PHÂN ĐOẠN VÙNG BẰNG PHÂN CỤM K-MEANS
+
+<div class="columns">
+<div class="col-2">
 
 **Nguyên lý**
 
@@ -523,13 +616,22 @@ cv2.waitKey(0)
 **Thuật toán**
 
 1. Chọn ngẫu nhiên K tâm cụm ban đầu.
+
+</div>
+<div>
+
+![](images/4.13.png)
+
+</div>
+</div>
+
 2. Gán mỗi pixel vào tâm gần nhất (thường theo khoảng cách Euclid).
 3. Cập nhật tâm cụm bằng trung bình các pixel trong cụm.
 4. Lặp lại cho đến khi hội tụ.
 ---
 
 # Bài tập thực hành: Phân đoạn ảnh bằng K-Means
-
+<gap></gap>
 ```python
 import cv2
 import numpy as np
@@ -560,6 +662,9 @@ cv2.waitKey(0)
 - Superpixel là cách gom các pixel lân cận có đặc trưng giống nhau (màu sắc, độ sáng, vị trí) thành một vùng lớn hơn.
 - Các vùng này bám biên tốt hơn so với việc xét từng pixel riêng lẻ hoặc chia theo ô chữ nhật cố định.
 
+<div class="columns">
+<div class="col-3">
+
 **Lợi ích**
 
 - Giảm số lượng phần tử cần xử lý (từ hàng trăm nghìn pixel xuống còn vài trăm superpixels).
@@ -568,6 +673,14 @@ cv2.waitKey(0)
 **Ứng dụng**
 
 - Tiền xử lý cho phân đoạn ảnh, tách nền, theo dõi video và nhận dạng đối tượng.
+
+</div>
+<div class="col-2">
+
+![](images/4.14.png)
+
+</div>
+</div>
 
 ---
 
@@ -590,6 +703,7 @@ cv2.waitKey(0)
 ---
 
 # Bài tập thực hành: Tạo Superpixels với SLIC
+<gap></gap>
 
 ```python
 from skimage.segmentation import slic
