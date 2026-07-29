@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "marp": "npx @marp-team/marp-cli src/slides/*.md --theme theme/styles.css --html"
+    },
+    "devDependencies": {
+        "@marp-team/marp-cli":"latest"
+    }
+}

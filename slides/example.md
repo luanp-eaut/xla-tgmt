@@ -2,6 +2,7 @@
 marp: true
 theme: eaut
 paginate: true
+transition: fade
 ---
 
 <!-- _class: cover -->
@@ -17,7 +18,7 @@ paginate: true
 ### Giảng viên: Nguyễn Văn A
 
 ---
-
+<!-- transition: wipe -->
 <!-- _class: toc -->
 
 # Nội dung
@@ -28,12 +29,13 @@ paginate: true
 - Operator Overloading.
 
 ---
-
+<!-- transition: slide -->
 <!-- _class: section -->
 
 # Class & Object
 
 ---
+<!-- transition: zoom -->
 
 # Khái niệm cơ bản
 
@@ -48,12 +50,13 @@ paginate: true
 </div>
 <div>
 
-![width=500](images/picture.png)
+![](images/picture.png)
 
 </div>
 </div>
 
 ---
+<!-- transition: flip -->
 
 # Cú pháp khai báo
 
@@ -94,7 +97,7 @@ class SinhVien {
 </div>
 
 ---
-
+<!-- transition: cube -->
 <!-- _class: text-xs-->
 
 # Khởi tạo & Sử dụng
@@ -124,7 +127,7 @@ int main() {
   - $\rightarrow$ **Nguyên tắc:** Ẩn dữ liệu, lộ phương thức.
 
 ---
-
+<!-- transition: explode -->
 <!--_class: text-xs-->
 
 # So sánh C và C++
