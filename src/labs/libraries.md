@@ -9,6 +9,7 @@
 | collections.Counter | —   | —   | ✅   | —   | ✅   | Đếm tần suất (Ch3, Ch5)     |
 | collections.deque   | —   | —   | —   | ✅   | —   | BFS Region Growing (Ch4)    |
 | sklearn             | —   | —   | —   | —   | ✅   | k-NN, SVM, metrics (Ch5)    |
+| pandas              | —   | —   | —   | —   | ✅   | Xử lý dữ liệu (Ch5)         |
 | time                | —   | —   | —   | —   | ✅   | Đo hiệu năng detector (Ch5) |
 | urllib.request      | —   | —   | —   | —   | ✅   | Tải Haar XML (Ch5)          |
 | os                  | —   | —   | —   | —   | ✅   | Kiểm tra file (Ch5)         |
