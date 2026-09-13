@@ -1,6 +1,6 @@
 # Summary
 
-- [Nội dung học phần](README.md)
+- [Tổng quan học phần](README.md)
 - [Chương 1: Giới thiệu tổng quan](slides/chapter_1.md)
 - [Chương 2: Biến đổi ảnh](slides/chapter_2.md)
 - [Chương 3: Nén ảnh](slides/chapter_3.md)
