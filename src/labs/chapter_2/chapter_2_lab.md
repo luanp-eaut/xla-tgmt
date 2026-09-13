@@ -1038,37 +1038,45 @@ cv2.imwrite('output/bai17_emphasis.png',  img_he)
 
 ```python
 img = data.camera()
+M, N = img.shape
 
-# 1. Thêm nhiễu tuần hoàn
+# ---------- Tham số nhiễu (khai báo ở phạm vi toàn cục) ----------
+A  = 40       # biên độ nhiễu
+u0 = 0.15     # tần số theo trục u
+v0 = 0.15     # tần số theo trục v
+
 def add_periodic_noise(img, A=40, u0=0.15, v0=0.15):
+    """Thêm nhiễu tuần hoàn dạng sin."""
     M, N = img.shape
     x = np.arange(M).reshape(-1, 1)
     y = np.arange(N).reshape(1, -1)
     noise = A * np.sin(2 * np.pi * (u0 * x + v0 * y))
     return np.clip(img.astype(np.float32) + noise, 0, 255).astype(np.uint8)
 
-noisy = add_periodic_noise(img, A=40, u0=0.15, v0=0.15)
+# 1. Thêm nhiễu tuần hoàn
+noisy = add_periodic_noise(img, A=A, u0=u0, v0=v0)
 
 # 2. Phổ của ảnh nhiễu
 F = np.fft.fft2(noisy.astype(np.float32))
 Fshift = np.fft.fftshift(F)
 
 # 3. Notch filter: chặn các đỉnh nhiễu tại ±(u0*M, v0*N)
-M, N = img.shape
 crow, ccol = M // 2, N // 2
 H = np.ones((M, N), dtype=np.float32)
 
-# Bán kính notch
-r = 8
+r = 8  # bán kính notch
+
 # Vị trí đỉnh nhiễu (tần số dương và âm, đối xứng qua tâm)
-peaks = [(int(u0 * M), int(v0 * N)),
+# u0, v0 giờ đã ở phạm vi toàn cục → không còn NameError
+peaks = [( int(u0 * M),  int(v0 * N)),
          (-int(u0 * M), -int(v0 * N))]
+
+u_grid = np.arange(M).reshape(-1, 1)
+v_grid = np.arange(N).reshape(1, -1)
 
 for du, dv in peaks:
     cu, cv_ = crow + du, ccol + dv
-    u = np.arange(M).reshape(-1, 1)
-    v = np.arange(N).reshape(1, -1)
-    D = np.sqrt((u - cu)**2 + (v - cv_)**2)
+    D = np.sqrt((u_grid - cu)**2 + (v_grid - cv_)**2)
     H[D <= r] = 0
 
 # 4. Lọc và biến đổi ngược
@@ -1080,9 +1088,10 @@ restored = np.clip(restored, 0, 255).astype(np.uint8)
 def norm_vis(x):
     return cv2.normalize(x, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
-mag_noisy = norm_vis(20 * np.log(1 + np.abs(Fshift)))
-mag_H = (H * 255).astype(np.uint8)
-mag_restored = norm_vis(20 * np.log(1 + np.abs(np.fft.fftshift(np.fft.fft2(restored.astype(np.float32))))))
+mag_noisy    = norm_vis(20 * np.log(1 + np.abs(Fshift)))
+mag_H        = (H * 255).astype(np.uint8)
+mag_restored = norm_vis(20 * np.log(1 + np.abs(
+                    np.fft.fftshift(np.fft.fft2(restored.astype(np.float32))))))
 
 show_grid(
     [img, noisy, mag_noisy, mag_H, restored, mag_restored],
