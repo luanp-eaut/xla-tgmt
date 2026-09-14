@@ -1,9 +1,0 @@
-opencv-python
-opencv-contrib-python
-numpy
-matplotlib
-scikit-image
-scikit-learn
-pillow
-ipykernel
-pandas
