@@ -171,7 +171,9 @@ ol, ul {
 .chapter-link-wrapper span{
     font-weight: bold;
     color: #000;
+    cursor: context-menu;
 }
+
 .chapter-link-wrapper a{
   font-weight: normal!important;
 }

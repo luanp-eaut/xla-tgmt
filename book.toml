@@ -4,9 +4,9 @@ authors = ["Nguyễn Phồn Lữa"]
 language = "en"
 
 [output.html]
-additional-css = ["custom.css"]
+additional-css = ["theme/custom.css"]
 theme = "theme"
-additional-js = ["fix_colab_links.js"]
+additional-js = ["theme/fix_colab_links.js"]
 
 [output.html.search]
 enable = false
