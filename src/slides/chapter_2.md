@@ -130,6 +130,10 @@ transition: zoom
 
 ---
 
+# Bài tập thực hành
+
+---
+
 # Biến đổi cường độ - Bài tập thực hành
 
 - Viết code Python sử dụng OpenCV để tạo ảnh âm bản và biến đổi Gamma.

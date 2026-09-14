@@ -6,6 +6,7 @@ language = "en"
 [output.html]
 additional-css = ["custom.css"]
 theme = "theme"
+additional-js = ["fix_colab_links.js"]
 
 [output.html.search]
 enable = false
