@@ -1,136 +1,70 @@
-## Đề tài thi kết thúc học phần
+# Danh sách đề tài bài tập lớn
 
----
+## Nhóm 1: Các đề tài xử lý ảnh cơ bản
 
-**I. YÊU CẦU CHUNG**
+> Sinh viên tự cài đặt các thuật toán xử lý ảnh cơ bản theo yêu cầu của đề tài, chỉ sử dụng các thư viện có sẵn để thao tác đọc, ghi, hiển thị ảnh.
 
-**1\. Hình thức thực hiện**
+| Mã đề     | Tên đề tài                                                                                                          | Gợi ý làm bài                                                                                                                                                                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | Xây dựng ứng dụng chuyển đổi giữa các hệ màu và nâng cao chất lượng ảnh sử dụng các phép biến đổi cơ bản và lọc ảnh | Ứng dụng cho phép chuyển đổi giữa các hệ màu: RGB, HSV, CMYK, YCbCr; lọc, khử nhiễu, thay đổi độ sáng, độ tương phản thông qua các phép biến đổi cơ bản.                                                                                                                                                                      |
+| **2**  | Xây dựng ứng dụng tính histogram của ảnh và nâng cao chất lượng ảnh bằng histogram                                  | Ứng dụng cho phép tính toán, cân bằng và hiển thị histogram của ảnh màu trước và sau khi thực hiện các phép biến đổi nâng cao chất lượng ảnh (khử nhiễu, tăng độ sắc nét).                                                                                                                                                    |
+| **3**  | Xây dựng ứng dụng phục chế ảnh cũ sử dụng các kỹ thuật lọc nhiễu, tăng độ sắc nét và cân bằng màu sắc               | Ứng dụng sử dụng lọc trung vị để làm mượt nhiễu; sử dụng kỹ thuật Unsharp Masking để làm sắc nét; thực hiện cân bằng trắng (white balance) bằng cách điều chỉnh các kênh RGB để loại bỏ hiện tượng ngả màu trên ảnh cũ.                                                                                                       |
+| **4**  | Xây dựng ứng dụng tiền xử lý ảnh và phát hiện biên sử dụng phương pháp Laplacian, Canny                             | Ứng dụng cho phép thực hiện các phép biến đổi, tăng cường chất lượng ảnh (lọc, khử nhiễu, điều chỉnh độ sáng...) trước khi thực hiện các phương pháp phát hiện biên Laplacian, Canny.                                                                                                                                         |
+| **5**  | Xây dựng ứng dụng tiền xử lý ảnh và phát hiện biên sử dụng phương pháp Sobel, Prewitt                               | Ứng dụng cho phép thực hiện các phép biến đổi, tăng cường chất lượng ảnh (lọc, khử nhiễu, điều chỉnh độ sáng...) trước khi thực hiện các phương pháp phát hiện biên Sobel, Prewitt.                                                                                                                                           |
+| **6**  | Xây dựng ứng dụng phát hiện biên thời gian thực từ webcam                                                           | Ứng dụng cho phép thu nhận và hiển thị video từ webcam, sau đó thực hiện các bước tiền xử lý và phát hiện biên thời gian thực trên video.                                                                                                                                                                                     |
+| **7**  | Xây dựng ứng dụng xác định đối tượng trong ảnh sử dụng các thuật toán tìm biên và phân vùng ảnh                     | Ứng dụng cho phép xác định biên và phân vùng ảnh để vẽ bounding box, centroid, đếm số đối tượng xuất hiện trong ảnh, tính diện tích của đối tượng dựa vào số pixel.                                                                                                                                                           |
+| **8**  | Xây dựng ứng dụng phân đoạn ảnh màu dựa trên phân cụm K-Means                                                       | Ứng dụng áp dụng thuật toán K-Means để nhóm các pixel lại với nhau dựa trên giá trị màu RGB hoặc HSV. So sánh kết quả phân đoạn khi sử dụng số cụm (K) khác nhau và phân tích ưu nhược điểm của phương pháp này.                                                                                                              |
+| **9**  | Xây dựng ứng dụng tách nền và đối tượng bằng phân cụm K-Means                                                       | Ứng dụng cho phép phân tách đối tượng khỏi phông nền bằng thuật toán K-Means bằng cách áp dụng K-Means với K=2 để phân cụm các pixel thành hai nhóm (nền và đối tượng). Phân tích hiệu quả của phương pháp này đối với các ảnh có nền phức tạp và gợi ý các cải tiến.                                                         |
+| **10** | Xây dựng ứng dụng biến đổi ảnh từng đoạn sử dụng phương pháp K-means                                                | Ứng dụng cho phép biến đổi ảnh từng đoạn bằng K-means theo màu hoặc theo từng kênh màu, cho phép điều chỉnh các tham số như số cụm K, không gian màu, thông số lọc, góc xoay,...                                                                                                                                              |
+| **11** | Xây dựng ứng dụng phân đoạn ảnh màu dựa trên phương pháp phát triển vùng Region Growing                             | Ứng dụng cho phép người dùng chọn một điểm "hạt giống" (seed pixel) và chương trình sẽ tự động phát triển vùng từ điểm đó dựa trên một tiêu chí tương đồng thích nghi, ví dụ như độ lệch chuẩn của các pixel trong vùng.                                                                                                      |
+| **12** | Xây dựng ứng dụng phân đoạn ảnh màu dựa trên phương pháp GrabCut                                                    | Ứng dụng cho phép người dùng đánh dấu các pixels tạo ra phân đoạn nền sau/nền trước và chương trình sẽ tự động nhóm các pixels thành các màu tương tự nhau.                                                                                                                                                                   |
+| **13** | Xây dựng ứng dụng phân đoạn ảnh y tế bằng phân ngưỡng thích nghi                                                    | Áp dụng các phương pháp phân ngưỡng để phân đoạn các cấu trúc quan trọng trên ảnh y tế (ví dụ: ảnh X-quang, CT).                                                                                                                                                                                                              |
+| **14** | Xây dựng ứng dụng phát hiện và liên kết đường thẳng trong ảnh                                                       | Ứng dụng có khả năng phát hiện các đường thẳng trong ảnh, ngay cả khi chúng bị đứt quãng bằng cách sử dụng thuật toán Canny Edge Detector để tìm các điểm biên, sau đó áp dụng biến đổi Hough (Hough Transform) để liên kết các điểm này thành các đường thẳng.                                                               |
+| **15** | Xây dựng ứng dụng phát hiện và giữ lại vùng mã mạch dạng BarCode trong ảnh                                          | Ứng dụng cho phép tiền xử lý ảnh và phát hiện vùng mã vạch Barcode trong ảnh sử dụng phương pháp phát hiện biên Sobel/Hough, sau đó thực hiện hiệu chỉnh mã vạch và giải mã (decode).                                                                                                                                         |
+| **16** | Xây dựng ứng dụng phát hiện và giữ lại vùng mã mạch dạng QRCode trong ảnh                                           | Ứng dụng cho phép tiền xử lý ảnh và phát hiện vùng mã vạch QRCode trong ảnh sử dụng phương pháp phát hiện biên Sobel/Hough, sau đó thực hiện hiệu chỉnh mã vạch và giải mã (decode).                                                                                                                                          |
+| **17** | Xây dựng ứng dụng sử dụng thuật toán SIFT để trích chọn đặc trưng                                                   | Ứng dụng cho phép tiền xử lý ảnh và trích chọn đặc trưng bằng SIFT: phát hiện keypoint và tính descriptor, cho phép điều chỉnh tham số chính cho bộ trích chọn SIFT; ghép cặp đặc trưng (matching) giữa 2 ảnh.                                                                                                                |
+| **18** | Xây dựng ứng dụng sử dụng thuật toán SURF để trích chọn đặc trưng                                                   | Ứng dụng cho phép tiền xử lý ảnh và trích chọn đặc trưng bằng SURF: phát hiện keypoint và tính descriptor, cho phép điều chỉnh tham số chính cho bộ trích chọn SURF; ghép cặp đặc trưng (matching) giữa 2 ảnh.                                                                                                                |
+| **19** | Xây dựng ứng dụng nén ảnh không mất dữ liệu                                                                         | Ứng dụng cho phép nén ảnh không mất dữ liệu bằng cách cài đặt các thuật toán cơ bản: thuật toán Mã hóa chạy độ dài (RLC) và Mã hóa Huffman. Sinh viên cần so sánh hiệu quả nén (tỉ lệ nén) của hai phương pháp này trên các loại ảnh khác nhau (ảnh nhị phân, ảnh xám, ảnh có nhiều vùng đồng nhất).                          |
+| **20** | Xây dựng ứng dụng nén ảnh JPEG                                                                                      | Ứng dụng cho phép thực hiện các bước cơ bản của thuật toán nén ảnh JPEG dựa trên biến đổi Cosine rời rạc (DCT); tối ưu thuật toán để nén cho các loại ảnh cụ thể (phong cảnh, chân dung) bằng cách điều chỉnh các thông số trong ma trận lượng tử hóa để đạt được tỉ lệ nén tốt nhất với một ngưỡng chất lượng ảnh nhất định. |
+| **21** | Xây dựng ứng dụng nén ảnh JPEG2000                                                                                  | Ứng dụng cho phép thực hiện các bước cơ bản của thuật toán nén ảnh JPEG2000 dựa trên Biến đổi Wavelet; tối ưu thuật toán để nén cho các loại ảnh cụ thể (phong cảnh, chân dung) bằng cách điều chỉnh các thông số trong ma trận lượng tử hóa để đạt được tỉ lệ nén tốt nhất với một ngưỡng chất lượng ảnh nhất định.          |
+| **22** | Xây dựng ứng dụng phát hiện khuôn mặt bằng thuật toán Haar Cascade                                                  | Ứng dụng cho phép đọc ảnh từ máy tính và tiền xử lý trước khi thực hiện phát hiện khuôn mặt sử dụng thuật toán Haar Cascade, vẽ khung và lưu phần crop khuôn mặt, phát hiện mắt để căn chỉnh khuôn mặt, đếm số khuôn mặt trong ảnh, hiển thị tọa độ khuôn mặt.                                                                |
 
-- Bài tập lớn được thực hiện theo nhóm, mỗi nhóm tối đa 05 sinh viên.
-- Mỗi nhóm phải có bảng phân công công việc, thể hiện rõ nhiệm vụ của từng thành viên.
+## Nhóm 2: Các đề tài thị giác máy tính sử dụng OpenCV
 
-**2\. Đề tài thực hiện**
+> Không sử dụng các mô hình AI.
 
-- Mỗi nhóm lựa chọn 01 đề tài trong danh sách 50 đề tài đã công bố hoặc đề tài mở.
-- Đối với đề tài mở, nhóm phải mô tả ngắn gọn bài toán và được giảng viên chấp thuận trước khi thực hiện.
+| Mã đề     | Tên đề tài                                                                                                         | Gợi ý làm bài                                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **23** | Sử dụng OpenCV để xây dựng ứng dụng vẽ và xử lý ảnh đơn giản                                                       | Công cụ cho phép vẽ các đối tượng cơ bản lên ảnh và cung cấp các công cụ xử lý ảnh đơn giản như xoay, cắt, tăng giảm độ sáng, độ tương phản, khử nhiễu, chèn ảnh, chèn chữ, nén ảnh...                                                           |
+| **24** | Sử dụng OpenCV để xây dựng ứng dụng trích xuất thông tin từ ảnh thẻ sinh viên                                      | Ứng dụng cho phép tiền xử lý ảnh và trích xuất các thông tin gồm ảnh chân dung và các trường dữ liệu từ ảnh thẻ của sinh viên; lưu trữ dữ liệu danh sách sinh viên trong cơ sở dữ liệu để phục vụ tìm kiếm (hỗ trợ tìm kiếm theo ảnh khuôn mặt). |
+| **25** | Sử dụng OpenCV để xây dựng hệ thống phát hiện đối tượng và trích xuất thông tin đối tượng trong ảnh                | Ứng dụng cho phép tiền xử lý ảnh và xác định đối tượng trong ảnh: vẽ bounding box, centroid, đếm số đối tượng, xác định màu sắc, tính chu vi/diện tích của đối tượng dựa vào số pixel.                                                           |
+| **26** | Sử dụng OpenCV để xây dựng hệ thống đếm và phân loại sản phẩm theo kích thước và màu sắc                           | Ứng dụng cho phép tiền xử lý ảnh và phân loại cho một số loại sản phẩm cụ thể (ví dụ phân loại quả xanh/chín, kích thước, quả hỏng... cho cà chua, táo, ổi, chuối...).                                                                           |
+| **27** | Sử dụng OpenCV để xây dựng hệ thống nhận dạng và kiểm tra lỗi bề mặt sản phẩm công nghiệp trên dây chuyền sản xuất | Ứng dụng cho phép tiền xử lý ảnh và phát hiện các lỗi trên bề mặt sản phẩm như vết xước, nứt, gãy, cong vênh, thiếu linh kiện...                                                                                                                 |
+| **28** | Sử dụng OpenCV để xây dựng hệ thống hỗ trợ đếm và phân tích tế bào trong ảnh hiển vi                               | Ứng dụng cho phép tiền xử lý ảnh và đếm, phân tích tế bào như xác định kích thước, hình dạng, mật độ, màu sắc của tế bào và nhân tế bào.                                                                                                         |
+| **29** | Sử dụng OpenCV để xây dựng hệ thống phát hiện và đo kích thước khối u từ ảnh X-quang/siêu âm                       | Ứng dụng cho phép tiền xử lý ảnh và phát hiện, phân vùng nghi ngờ là khối u, xác định hình dạng và đo kích thước khối u.                                                                                                                         |
+| **30** | Sử dụng OpenCV để xây dựng hệ thống nhận diện biển số xe                                                           | Ứng dụng cho phép tiền xử lý ảnh và tách vùng biển số và nhận dạng chữ & số trong biển số xe.                                                                                                                                                    |
+| **31** | Sử dụng OpenCV để xây dựng hệ thống đếm số người tham gia sự kiện                                                  | Ứng dụng cho phép tiền xử lý ảnh, nhận diện đối tượng là người và đếm số lượng người trong ảnh.                                                                                                                                                  |
 
-**3\. Hình thức báo cáo**
+## Nhóm 3: Các đề tài thị giác máy tính sử dụng các mô hình AI
 
-- Báo cáo bài tập lớn phải có độ dài tối thiểu 35 trang A4 (không bao gồm trang bìa, các phần Phụ lục và Tài liệu tham khảo), được trình bày đúng theo mẫu báo cáo bài tập lớn đã ban hành, đảm bảo các yêu cầu về bố cục, định dạng, hình thức trình bày và quy chuẩn học thuật.
-
----
-
-**II. YÊU CẦU NỘI DUNG BÁO CÁO**
-
-Báo cáo bài tập lớn phải thể hiện đầy đủ các nội dung và yêu cầu sau đây:
-
-**1\. Giới thiệu đề tài**
-
-- Mô tả mục tiêu của hệ thống.
-- Xác định rõ phạm vi bài toán và đối tượng sử dụng.
-
-**2\. Phân tích yêu cầu và Use Cases**
-
-- Trình bày danh sách các use cases chính của hệ thống.
-- Mỗi use case cần mô tả ngắn gọn chức năng và nghiệp vụ xử lý.
-- Yêu cầu tối thiểu: tối thiểu 15 use cases.
-
-**3\. Thiết kế cơ sở dữ liệu quan hệ**
-
-- Xác định các thực thể, thuộc tính và mối quan hệ giữa các thực thể.
-- Trình bày sơ đồ ERD (logic hoặc vật lý).
-- Chỉ rõ khóa chính, khóa ngoại và các ràng buộc dữ liệu.
-- Yêu cầu tối thiểu: CSDL đạt ít nhất chuẩn 3NF.
-
-**4\. Xây dựng các khối lệnh PL/SQL**
-
-- Phát triển các chương trình xử lý nghiệp vụ bằng PL/SQL đáp ứng các use cases trên đây, sử dụng đầy đủ các thành phần: Stored Procedure, Function, Package, Trigger.
-- Yêu cầu:
-  - Có procedure và function phục vụ nghiệp vụ chính;
-  - Có ít nhất 01 trigger đảm bảo ràng buộc hoặc ghi nhận lịch sử.
-  - Các khối PL/SQL phải có xử lý ngoại lệ (exception handling).
-  - Sử dụng commit/rollback hợp lý trong các giao dịch.
-  - Minh họa được ít nhất 01 tình huống xử lý lỗi nghiệp vụ.
-
-**5\. Triển khai cơ sở dữ liệu trong Oracle**
-
-- Tạo schema/user riêng (hoặc PDB theo yêu cầu giảng viên).
-- Xây dựng đầy đủ các đối tượng CSDL:
-  - Bảng (tables) với các ràng buộc cần thiết;
-  - Chỉ mục (indexes);
-  - Sequence sinh khóa tự động;
-  - View phục vụ truy vấn và phân quyền.
-- Xây dựng dữ liệu mẫu phục vụ kiểm thử hệ thống.
-
-**6\. Phân quyền, bảo mật CSDL**
-
-- Thiết kế các role nghiệp vụ và gán quyền phù hợp.
-- Tạo các user kiểm thử và kiểm tra quyền truy cập.
-- Yêu cầu:
-  - Ít nhất 02 role;
-  - Ít nhất 02 user;
-  - Thể hiện được sự khác nhau về quyền hạn giữa các user.
-
-**7\. Kiểm thử**
-
-- Có tối thiểu 10 kịch bản kiểm thử, bao gồm cả trường hợp hợp lệ và không hợp lệ.
-- Các lệnh kiểm thử phải chạy được trên Oracle và có kết quả minh họa.
-
-**8\. Kết luận**
-
-- Đánh giá kết quả đạt được, những khó khăn trong quá trình thực hiện.
-- Các bài học kinh nghiệm khi thực hiện đề tài:
-  - Kinh nghiệm trong thiết kế mô hình CSDL và chuẩn hóa dữ liệu;
-  - Kinh nghiệm trong triển khai, phân quyền và quản trị CSDL Oracle;
-  - Kinh nghiệm trong viết và tổ chức mã PL/SQL, xử lý lỗi và giao dịch;
-
----
-
-**III. DANH SÁCH CÁC ĐỀ TÀI**
-
-<div class="scoring">
-
-| **Mã <br>đề tài** | **Tên đề tài**                                                              |
-| ----------------- | --------------------------------------------------------------------------- |
-| 1                 | Xây dựng CSDL cho hệ thống quản lý ngân hàng máu.                           |
-| 2                 | Xây dựng CSDL cho hệ thống quản lý hiến tạng và ghép tạng.                  |
-| 3                 | Xây dựng CSDL cho hệ thống quản lý trung tâm cứu hộ động vật.               |
-| 4                 | Xây dựng CSDL cho hệ thống quản lý đội xe buýt công cộng.                   |
-| 5                 | Xây dựng CSDL cho hệ thống quản lý tàu điện đô thị.                         |
-| 6                 | Xây dựng CSDL cho hệ thống quản lý cảng biển và tàu hàng.                   |
-| 7                 | Xây dựng CSDL cho hệ thống quản lý sân vận động đa năng.                    |
-| 8                 | Xây dựng CSDL cho hệ thống quản lý khu công nghiệp.                         |
-| 9                 | Xây dựng CSDL cho hệ thống quản lý chuỗi cửa hàng giặt là.                  |
-| 10                | Xây dựng CSDL cho hệ thống quản lý dịch vụ chuyển nhà.                      |
-| 11                | Xây dựng CSDL cho hệ thống quản lý trung tâm chăm sóc người cao tuổi.       |
-| 12                | Xây dựng CSDL cho hệ thống quản lý nhà trẻ tư thục.                         |
-| 13                | Xây dựng CSDL cho hệ thống quản lý dịch vụ bảo vệ chuyên nghiệp.            |
-| 14                | Xây dựng CSDL cho hệ thống quản lý tòa soạn xuất bản sách.                  |
-| 15                | Xây dựng CSDL cho hệ thống quản lý bản quyền tác giả.                       |
-| 16                | Xây dựng CSDL cho hệ thống quản lý sàn giao dịch bất động sản.              |
-| 17                | Xây dựng CSDL cho hệ thống quản lý môi giới bảo hiểm.                       |
-| 18                | Xây dựng CSDL cho hệ thống quản lý hợp tác xã nông nghiệp.                  |
-| 19                | Xây dựng CSDL cho hệ thống quản lý chợ đầu mối nông sản.                    |
-| 20                | Xây dựng CSDL cho hệ thống quản lý trung tâm kiểm định chất lượng sản phẩm. |
-| 21                | Xây dựng CSDL cho hệ thống quản lý xưởng may và đơn hàng gia công.          |
-| 22                | Xây dựng CSDL cho hệ thống quản lý nhà máy sản xuất thực phẩm.              |
-| 23                | Xây dựng CSDL cho hệ thống quản lý dây chuyền sản xuất linh kiện điện tử.   |
-| 24                | Xây dựng CSDL cho hệ thống quản lý cửa hàng vật liệu xây dựng.              |
-| 25                | Xây dựng CSDL cho hệ thống quản lý trung tâm thương mại.                    |
-| 26                | Xây dựng CSDL cho hệ thống quản lý siêu thị điện máy.                       |
-| 27                | Xây dựng CSDL cho hệ thống quản lý cửa hàng hoa và dịch vụ điện hoa.        |
-| 28                | Xây dựng CSDL cho hệ thống quản lý dịch vụ chăm sóc cây cảnh.               |
-| 29                | Xây dựng CSDL cho hệ thống quản lý trung tâm tư vấn tâm lý.                 |
-| 30                | Xây dựng CSDL cho hệ thống quản lý cơ sở cai nghiện.                        |
-| 31                | Xây dựng CSDL cho hệ thống quản lý trạm quan trắc môi trường.               |
-| 32                | Xây dựng CSDL cho hệ thống quản lý xử lý rác thải đô thị.                   |
-| 33                | Xây dựng CSDL cho hệ thống quản lý hệ thống chiếu sáng công cộng.           |
-| 34                | Xây dựng CSDL cho hệ thống quản lý cứu hộ cứu nạn.                          |
-| 35                | Xây dựng CSDL cho hệ thống quản lý phòng cháy chữa cháy.                    |
-| 36                | Xây dựng CSDL cho hệ thống quản lý trung tâm kiểm soát dịch bệnh.           |
-| 37                | Xây dựng CSDL cho hệ thống quản lý câu lạc bộ đọc sách.                     |
-| 38                | Xây dựng CSDL cho hệ thống quản lý học bổng và tài trợ giáo dục.            |
-| 39                | Xây dựng CSDL cho hệ thống quản lý vườn quốc gia và bảo tồn động thực vật.  |
-| 40                | Đề mở                                                                       |
-
-</div>
+| Mã đề     | Tên đề tài                                                                                          | Gợi ý làm bài                                                                                                                                                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **32** | Sử dụng mô hình AI để xây dựng hệ thống nhận diện các loại quả                                      | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép nhận diện một số loại quả thông dụng.                                                                                                                                                                                                   |
+| **33** | Sử dụng mô hình AI để xây dựng hệ thống nhận dạng các loài động vật                                 | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép nhận dạng một số loài động vật.                                                                                                                                                                                                         |
+| **34** | Sử dụng mô hình AI để xây dựng hệ thống xác định giới tính qua video và ảnh chụp khuôn mặt          | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép xác định giới tính từ ảnh khuôn mặt.                                                                                                                                                                                                    |
+| **35** | Sử dụng mô hình AI để xây dựng hệ thống xác định độ tuổi qua video và ảnh chụp khuôn mặt            | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép xác định độ tuổi từ ảnh khuôn mặt.                                                                                                                                                                                                      |
+| **36** | Sử dụng mô hình AI để xây dựng hệ thống phát hiện buồn ngủ                                          | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép phát hiện trạng thái buồn ngủ từ khuôn mặt hoặc cử chỉ.                                                                                                                                                                                 |
+| **37** | Sử dụng mô hình AI để xây dựng hệ thống nhận dạng chữ và số viết tay                                | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép nhận dạng chữ và số viết tay.                                                                                                                                                                                                           |
+| **38** | Sử dụng mô hình AI để xây dựng hệ thống phân loại phương tiện trên đường                            | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép phân loại phương tiện giao thông (xe sedan, xe SUV, xe máy, xe đạp, xe máy điện...).                                                                                                                                                    |
+| **39** | Sử dụng mô hình AI để xây dựng hệ thống nhận dạng biển báo giao thông                               | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép nhận dạng các biển báo giao thông thông dụng.                                                                                                                                                                                           |
+| **40** | Sử dụng mô hình AI để xây dựng hệ thống nhận dạng biển số xe                                        | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép tách riêng phần biển số và nhận dạng ký tự (chữ và số) trên biển số.                                                                                                                                                                    |
+| **41** | Sử dụng mô hình AI để xây dựng hệ thống phân loại cảm xúc qua khuôn mặt                             | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép xác định một số cảm xúc trên khuôn mặt.                                                                                                                                                                                                 |
+| **42** | Sử dụng mô hình AI để xây dựng hệ thống xác định kích thước của đối tượng                           | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép xác định kích thước (chiều dài, rộng, cao) của các đối tượng có trong ảnh.                                                                                                                                                              |
+| **43** | Sử dụng mô hình AI để xây dựng hệ thống nâng cao chất lượng ảnh                                     | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép tự động hoặc gợi ý các lựa chọn nâng cao chất lượng ảnh.                                                                                                                                                                                |
+| **44** | Sử dụng mô hình AI để xây dựng hệ thống điểm danh khuôn mặt                                         | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép hỗ trợ điểm danh khuôn mặt và theo dõi sự hiện diện của sinh viên trong lớp học từ camera (ứng dụng cho phép điểm danh, xem kết quả điểm danh theo danh sách lớp, thống kê thời gian sinh viên có mặt trong lớp trong mỗi buổi học...). |
+| **45** | Xây dựng chương trình mô phỏng mô hình YOLO và tối ưu mô hình trong nhận diện động vật qua hình ảnh | Mô phỏng các chức năng của mô hình YOLO nhận diện hình ảnh của một số động vật.                                                                                                                                                                                                                                                                                  |
+| **46** | Sử dụng mô hình AI để xây dựng chương trình nhận diện phương tiện đường bộ                          | Chương trình ứng dụng cho phép nhận diện các loại phương tiện đường bộ dựa trên đặc điểm nhận dạng của phương tiện (loại phương tiện, hãng xe, màu xe...).                                                                                                                                                                                                       |
+| **47** | Sử dụng mô hình AI để xây dựng ứng dụng dự đoán cây đang bị héo lá                                  | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép dự đoán một số tình trạng sức khoẻ của cây (héo lá).                                                                                                                                                                                    |
+| **48** | Sử dụng mô hình AI để xây dựng ứng dụng dự báo thời tiết dựa trên ảnh chụp bầu trời                 | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép dự báo thời tiết dựa trên hình ảnh chụp bầu trời.                                                                                                                                                                                       |
+| **49** | Sử dụng mô hình AI để xây dựng ứng dụng dự báo tình trạng tắc đường tại một tuyến đường             | Thực hiện đầy đủ các công đoạn từ thu thập, tiền xử lý dữ liệu, lựa chọn, huấn luyện mô hình, xây dựng ứng dụng cho phép dự báo tình trạng tắc đường tại một tuyến đường dựa vào việc phân tích mật độ giao thông từ ảnh chụp một số khu vực liên quan đến tuyến đường đó tại một thời điểm bất kỳ.                                                              |
+| **50** | Đề mở                                                                                               | Sinh viên đề xuất đề tài, ý tưởng và giải pháp thực hiện. Giảng viên duyệt/chấp thuận và bổ sung yêu cầu cho phù hợp với học phần.                                                                                                                                                                                                                               |

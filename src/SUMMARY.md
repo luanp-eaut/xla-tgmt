@@ -1,6 +1,6 @@
 # Summary
 
-- [Xử lý ảnh & Thị giác máy tính]()
+- [Bài giảng]()
   - [Nội dung khoá học](README.md)
   - [Chương 1: Giới thiệu tổng quan](slides/chapter_1.md)
   - [Chương 2: Biến đổi ảnh](slides/chapter_2.md)
@@ -18,6 +18,5 @@
 
 - [Thi kết thúc học phần]()
   - [Danh sách đề tài](exam/topics.md)
-  - [Đáp án](exam/scoring.md)
   - [Mẫu bìa báo cáo](exam/template.md)
   - [Hướng dẫn viết báo cáo BTL](exam/guideline.md)
