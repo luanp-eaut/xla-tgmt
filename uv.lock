@@ -1478,9 +1478,9 @@ wheels = [
 ]
 
 [[package]]
-name = "xla_tgmt"
+name = "xla-tgmt"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "ipykernel" },
     { name = "jupytext" },

@@ -1,9 +1,8 @@
 [project]
 name = "xla_tgmt"
 version = "0.1.0"
-description = "Add your description here"
+description = "Computer Vision and Machine Learning experiments"
 readme = "README.md"
-authors = [{ name = "nplua", email = "nguyenphonlua@gmail.com" }]
 requires-python = ">=3.13"
 dependencies = [
     "ipykernel>=7.3.0",
@@ -16,10 +15,3 @@ dependencies = [
     "scikit-image>=0.26.0",
     "scikit-learn>=1.9.1",
 ]
-
-[project.scripts]
-xla_tgmt = "xla_tgmt:main"
-
-[build-system]
-requires = ["uv_build>=0.12.8,<0.13.0"]
-build-backend = "uv_build"
