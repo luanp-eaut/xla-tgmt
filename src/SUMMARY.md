@@ -12,7 +12,7 @@
   - [Bài tập thực hành chương 2](https://colab.research.google.com/gist/luanp-eaut/c2ff041f32716051ef9c53e7ed9a5237)
   - [Bài tập thực hành chương 3](https://colab.research.google.com/gist/luanp-eaut/f8bfa5d72023e61baeedc9b437f97096)
   - [Bài tập thực hành chương 4](https://colab.research.google.com/gist/luanp-eaut/8e4de977d99a45bd36d5aa9e5bd9d444)
-  - [Bài tập thực hành chương 5](https://colab.research.google.com/gist/luanp-eaut/6aa17b79e266cd98063d1eaf50e03a77)
+  - [Bài tập thực hành chương 5](https://colab.research.google.com/gist/luanp-eaut/1ef996e5733a2fd1bac263a821be94ee)
 <div style="display:none">
 </div>
 
