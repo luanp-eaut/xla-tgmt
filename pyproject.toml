@@ -1,11 +1,9 @@
 [project]
-name = "xla-tgmt"
+name = "xla_tgmt"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "nplua", email = "nguyenphonlua@gmail.com" }
-]
+authors = [{ name = "nplua", email = "nguyenphonlua@gmail.com" }]
 requires-python = ">=3.13"
 dependencies = [
     "ipykernel>=7.3.0",
@@ -20,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-xla-tgmt = "xla_tgmt:main"
+xla_tgmt = "xla_tgmt:main"
 
 [build-system]
 requires = ["uv_build>=0.12.8,<0.13.0"]

@@ -2,818 +2,432 @@
 
 ---
 
-
-## 1. Trích xuất đặc trưng và phân loại ảnh
+## 1. Tổng quan về Thị giác máy tính
 
 ---
 
+### 1.1. Kiến trúc hệ thống Computer Vision
 
-### 1.1. Feature vector — Color Histogram
 **📌 Bài tập 1:**
-Cho ảnh `data.astronaut()`. Cắt ra 3 vùng: mặt người, nền xanh (sky), bộ đồ (clothing). Tính histogram màu 3D cho mỗi vùng (8 bins/kênh), so sánh khoảng cách giữa các feature vector bằng `np.linalg.norm`.
+Mô phỏng **kiến trúc 4 giai đoạn** của hệ thống Computer Vision bằng OpenCV trên ảnh `data.coins()`. Yêu cầu:
+1. Giai đoạn 1 — Tiền xử lý: lọc nhiễu Gaussian, resize.
+2. Giai đoạn 2 — Trích xuất đặc trưng: phát hiện biên Canny, keypoint ORB.
+3. Giai đoạn 3 — Hiểu và nhận thức: phân đoạn Otsu + đếm contour.
+4. Giai đoạn 4 — Ra quyết định: in ra số đối tượng phát hiện được.
 
 ```python
-import numpy as np
 import cv2
+import numpy as np
 import matplotlib.pyplot as plt
 from skimage import data
 
-# 1. Tải ảnh và cắt 3 vùng
-img_rgb = data.astronaut()
-face     = img_rgb[60:180,  200:320]   # vùng mặt
-sky      = img_rgb[0:80,    0:200]     # vùng nền xanh
-clothing = img_rgb[300:400, 100:300]   # vùng áo
+# Tải ảnh đầu vào
+img = data.coins()
+print(f"Ảnh gốc: shape={img.shape}, dtype={img.dtype}")
 
-# 2. Hàm tính histogram màu 3D
+# === GIAI ĐOẠN 1 — TIỀN XỬ LÝ ===
+# Làm sạch dữ liệu đầu vào
+blurred = cv2.GaussianBlur(img, (5, 5), 1.5)
+resized = cv2.resize(blurred, (256, 256))
+normalized = resized / 255.0
+
+# === GIAI ĐOẠN 2 — TRÍCH XUẤT ĐẶC TRƯNG ===
+# Phát hiện biên và keypoint
+edges = cv2.Canny(resized, 50, 150)
+orb = cv2.ORB_create(nfeatures=200)
+kps, desc = orb.detectAndCompute(resized, None)
+keypoint_vis = cv2.drawKeypoints(resized, kps, None,
+                                 color=(0, 255, 0),
+                                 flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+# === GIAI ĐOẠN 3 — HIỂU VÀ NHẬN THỨC ===
+# Phân đoạn và đếm đối tượng
+_, th = cv2.threshold(resized, 0, 255,
+                       cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+closed = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel, iterations=2)
+contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL,
+                                cv2.CHAIN_APPROX_SIMPLE)
+valid = [c for c in contours if cv2.contourArea(c) > 100]
+
+# === GIAI ĐOẠN 4 — RA QUYẾT ĐỊNH ===
+result = cv2.cvtColor(resized, cv2.COLOR_GRAY2RGB)
+for i, c in enumerate(valid, 1):
+    cv2.drawContours(result, [c], -1, (255, 0, 0), 2)
+
+print(f"\n=== KẾT QUẢ RA QUYẾT ĐỊNH ===")
+print(f"Số đối tượng phát hiện: {len(valid)}")
+
+# Hiển thị 4 giai đoạn
+fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+axes[0].imshow(blurred, cmap='gray');       axes[0].set_title('1. Tiền xử lý')
+axes[1].imshow(keypoint_vis, cmap='gray');  axes[1].set_title(f'2. Đặc trưng\n{len(kps)} keypoint')
+axes[2].imshow(closed, cmap='gray');        axes[2].set_title('3. Nhận thức\n(Otsu + Morphology)')
+axes[3].imshow(result);                     axes[3].set_title(f'4. Quyết định\n{len(valid)} đối tượng')
+for ax in axes: ax.axis('off')
+plt.suptitle('Kiến trúc 4 giai đoạn của hệ thống Computer Vision',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Ảnh được xử lý qua 4 giai đoạn tuần tự.
+- Số đối tượng (đồng xu) được đếm tự động.
+- Mỗi giai đoạn có đầu ra riêng biệt, tương ứng với lý thuyết.
+
+---
+
+### 1.2. So sánh Computer Vision và Xử lý ảnh
+
+**📌 Bài tập 2:**
+Minh họa sự khác biệt giữa **xử lý ảnh** và **Computer Vision** trên cùng một ảnh. Yêu cầu:
+1. Xử lý ảnh: tăng cường chất lượng (cân bằng histogram, khử nhiễu).
+2. Computer Vision: đưa ra quyết định (phát hiện đối tượng).
+3. Hiển thị song song để thấy sự khác biệt về **mục đích đầu ra**.
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+
+img = data.camera()
+
+# === VAI TRÒ XỬ LÝ ẢNH ===
+# Mục đích: cải thiện chất lượng ảnh
+# Kỹ thuật: lọc, ngưỡng hóa, hình thái học
+eq_img = cv2.equalizeHist(img)          # cân bằng histogram
+denoised = cv2.medianBlur(eq_img, 3)    # khử nhiễu muối tiêu
+# Đầu ra: ảnh đã được cải thiện
+
+# === VAI TRÒ COMPUTER VISION ===
+# Mục đích: hiểu nội dung ảnh
+# Kỹ thuật: nhận dạng mẫu, phát hiện đối tượng
+_, th = cv2.threshold(denoised, 0, 255,
+                       cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+contours, _ = cv2.findContours(th, cv2.RETR_EXTERNAL,
+                                cv2.CHAIN_APPROX_SIMPLE)
+valid = [c for c in contours if cv2.contourArea(c) > 500]
+
+cv_result = cv2.cvtColor(denoised, cv2.COLOR_GRAY2RGB)
+for c in valid:
+    x, y, w, h = cv2.boundingRect(c)
+    cv2.rectangle(cv_result, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
+# So sánh đầu ra
+fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+axes[0].imshow(img, cmap='gray');        axes[0].set_title('Ảnh gốc')
+axes[1].imshow(eq_img, cmap='gray');     axes[1].set_title('Xử lý ảnh:\nCân bằng histogram')
+axes[2].imshow(denoised, cmap='gray');   axes[2].set_title('Xử lý ảnh:\nKhử nhiễu')
+axes[3].imshow(cv_result);               axes[3].set_title(f'Computer Vision:\n{len(valid)} đối tượng')
+for ax in axes: ax.axis('off')
+plt.suptitle('Xử lý ảnh cải thiện chất lượng — Computer Vision hiểu nội dung',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Hai cột đầu: ảnh được cải thiện nhưng **không có thông tin mới**.
+- Cột cuối: ảnh được gán **thông tin có nghĩa** (vị trí đối tượng).
+
+---
+
+## 2. Các bài toán trong Thị giác máy tính
+
+---
+
+### 2.1. Bài toán Classification — Color Histogram + k-NN
+
+**📌 Bài tập 3:**
+Mô phỏng bài toán **Classification** với đặc trưng **color histogram**. Yêu cầu:
+1. Cắt 3 vùng khác nhau từ `data.astronaut()`: mặt, nền xanh, áo.
+2. Tính feature vector color histogram (8 bins/kênh) cho mỗi vùng.
+3. Dùng k-NN để phân loại vùng mới dựa trên 3 vùng mẫu.
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+from sklearn.neighbors import KNeighborsClassifier
+
+img_rgb = data.astronaut()
+
+# Tạo 3 vùng mẫu (mỗi vùng là 1 lớp)
+face     = img_rgb[60:180,  200:320]
+sky      = img_rgb[0:80,    0:200]
+clothing = img_rgb[300:400, 100:300]
+
+# Hàm trích xuất đặc trưng color histogram
 def color_hist(img, bins=8):
-    """Histogram 3D cho ảnh màu → vector 1D đã chuẩn hóa."""
     h = cv2.calcHist([img], [0, 1, 2], None,
                      [bins, bins, bins],
                      [0, 256, 0, 256, 0, 256])
     h = h.flatten()
     return h / h.sum()
 
-feat_face  = color_hist(face)
-feat_sky   = color_hist(sky)
-feat_cloth = color_hist(clothing)
-print(f"Kích thước feature vector: {feat_face.shape[0]} chiều")
+# Tạo tập huấn luyện
+X_train = np.array([
+    color_hist(face),
+    color_hist(sky),
+    color_hist(clothing),
+])
+y_train = np.array([0, 1, 2])   # 0=face, 1=sky, 2=clothing
+class_names = ['Mặt', 'Nền xanh', 'Áo']
 
-# 3. Khoảng cách giữa các feature
-def dist(a, b):
-    return np.linalg.norm(a - b)
+# Huấn luyện k-NN
+knn = KNeighborsClassifier(n_neighbors=1).fit(X_train, y_train)
 
-print(f"d(face, sky)      = {dist(feat_face, feat_sky):.4f}")
-print(f"d(face, clothing) = {dist(feat_face, feat_cloth):.4f}")
-print(f"d(sky, clothing)  = {dist(feat_sky, feat_cloth):.4f}")
+# Phân loại vùng mới (crop từ vị trí khác)
+test_region = img_rgb[380:450, 150:250]   # vùng vai/áo khác
+pred = knn.predict([color_hist(test_region)])[0]
+print(f"Vùng test được phân loại là: {class_names[pred]}")
 
-# 4. Hiển thị
-fig, axes = plt.subplots(2, 3, figsize=(15, 8))
-for i, (patch, name) in enumerate(zip([face, sky, clothing],
-                                       ['Mặt', 'Nền xanh', 'Áo'])):
-    axes[0, i].imshow(patch)
-    axes[0, i].set_title(f'Vùng: {name} — shape {patch.shape}')
-    axes[0, i].axis('off')
-
-# Histogram R, G, B cho từng vùng
-colors = ['red', 'green', 'blue']
-for i, (patch, name) in enumerate(zip([face, sky, clothing],
-                                       ['Mặt', 'Nền xanh', 'Áo'])):
-    for ch, c in enumerate(colors):
-        hist = cv2.calcHist([patch], [ch], None, [64], [0, 256]).flatten()
-        axes[1, i].plot(hist, color=c, alpha=0.7)
-    axes[1, i].set_title(f'Histogram RGB — {name}')
-    axes[1, i].set_xlabel('Mức xám')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Feature vector 512 chiều cho mỗi vùng.
-- Vùng "nền xanh" khác biệt rõ với "mặt" và "áo" → khoảng cách lớn.
-- Mặt và áo có thể gần nhau hơn nếu tông màu tương tự.
-
----
-
-
-### 1.2. Phân loại ảnh với đặc trưng hình học + k-NN/SVM
-**📌 Bài tập 2:**
-Tự sinh dataset tổng hợp gồm 3 lớp hình học (tròn, vuông, tam giác), mỗi lớp 30 ảnh 64×64. Trích xuất 5 đặc trưng hình học từ contour. Huấn luyện k-NN và SVM để phân loại.
-
-```python
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-
-# 1. Sinh dataset
-def gen_shape(shape_type, size=64, noise=0.0):
-    """Sinh ảnh 1 hình trên nền đen."""
-    img = np.zeros((size, size), dtype=np.uint8)
-    center = (size // 2, size // 2)
-    if shape_type == 'circle':
-        cv2.circle(img, center, size // 3, 255, -1)
-    elif shape_type == 'square':
-        s = size // 3
-        cv2.rectangle(img, (center[0] - s, center[1] - s),
-                            (center[0] + s, center[1] + s), 255, -1)
-    elif shape_type == 'triangle':
-        s = size // 3
-        pts = np.array([[center[0], center[1] - s],
-                        [center[0] - s, center[1] + s],
-                        [center[0] + s, center[1] + s]])
-        cv2.fillPoly(img, [pts], 255)
-    if noise > 0:
-        n = np.random.normal(0, noise * 255, img.shape)
-        img = np.clip(img.astype(np.float32) + n, 0, 255).astype(np.uint8)
-    return img
-
-# 2. Trích xuất 5 đặc trưng hình học
-def extract_features(img):
-    _, th = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
-    cnts, _ = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if len(cnts) == 0:
-        return np.zeros(5)
-    c = max(cnts, key=cv2.contourArea)
-    area = cv2.contourArea(c)
-    peri = cv2.arcLength(c, True)
-    approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-    n_vertices = len(approx)
-    circularity = 4 * np.pi * area / (peri ** 2) if peri > 0 else 0
-    x, y, w, h = cv2.boundingRect(c)
-    aspect = w / h if h > 0 else 1
-    return np.array([area, peri, n_vertices, circularity, aspect])
-
-# 3. Sinh dataset 3 lớp
-np.random.seed(42)
-X, y = [], []
-label_map = {'circle': 0, 'square': 1, 'triangle': 2}
-for label_name, label_id in label_map.items():
-    for _ in range(30):
-        img = gen_shape(label_name, noise=np.random.uniform(0, 0.05))
-        X.append(extract_features(img))
-        y.append(label_id)
-X = np.array(X); y = np.array(y)
-
-# 4. Train/test split
-X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2,
-                                           random_state=42, stratify=y)
-print(f"Train: {len(X_tr)} mẫu | Test: {len(X_te)} mẫu")
-
-# 5. Huấn luyện 2 mô hình
-knn = KNeighborsClassifier(n_neighbors=3).fit(X_tr, y_tr)
-svm = SVC(kernel='rbf', C=1.0).fit(X_tr, y_tr)
-
-for name, model in [('k-NN (k=3)', knn), ('SVM (RBF)', svm)]:
-    y_pred = model.predict(X_te)
-    acc = accuracy_score(y_te, y_pred)
-    print(f"\n{name}: Accuracy = {acc*100:.2f}%")
-    print("Confusion matrix:")
-    print(confusion_matrix(y_te, y_pred))
-
-# 6. Trực quan hóa mẫu mỗi lớp
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-for i, (lname, lid) in enumerate(label_map.items()):
-    imgs = [gen_shape(lname, noise=0.02) for _ in range(3)]
-    combined = np.hstack(imgs)
-    axes[i].imshow(combined, cmap='gray')
-    axes[i].set_title(f'{lname} (label={lid})')
-    axes[i].axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Cả 2 mô hình đều đạt accuracy cao (>95%).
-- Số đỉnh (`n_vertices`) là đặc trưng quan trọng nhất: tam giác = 3, vuông = 4, tròn = nhiều.
-
----
-
-
-### 1.3. Trích xuất đặc trưng HOG + SVM
-**📌 Bài tập 3:**
-Sinh dataset gồm 2 lớp: **đường ngang** và **đường dọc** (mỗi lớp 40 ảnh 64×64 có nhiễu nhẹ). Trích xuất HOG descriptor, huấn luyện SVM linear và đánh giá accuracy.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from skimage.feature import hog
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-
-# 1. Sinh dataset
-def gen_line(orientation, size=64, noise=0.05):
-    img = np.zeros((size, size), dtype=np.uint8)
-    if orientation == 'horizontal':
-        for y in [size//2 - 1, size//2, size//2 + 1]:
-            img[y, 10:size-10] = 255
-    else:
-        for x in [size//2 - 1, size//2, size//2 + 1]:
-            img[10:size-10, x] = 255
-    n = np.random.normal(0, noise * 255, img.shape)
-    return np.clip(img.astype(np.float32) + n, 0, 255).astype(np.uint8)
-
-# 2. Trích xuất HOG
-def extract_hog(img):
-    return hog(img, orientations=9, pixels_per_cell=(8, 8),
-               cells_per_block=(2, 2), feature_vector=True)
-
-X, y = [], []
-for _ in range(40):
-    X.append(extract_hog(gen_line('horizontal')));  y.append(0)
-    X.append(extract_hog(gen_line('vertical')));    y.append(1)
-X = np.array(X); y = np.array(y)
-print(f"Feature HOG shape: {X.shape}")
-
-# 3. Train/test + SVM
-X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2,
-                                           random_state=42, stratify=y)
-svm = SVC(kernel='linear', C=1.0).fit(X_tr, y_tr)
-acc = accuracy_score(y_te, svm.predict(X_te))
-print(f"SVM + HOG — Accuracy: {acc*100:.2f}%")
-
-# 4. Trực quan HOG
-fig, axes = plt.subplots(2, 2, figsize=(10, 10))
-for i, (orient, name) in enumerate([('horizontal', 'Ngang'),
-                                     ('vertical', 'Dọc')]):
-    img = gen_line(orient, noise=0.02)
-    _, hog_img = hog(img, orientations=9, pixels_per_cell=(8, 8),
-                     cells_per_block=(2, 2), visualize=True)
-    axes[i, 0].imshow(img, cmap='gray'); axes[i, 0].set_title(f'{name} — Ảnh gốc'); axes[i, 0].axis('off')
-    axes[i, 1].imshow(hog_img, cmap='gray'); axes[i, 1].set_title(f'{name} — HOG'); axes[i, 1].axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Accuracy ~100% trên bài toán đơn giản.
-- HOG visual cho thấy sự khác biệt rõ rệt về hướng gradient giữa 2 lớp.
-
----
-
-
-## 2. Phát hiện đối tượng và khuôn mặt
-
----
-
-
-### 2.1. Phát hiện khuôn mặt với Haar Cascade
-**📌 Bài tập 4:**
-Cho ảnh `data.astronaut()`. Load `haarcascade_frontalface_default.xml`, phát hiện mặt với 2 cặp tham số `(scaleFactor, minNeighbors) = (1.1, 5)` và `(1.3, 3)`. Vẽ bounding box lên ảnh gốc.
-
-```python
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-from skimage import data
-import os
-
-# 1. Tải ảnh và chuyển xám
-img_rgb = data.astronaut()
-img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
-
-# 2. Load Haar Cascade
-face_cascade = cv2.CascadeClassifier('images/haarcascade_frontalface_default.xml')
-if face_cascade.empty():
-    raise IOError("Không load được file XML — hãy kiểm tra đường dẫn!")
-
-# 3. Phát hiện với 2 cặp tham số
-configs = [
-    (1.1, 5, 'scaleFactor=1.1, minNeighbors=5'),
-    (1.3, 3, 'scaleFactor=1.3, minNeighbors=3'),
-]
-
-vis_imgs = []
-for sf, mn, title in configs:
-    faces = face_cascade.detectMultiScale(img_gray, scaleFactor=sf,
-                                           minNeighbors=mn, minSize=(30, 30))
-    out = img_rgb.copy()
-    for (x, y, w, h) in faces:
-        cv2.rectangle(out, (x, y), (x + w, y + h), (255, 0, 0), 3)
-    vis_imgs.append(out)
-    print(f"{title}: phát hiện {len(faces)} khuôn mặt")
-
-# 4. Hiển thị
-fig, axes = plt.subplots(1, 3, figsize=(16, 5))
-axes[0].imshow(img_rgb); axes[0].set_title('Ảnh gốc')
-for i, (vis, cfg) in enumerate(zip(vis_imgs, configs)):
-    axes[i+1].imshow(vis); axes[i+1].set_title(cfg[2])
+# Trực quan hóa
+fig, axes = plt.subplots(1, 4, figsize=(16, 5))
+axes[0].imshow(face);     axes[0].set_title('Mẫu 1: Mặt')
+axes[1].imshow(sky);      axes[1].set_title('Mẫu 2: Nền xanh')
+axes[2].imshow(clothing); axes[2].set_title('Mẫu 3: Áo')
+axes[3].imshow(test_region)
+axes[3].set_title(f'Test → Dự đoán: {class_names[pred]}')
 for ax in axes: ax.axis('off')
+plt.suptitle('Bài toán Classification với color histogram + k-NN',
+             fontsize=13, fontweight='bold')
 plt.tight_layout(); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Haar Cascade phát hiện khuôn mặt phi hành gia.
-- `scaleFactor` nhỏ + `minNeighbors` lớn → chính xác hơn nhưng có thể bỏ sót.
-- `scaleFactor` lớn + `minNeighbors` nhỏ → nhạy hơn nhưng dễ false positive.
+- Vùng test được gán nhãn dựa trên đặc trưng màu sắc gần nhất với vùng mẫu.
+- Minh họa nguyên lý Classification: **1 ảnh → 1 nhãn**.
 
 ---
 
+### 2.2. Bài toán Object Detection — Haar Cascade
 
-### 2.2. Phát hiện mắt và miệng
-**📌 Bài tập 5:**
-Cho ảnh `data.astronaut()`. Tiền xử lý bằng CLAHE để tăng tương phản. Phát hiện mặt trước, sau đó tìm mắt trong nửa trên khuôn mặt, tìm miệng trong nửa dưới. Nếu không tìm được miệng bằng cascade, dùng fallback hình học.
+**📌 Bài tập 4:**
+Mô phỏng bài toán **Object Detection** với Haar Cascade. Yêu cầu:
+1. Tải Haar Cascade XML tự động vào `/tmp/`.
+2. Phát hiện khuôn mặt trong `data.astronaut()`.
+3. Vẽ bounding box và in tọa độ từng đối tượng.
 
 ```python
-import numpy as np
+import os
+import tempfile
+import urllib.request
 import cv2
 import matplotlib.pyplot as plt
 from skimage import data
 
-# 1. Tải ảnh
+# Hàm load cascade hỗ trợ OpenCV 4.x và 5.0
+def get_cascade_classifier():
+    if hasattr(cv2, 'CascadeClassifier'):
+        return cv2.CascadeClassifier
+    elif hasattr(cv2, 'objdetect') and hasattr(cv2.objdetect, 'CascadeClassifier'):
+        return cv2.objdetect.CascadeClassifier
+    raise AttributeError("Không tìm thấy CascadeClassifier")
+
+def load_cascade(filename):
+    filepath = os.path.join(tempfile.gettempdir(), filename)
+    if not os.path.exists(filepath):
+        url = (f"https://raw.githubusercontent.com/opencv/opencv/"
+               f"master/data/haarcascades/{filename}")
+        urllib.request.urlretrieve(url, filepath)
+        print(f"Đã tải: {filename}")
+    return get_cascade_classifier()(filepath)
+
+# Tải cascade
+face_cascade = load_cascade("haarcascade_frontalface_default.xml")
+
+# Phát hiện khuôn mặt
 img_rgb = data.astronaut()
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+faces = face_cascade.detectMultiScale(img_gray, 1.1, 5, minSize=(30, 30))
 
-# 2. Tiền xử lý CLAHE
-clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-img_gray = clahe.apply(img_gray)
+# Vẽ bounding box
+result = img_rgb.copy()
+print(f"\n=== KẾT QUẢ DETECTION ===")
+print(f"Số khuôn mặt phát hiện: {len(faces)}")
+print(f"{'STT':>4}{'x':>6}{'y':>6}{'w':>6}{'h':>6}")
+print("-" * 28)
+for i, (x, y, w, h) in enumerate(faces, 1):
+    cv2.rectangle(result, (x, y), (x+w, y+h), (255, 0, 0), 3)
+    print(f"{i:>4}{x:>6}{y:>6}{w:>6}{h:>6}")
 
-# 3. Load 3 cascade
-face_cascade  = cv2.CascadeClassifier('images/haarcascade_frontalface_default.xml')
-eye_cascade   = cv2.CascadeClassifier('images/haarcascade_eye.xml')
-smile_cascade = cv2.CascadeClassifier('images/haarcascade_smile.xml')
-
-# Kiểm tra cascade
-for name, c in [('face', face_cascade), ('eye', eye_cascade), ('smile', smile_cascade)]:
-    if c.empty():
-        raise IOError(f"Cascade '{name}' rỗng — file XML chưa tải đúng!")
-
-# 4. Phát hiện mặt
-faces = face_cascade.detectMultiScale(img_gray, 1.1, 5, minSize=(50, 50))
-out = img_rgb.copy()
-
-for (x, y, w, h) in faces:
-    cv2.rectangle(out, (x, y), (x + w, y + h), (255, 0, 0), 3)
-
-    roi_gray  = img_gray[y:y+h, x:x+w]
-    roi_color = out[y:y+h, x:x+w]
-
-    # 5. Tìm mắt — nửa trên khuôn mặt
-    upper = roi_gray[:int(h*0.6), :]
-    eyes = eye_cascade.detectMultiScale(upper, scaleFactor=1.05,
-                                         minNeighbors=4,
-                                         minSize=(10, 10),
-                                         maxSize=(h//3, h//3))
-    for (ex, ey, ew, eh) in eyes:
-        cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
-    print(f"  Phát hiện {len(eyes)} mắt")
-
-    # 6. Tìm miệng — nửa dưới
-    lower = roi_gray[int(h*0.5):, :]
-    smiles = smile_cascade.detectMultiScale(lower, scaleFactor=1.5,
-                                             minNeighbors=10, minSize=(15, 10))
-    if len(smiles) > 0:
-        for (sx, sy, sw, sh) in smiles:
-            cv2.rectangle(roi_color,
-                          (sx, sy + int(h*0.5)),
-                          (sx + sw, sy + sh + int(h*0.5)), (255, 255, 0), 2)
-        print(f"  Phát hiện {len(smiles)} miệng")
-    else:
-        # Fallback: vẽ miệng theo hình học
-        mx, my = int(w*0.25), int(h*0.68)
-        mw, mh = int(w*0.5),  int(h*0.22)
-        cv2.rectangle(roi_color, (mx, my), (mx + mw, my + mh), (255, 255, 0), 2)
-        print(f"  Không có smile cascade → dùng fallback hình học")
-
-# 7. Hiển thị
-plt.figure(figsize=(7, 7))
-plt.imshow(out); plt.title('Phát hiện mặt / mắt / miệng')
+plt.figure(figsize=(8, 8))
+plt.imshow(result)
+plt.title(f'Object Detection: {len(faces)} khuôn mặt')
 plt.axis('off'); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Bounding box đỏ (mặt), xanh lá (mắt), vàng (miệng).
-- Haar Cascade có thể bỏ sót 1 mắt hoặc miệng — đây là **hành vi bình thường**.
-- CLAHE giúp tăng khả năng phát hiện ở vùng tối.
+- Bounding box đỏ khoanh vùng khuôn mặt.
+- Bảng tọa độ từng đối tượng được in ra.
+- Minh họa nguyên lý Detection: **ảnh → danh sách + bounding box + nhãn**.
 
 ---
 
+### 2.3. Bài toán Segmentation — Otsu + Morphology + Contour
 
-### 2.3. Template Matching
-**📌 Bài tập 6:**
-Cho ảnh `data.coins()`. Cắt một đồng xu làm template. Áp dụng `cv2.matchTemplate` với 3 phương pháp `TM_CCOEFF_NORMED`, `TM_CCORR_NORMED`, `TM_SQDIFF_NORMED` và tìm vị trí khớp nhất bằng `cv2.minMaxLoc`.
+**📌 Bài tập 5:**
+Mô phỏng bài toán **Segmentation** với pipeline Otsu + Morphology. Yêu cầu:
+1. Phân đoạn ảnh `data.coins()`.
+2. So sánh **Semantic Segmentation** và **Instance Segmentation** (thông qua label).
+3. Hiển thị mask kết quả.
 
 ```python
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import data
+from skimage.measure import label
+from skimage.color import label2rgb
 
-# 1. Tải ảnh và cắt template
 img = data.coins()
-template = img[75:150, 230:305].copy()   # một đồng xu
-h_t, w_t = template.shape
 
-# 2. Áp dụng matchTemplate với 3 phương pháp
-methods = {
-    'TM_CCOEFF_NORMED': cv2.TM_CCOEFF_NORMED,
-    'TM_CCORR_NORMED':  cv2.TM_CCORR_NORMED,
-    'TM_SQDIFF_NORMED': cv2.TM_SQDIFF_NORMED,
-}
+# === SEMANTIC SEGMENTATION ===
+# Gán nhãn theo lớp (nhị phân: nền/đối tượng)
+blurred = cv2.GaussianBlur(img, (5, 5), 1.5)
+_, semantic_mask = cv2.threshold(blurred, 0, 255,
+                                  cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+semantic_mask = cv2.morphologyEx(semantic_mask, cv2.MORPH_CLOSE,
+                                  kernel, iterations=2)
 
-results = []
-for name, method in methods.items():
-    res = cv2.matchTemplate(img, template, method)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    # Với SQDIFF: giá trị NHỎ là tốt; với 2 cái còn lại: LỚN là tốt
-    if method == cv2.TM_SQDIFF_NORMED:
-        top_left = min_loc
-        score = min_val
-    else:
-        top_left = max_loc
-        score = max_val
-    bottom_right = (top_left[0] + w_t, top_left[1] + h_t)
+# === INSTANCE SEGMENTATION ===
+# Gán nhãn cho từng cá thể riêng biệt
+binary = (semantic_mask > 0).astype(np.uint8)
+instance_labels = label(binary)
+n_instances = instance_labels.max()
 
-    out = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-    cv2.rectangle(out, top_left, bottom_right, (255, 0, 0), 2)
-    results.append((out, f'{name}\nScore={score:.3f}'))
-    print(f"{name}: score = {score:.4f}, vị trí = {top_left}")
+# Loại bỏ các vùng nhỏ (nhiễu)
+min_area = 100
+for i in range(1, n_instances + 1):
+    if np.sum(instance_labels == i) < min_area:
+        instance_labels[instance_labels == i] = 0
+instance_labels = label(instance_labels > 0)
+n_clean = instance_labels.max()
 
-# 3. Hiển thị
-fig, axes = plt.subplots(1, 5, figsize=(22, 5))
-axes[0].imshow(img, cmap='gray'); axes[0].set_title('Ảnh gốc')
-axes[1].imshow(template, cmap='gray'); axes[1].set_title('Template')
-for i, (out, title) in enumerate(results):
-    axes[i+2].imshow(out); axes[i+2].set_title(title)
+# Tô màu cho instance segmentation
+colored = label2rgb(instance_labels, image=img, bg_label=0)
+
+print(f"Số instance ban đầu: {n_instances}")
+print(f"Sau khi lọc nhiễu:   {n_clean}")
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+axes[0].imshow(img, cmap='gray');           axes[0].set_title('Ảnh gốc')
+axes[1].imshow(semantic_mask, cmap='gray'); axes[1].set_title('Semantic Segmentation\n(1 nhãn cho tất cả đồng xu)')
+axes[2].imshow(colored);                    axes[2].set_title(f'Instance Segmentation\n({n_clean} cá thể riêng)')
 for ax in axes: ax.axis('off')
+plt.suptitle('So sánh Semantic vs Instance Segmentation',
+             fontsize=13, fontweight='bold')
 plt.tight_layout(); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Cả 3 phương pháp tìm đúng đồng xu.
-- `TM_CCOEFF_NORMED` thường ổn định nhất với thay đổi ánh sáng.
+- **Semantic:** tất cả đồng xu cùng màu (cùng lớp).
+- **Instance:** mỗi đồng xu có màu khác nhau (cá thể riêng biệt).
+- Minh họa sự khác biệt rõ ràng giữa 2 loại segmentation.
 
 ---
 
+### 2.4. Bài toán Keypoint — ORB Detector
 
-## 3. Phát hiện đặc trưng và ghép ảnh
-
----
-
-
-### 3.1. Phát hiện keypoint với ORB
-**📌 Bài tập 7:**
-Cho ảnh `data.astronaut()`. Tạo ORB detector với `nfeatures ∈ {50, 100, 500}`. Phát hiện keypoint + descriptor, in shape của descriptor array và vẽ keypoint lên ảnh.
+**📌 Bài tập 6:**
+Mô phỏng bài toán **Phát hiện điểm đặc trưng** với ORB. Yêu cầu:
+1. Phát hiện keypoint trên ảnh `data.camera()`.
+2. Đo **thời gian phát hiện** và **số keypoint**.
+3. Chứng minh tính **bất biến với rotation**: xoay ảnh 90°, phát hiện lại và so sánh.
 
 ```python
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from skimage import data
-
-# 1. Tải ảnh và chuyển xám
-img_rgb = data.astronaut()
-img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
-
-# 2. Chạy ORB với 3 cấu hình
-nfeatures_list = [50, 100, 500]
-results, counts = [], []
-
-print(f"{'nfeatures':>12}{'keypoint thực tế':>20}{'descriptor shape':>20}")
-print("-" * 52)
-for nf in nfeatures_list:
-    orb = cv2.ORB_create(nfeatures=nf)
-    kps, desc = orb.detectAndCompute(img_gray, None)
-    counts.append(len(kps))
-    print(f"{nf:>12}{len(kps):>20}{str(desc.shape):>20}")
-    out = cv2.drawKeypoints(img_rgb, kps, None,
-                             color=(0, 255, 0),
-                             flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    results.append(out)
-
-# 3. Hiển thị
-fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-axes[0, 0].imshow(img_rgb); axes[0, 0].set_title('Ảnh gốc'); axes[0, 0].axis('off')
-for i, (r, nf, cnt) in enumerate(zip(results, nfeatures_list, counts)):
-    ax = axes[(i+1) // 2, (i+1) % 2]
-    ax.imshow(r); ax.set_title(f'ORB nfeatures={nf}\n{cnt} keypoint'); ax.axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Descriptor ORB: 32 byte (256 bit) cho mỗi keypoint.
-- Keypoint tập trung ở vùng có cấu trúc cao (mắt, tóc, chi tiết áo).
-
----
-
-
-### 3.2. So sánh ORB vs SIFT
-**📌 Bài tập 8:**
-Cho ảnh `data.camera()`. Chạy ORB và SIFT (mỗi cái `nfeatures=500`). Đo số keypoint, thời gian phát hiện (ms), kích thước descriptor (byte). So sánh 2 phương pháp.
-
-```python
-import numpy as np
-import cv2
 import matplotlib.pyplot as plt
 from skimage import data
 import time
 
-# 1. Tải ảnh
 img = data.camera()
 
-# 2. Định nghĩa 2 detector có sẵn trong opencv-python
-detectors = {
-    'ORB':  cv2.ORB_create(nfeatures=500),
-    'SIFT': cv2.SIFT_create(nfeatures=500),
-}
+# Phát hiện keypoint trên ảnh gốc
+orb = cv2.ORB_create(nfeatures=500)
+t0 = time.time()
+kps1, desc1 = orb.detectAndCompute(img, None)
+t1 = time.time()
+print(f"Ảnh gốc:  {len(kps1)} keypoint, {(t1-t0)*1000:.2f} ms")
 
-# 3. Chạy và đo
-results = []
-print(f"{'Detector':<10}{'Số keypoint':>14}{'Thời gian (ms)':>18}{'Descriptor (byte)':>20}")
-print("-" * 62)
+# Xoay ảnh 90 độ và phát hiện lại
+img_rot = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+t0 = time.time()
+kps2, desc2 = orb.detectAndCompute(img_rot, None)
+t1 = time.time()
+print(f"Xoay 90°: {len(kps2)} keypoint, {(t1-t0)*1000:.2f} ms")
 
-for name, det in detectors.items():
-    t0 = time.time()
-    kps, desc = det.detectAndCompute(img, None)
-    t1 = time.time()
-    dt_ms = (t1 - t0) * 1000
-    desc_bytes = desc.itemsize * desc.shape[1] if desc is not None else 0
-
-    out = cv2.drawKeypoints(img, kps, None,
-                            color=(0, 255, 0),
-                            flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    results.append((out, name, len(kps), dt_ms, desc_bytes))
-    print(f"{name:<10}{len(kps):>14}{dt_ms:>18.2f}{desc_bytes:>20}")
-
-# 4. Hiển thị
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-axes[0].imshow(img, cmap='gray'); axes[0].set_title('Ảnh gốc')
-for i, (r, name, cnt, dt, db) in enumerate(results):
-    axes[i+1].imshow(r, cmap='gray')
-    axes[i+1].set_title(f'{name}\n{cnt} kp — {dt:.1f} ms')
-for ax in axes: ax.axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- **SIFT:** chậm hơn nhưng chất lượng keypoint tốt, bất biến scale + rotation.
-- **ORB:** nhanh nhất, descriptor 32 byte, phù hợp real-time.
-
----
-
-
-### 3.3. Ghép ảnh Panorama với ORB + Homography
-**📌 Bài tập 9:**
-Tạo 2 ảnh overlap bằng cách cắt từ `data.astronaut()` với offset khác nhau. Dùng ORB + BFMatcher + Homography để ghép 2 ảnh lại thành ảnh panorama.
-
-```python
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-from skimage import data
-
-# 1. Tạo 2 ảnh overlap (offset 150 pixel)
-img_full = data.astronaut()
-offset = 150
-img1 = img_full[:, :350].copy()
-img2 = img_full[:, offset:offset+350].copy()
-
-# 2. Phát hiện ORB keypoint
-orb = cv2.ORB_create(nfeatures=1000)
-kps1, desc1 = orb.detectAndCompute(cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY), None)
-kps2, desc2 = orb.detectAndCompute(cv2.cvtColor(img2, cv2.COLOR_RGB2GRAY), None)
-print(f"Ảnh 1: {len(kps1)} keypoint")
-print(f"Ảnh 2: {len(kps2)} keypoint")
-
-# 3. Matching với BFMatcher
+# Matching giữa 2 ảnh để chứng minh bất biến
 bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 matches = sorted(bf.match(desc1, desc2), key=lambda x: x.distance)
-print(f"Tổng số match: {len(matches)}")
+print(f"Số match: {len(matches)}")
 
-# 4. Trực quan hóa top 50 match
-match_vis = cv2.drawMatches(img1, kps1, img2, kps2, matches[:50], None, flags=2)
+# Vẽ
+out1 = cv2.drawKeypoints(img, kps1, None, color=(0, 255, 0),
+                         flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+out2 = cv2.drawKeypoints(img_rot, kps2, None, color=(0, 255, 0),
+                         flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+match_vis = cv2.drawMatches(img, kps1, img_rot, kps2,
+                             matches[:30], None, flags=2)
 
-# 5. Tính Homography (cần ít nhất 4 match)
-if len(matches) >= 4:
-    src_pts = np.float32([kps1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-    dst_pts = np.float32([kps2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-    H, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-    print(f"Số inlier: {mask.sum()}/{len(mask)}")
-
-    # 6. Warp và ghép
-    h, w = img_full.shape[:2]
-    result = cv2.warpPerspective(img1, H, (w + offset, h))
-    result[:, offset:offset+350] = img2
-else:
-    result = np.hstack([img1, img2])
-    mask = None
-
-# 7. Hiển thị
-fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-axes[0, 0].imshow(img1); axes[0, 0].set_title('Ảnh 1 (trái)')
-axes[0, 1].imshow(img2); axes[0, 1].set_title('Ảnh 2 (phải)')
-axes[1, 0].imshow(match_vis); axes[1, 0].set_title(f'Top-50 matches (inlier: {mask.sum() if mask is not None else 0})')
-axes[1, 1].imshow(result); axes[1, 1].set_title('Kết quả ghép')
-for ax in axes.ravel(): ax.axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Các đường match nối đúng điểm tương ứng giữa 2 ảnh.
-- Ảnh ghép mượt ở vùng overlap.
-
----
-
-
-## 4. Phân đoạn ảnh và đếm đối tượng
-
----
-
-
-### 4.1. Đếm đối tượng trong ảnh
-**📌 Bài tập 10:**
-Cho ảnh `data.coins()`. Xây dựng pipeline: làm mịn Gaussian → Otsu → Morphology → findContours → lọc theo diện tích. Đếm số đồng xu, gán số thứ tự cho từng đối tượng.
-
-```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from skimage import data
-
-# 1. Tải ảnh
-img = data.coins()
-
-# 2. Pipeline
-blur = cv2.GaussianBlur(img, (5, 5), 1.5)
-_, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-opened = cv2.morphologyEx(th, cv2.MORPH_OPEN, kernel, iterations=2)
-closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, kernel, iterations=2)
-
-# 3. Tìm contour
-contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)
-
-# 4. Lọc theo diện tích
-min_area = 200
-valid = [c for c in contours if cv2.contourArea(c) > min_area]
-print(f"Tổng số contour: {len(contours)}")
-print(f"Số đối tượng hợp lệ (>200px²): {len(valid)}")
-
-# 5. Vẽ contour + số thứ tự
-out = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-for i, c in enumerate(valid, 1):
-    cv2.drawContours(out, [c], -1, (0, 255, 0), 2)
-    M = cv2.moments(c)
-    if M['m00'] > 0:
-        cx = int(M['m10'] / M['m00'])
-        cy = int(M['m01'] / M['m00'])
-        cv2.putText(out, str(i), (cx - 8, cy + 8),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-
-# 6. Hiển thị
-fig, axes = plt.subplots(1, 4, figsize=(18, 5))
-axes[0].imshow(img, cmap='gray');    axes[0].set_title('Ảnh gốc')
-axes[1].imshow(th, cmap='gray');     axes[1].set_title('Otsu')
-axes[2].imshow(closed, cmap='gray'); axes[2].set_title('Sau Morphology')
-axes[3].imshow(out);                 axes[3].set_title(f'Đếm được {len(valid)} đồng xu')
+fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+axes[0].imshow(out1, cmap='gray'); axes[0].set_title(f'Ảnh gốc\n{len(kps1)} keypoint')
+axes[1].imshow(out2, cmap='gray'); axes[1].set_title(f'Xoay 90°\n{len(kps2)} keypoint')
+axes[2].imshow(match_vis);         axes[2].set_title(f'Top-30 match')
 for ax in axes: ax.axis('off')
+plt.suptitle('Keypoint bất biến với rotation',
+             fontsize=13, fontweight='bold')
 plt.tight_layout(); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Đếm chính xác số đồng xu.
-- Lọc diện tích giúp loại bỏ nhiễu nhỏ.
+- Số keypoint tương tự giữa ảnh gốc và ảnh xoay.
+- Nhiều match thành công → chứng minh tính **bất biến với rotation**.
 
 ---
 
+### 2.5. Bài toán OCR — Template Matching
 
-### 4.2. Đo lường kích thước đối tượng
-**📌 Bài tập 11:**
-Cho ảnh `data.coins()`. Giả định tỷ lệ: 1 pixel ≈ 0.1 mm. Từ contour, tính diện tích, chu vi, đường kính tương đương và circularity của từng đồng xu.
+**📌 Bài tập 7:**
+Mô phỏng bài toán **OCR** đơn giản với Template Matching. Yêu cầu:
+1. Tạo template chữ số `0-9` bằng `cv2.putText`.
+2. Sinh ảnh "biển số" chứa chuỗi `"2024"`.
+3. Chia ảnh thành các ô, phân loại từng ô.
 
 ```python
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import data
 
-# 1. Tải ảnh
-img = data.coins()
-PIXEL_TO_MM = 0.1    # tỷ lệ giả định
-
-# 2. Pipeline phân đoạn
-blur = cv2.GaussianBlur(img, (5, 5), 1.5)
-_, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-closed = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel, iterations=2)
-contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)
-valid = sorted([c for c in contours if cv2.contourArea(c) > 200],
-               key=cv2.contourArea, reverse=True)
-
-# 3. Đo lường
-print(f"{'#':>3}{'Diện tích':>12}{'Chu vi':>10}{'Đ.kính (px)':>14}"
-      f"{'Đ.kính (mm)':>14}{'Tròn?':>8}")
-print("-" * 63)
-
-out = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-for i, c in enumerate(valid, 1):
-    area = cv2.contourArea(c)
-    peri = cv2.arcLength(c, True)
-    diameter_px = 2 * np.sqrt(area / np.pi)
-    diameter_mm = diameter_px * PIXEL_TO_MM
-    circularity = 4 * np.pi * area / (peri ** 2) if peri > 0 else 0
-
-    # Vẽ đường tròn bao ngoài + chú thích đường kính
-    (x, y), r = cv2.minEnclosingCircle(c)
-    cv2.circle(out, (int(x), int(y)), int(r), (0, 255, 0), 2)
-    cv2.putText(out, f'{diameter_mm:.1f}mm',
-                (int(x) - 30, int(y) + 5),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
-
-    if i <= 5:
-        print(f"{i:>3}{area:>12.0f}{peri:>10.1f}{diameter_px:>14.1f}"
-              f"{diameter_mm:>14.1f}{circularity:>8.3f}")
-
-# 4. Hiển thị
-plt.figure(figsize=(7, 7))
-plt.imshow(out); plt.title(f'Đo lường {len(valid)} đồng xu')
-plt.axis('off'); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Bảng đo đường kính từng đồng xu (px và mm).
-- Circularity > 0.9 chứng tỏ hình gần tròn hoàn hảo.
-
----
-
-
-### 4.3. Phân đoạn ngữ nghĩa bằng ngưỡng
-**📌 Bài tập 12:**
-Cho ảnh `data.camera()`. Gán nhãn pixel theo 3 lớp bằng ngưỡng thủ công: tối (`I < 80`), trung bình (`80 ≤ I < 160`), sáng (`I ≥ 160`). Tạo color map, overlay lên ảnh gốc với alpha=0.4.
-
-```python
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-from skimage import data
-
-# 1. Tải ảnh
-img = data.camera()
-
-# 2. Phân lớp theo ngưỡng
-label_map = np.zeros_like(img, dtype=np.uint8)
-label_map[img < 80]                          = 0   # nền tối
-label_map[(img >= 80) & (img < 160)]         = 1   # trung bình
-label_map[img >= 160]                        = 2   # sáng
-
-# 3. Color map
-palette = np.array([
-    [  0,   0,   0],      # đen — lớp 0
-    [ 50, 200,  50],      # xanh lá — lớp 1
-    [255, 220,   0],      # vàng — lớp 2
-], dtype=np.uint8)
-seg_color = palette[label_map]
-
-# 4. Overlay
-img_rgb = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-overlay = (0.6 * img_rgb + 0.4 * seg_color).astype(np.uint8)
-
-# 5. Tỷ lệ pixel mỗi lớp
-total = img.size
-for lbl, name in [(0, 'Tối (nền)'), (1, 'Trung bình'), (2, 'Sáng')]:
-    ratio = np.sum(label_map == lbl) / total * 100
-    print(f"Lớp {lbl} - {name}: {ratio:.1f}%")
-
-# 6. Hiển thị
-fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-axes[0].imshow(img, cmap='gray');   axes[0].set_title('Ảnh gốc (xám)')
-axes[1].imshow(seg_color);           axes[1].set_title('Phân đoạn ngữ nghĩa')
-axes[2].imshow(overlay);             axes[2].set_title('Overlay (alpha=0.4)')
-for ax in axes: ax.axis('off')
-plt.tight_layout(); plt.show()
-```
-
-**Kết quả mong đợi:**
-- Ảnh được gán nhãn theo 3 mức sáng.
-- Overlay giúp thấy rõ phân bố các lớp.
-
----
-
-
-## 5. OCR và pipeline hoàn chỉnh
-
----
-
-
-### 5.1. OCR đơn giản với Template Matching
-**📌 Bài tập 13:**
-Sinh template 10 chữ số `0-9` bằng `cv2.putText`. Sinh ảnh "biển số" chứa chuỗi "2024" với kích thước khác. Chia ảnh thành 4 ô đều, so khớp mỗi ô với 10 template để đọc chữ số.
-
-```python
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-
-# 1. Tạo template chữ số
-def make_digit(d, size=(60, 40)):
-    img = np.zeros(size, dtype=np.uint8)
+# Tạo template chữ số
+def make_digit(d):
+    img = np.zeros((60, 40), dtype=np.uint8)
     cv2.putText(img, str(d), (5, 45),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, 255, 3)
     return img
 
 templates = {d: make_digit(d) for d in range(10)}
 
-# 2. Tạo ảnh "biển số"
+# Sinh ảnh biển số
 plate = np.zeros((80, 320), dtype=np.uint8)
 cv2.putText(plate, "2024", (10, 60),
             cv2.FONT_HERSHEY_SIMPLEX, 2.0, 255, 4)
 plate = cv2.copyMakeBorder(plate, 10, 10, 10, 10,
                             cv2.BORDER_CONSTANT, value=0)
 
-# 3. Chia ảnh thành 4 ô, match mỗi ô với 10 template
-h_t, w_t = templates[0].shape
-best_matches = []
+# OCR từng ký tự
 step = plate.shape[1] // 4
+predicted = ""
+print(f"{'Ô':>4}{'Dự đoán':>10}{'Score':>10}")
+print("-" * 26)
 
 for i in range(4):
-    x0 = i * step
-    x1 = x0 + step
-    roi = plate[:, x0:x1]
-    roi_rs = cv2.resize(roi, (w_t, h_t))
-
+    roi = plate[:, i*step:(i+1)*step]
+    roi_rs = cv2.resize(roi, (40, 60))
     best_digit, best_score = None, -np.inf
     for d, tmpl in templates.items():
         res = cv2.matchTemplate(roi_rs, tmpl, cv2.TM_CCOEFF_NORMED)
@@ -821,38 +435,106 @@ for i in range(4):
         if max_val > best_score:
             best_score = max_val
             best_digit = d
-    best_matches.append((best_digit, best_score, x0, x1))
-
-# 4. Vẽ kết quả
-out = cv2.cvtColor(plate, cv2.COLOR_GRAY2RGB)
-predicted = ""
-for digit, score, x0, x1 in best_matches:
-    predicted += str(digit)
-    cv2.rectangle(out, (x0, 0), (x1, out.shape[0]), (0, 255, 0), 1)
-    cv2.putText(out, str(digit), (x0 + 10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+    predicted += str(best_digit)
+    print(f"{i+1:>4}{best_digit:>10}{best_score:>10.3f}")
 
 ground_truth = "2024"
-print(f"Ground truth: {ground_truth}")
+print(f"\nGround truth: {ground_truth}")
 print(f"Dự đoán     : {predicted}")
 print(f"Khớp?       : {predicted == ground_truth}")
 
-# 5. Hiển thị
+# Hiển thị
+out = cv2.cvtColor(plate, cv2.COLOR_GRAY2RGB)
+for i in range(4):
+    x0 = i * step
+    cv2.rectangle(out, (x0, 0), (x0 + step, out.shape[0]), (0, 255, 0), 1)
+
 plt.figure(figsize=(10, 3))
-plt.imshow(out); plt.title(f'OCR — GT="{ground_truth}" | Dự đoán="{predicted}"')
+plt.imshow(out)
+plt.title(f'OCR: GT="{ground_truth}" | Dự đoán="{predicted}"')
 plt.axis('off'); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Đọc được chuỗi số "2024" (minh họa nguyên lý OCR cổ điển).
-- Template matching chỉ hiệu quả với ảnh có cùng font/kích thước.
+- Chuỗi `"2024"` được đọc chính xác.
+- Score của từng ký tự > 0.5.
+- Minh họa OCR cổ điển: **ảnh → văn bản**.
 
 ---
 
+### 2.6. Bài toán 3D — Stereo Vision đơn giản
 
-### 5.2. Pipeline CV hoàn chỉnh — Đếm và phân loại đối tượng
-**📌 Bài tập 14:**
-Cho ảnh `data.coins()`. Xây dựng pipeline tổng hợp từ Chương 1 → 5: tiền xử lý → phân đoạn → contour → trích xuất đặc trưng → phân loại rule-based thành 3 nhóm kích thước (nhỏ/vừa/lớn).
+**📌 Bài tập 8:**
+Mô phỏng bài toán **tái tạo 3D** với **Stereo Vision**. Yêu cầu:
+1. Tạo 2 ảnh stereo từ `data.camera()` (dịch chuyển ngang).
+2. Tính **disparity map** bằng `cv2.StereoSGBM`.
+3. Ước lượng **depth map** từ disparity.
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+
+# Tạo cặp ảnh stereo từ 1 ảnh (mô phỏng)
+img_left = data.camera()
+shift = 20
+img_right = np.roll(img_left, -shift, axis=1)
+
+# Tính disparity map
+stereo = cv2.StereoSGBM_create(
+    minDisparity=0,
+    numDisparities=64,
+    blockSize=11,
+    P1=8 * 3 * 11 ** 2,
+    P2=32 * 3 * 11 ** 2,
+)
+disparity = stereo.compute(img_left, img_right).astype(np.float32) / 16.0
+
+# Ước lượng depth từ disparity
+# Công thức: depth = focal_length * baseline / disparity
+focal_length = 500    # giả định
+baseline = 0.1        # giả định 10 cm
+depth = np.zeros_like(disparity)
+valid = disparity > 0
+depth[valid] = focal_length * baseline / disparity[valid]
+
+# Chuẩn hóa để hiển thị
+disp_norm = cv2.normalize(disparity, None, 0, 255,
+                          cv2.NORM_MINMAX).astype(np.uint8)
+depth_norm = cv2.normalize(depth, None, 0, 255,
+                            cv2.NORM_MINMAX).astype(np.uint8)
+
+print(f"Baseline: {baseline*100:.0f} cm")
+print(f"Focal length: {focal_length} pixels")
+print(f"Disparity range: {disparity[valid].min():.1f} – {disparity[valid].max():.1f} pixels")
+
+fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+axes[0].imshow(img_left, cmap='gray');  axes[0].set_title('Ảnh trái')
+axes[1].imshow(img_right, cmap='gray'); axes[1].set_title(f'Ảnh phải (dịch {shift}px)')
+axes[2].imshow(disp_norm, cmap='jet');  axes[2].set_title('Disparity map')
+axes[3].imshow(depth_norm, cmap='jet'); axes[3].set_title('Depth map (ước lượng)')
+for ax in axes: ax.axis('off')
+plt.suptitle('Stereo Vision — Tái tạo 3D từ 2 ảnh',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- **Disparity map:** vùng gần camera có disparity lớn.
+- **Depth map:** ngược lại, vùng gần có depth nhỏ.
+- Minh họa nguyên lý tái tạo 3D từ **nhiều ảnh chụp**.
+
+---
+
+## 3. Quy trình và công cụ
+
+---
+
+### 3.1. Pipeline hoàn chỉnh
+
+**📌 Bài tập 9:**
+Áp dụng **pipeline 7 bước** xây dựng hệ thống Computer Vision vào bài toán đếm đối tượng. Yêu cầu in ra từng bước của pipeline.
 
 ```python
 import cv2
@@ -861,140 +543,625 @@ import matplotlib.pyplot as plt
 from skimage import data
 from collections import Counter
 
-# 1. Tải ảnh
+# === BƯỚC 1 — XÁC ĐỊNH BÀI TOÁN ===
+print("Bước 1: Bài toán đếm và phân loại đồng xu theo kích thước")
+
+# === BƯỚC 2 — THU THẬP DỮ LIỆU ===
 img = data.coins()
+print(f"Bước 2: Ảnh đầu vào shape={img.shape}")
 
-# 2. Tiền xử lý (Chương 2)
-blur = cv2.GaussianBlur(img, (5, 5), 1.5)
-_, th = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+# === BƯỚC 3 — GÁN NHÃN DỮ LIỆU ===
+# Không cần thiết cho bài toán không giám sát (dùng rule-based)
+print("Bước 3: Không cần gán nhãn (dùng rule-based)")
 
-# 3. Morphology + contours (Chương 4)
+# === BƯỚC 4 — TIỀN XỬ LÝ ===
+blurred = cv2.GaussianBlur(img, (5, 5), 1.5)
+_, th = cv2.threshold(blurred, 0, 255,
+                       cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
 closed = cv2.morphologyEx(th, cv2.MORPH_CLOSE, kernel, iterations=2)
+print("Bước 4: Đã làm sạch ảnh")
+
+# === BƯỚC 5 — XÂY DỰNG MÔ HÌNH ===
+# Rule-based: phân loại theo percentile diện tích
 contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)
 valid = [c for c in contours if cv2.contourArea(c) > 200]
+areas = np.array([cv2.contourArea(c) for c in valid])
+thresh_small = np.percentile(areas, 33)
+thresh_large = np.percentile(areas, 66)
 
-# 4. Trích xuất đặc trưng (Chương 5)
-feats = []
-for c in valid:
-    area = cv2.contourArea(c)
-    peri = cv2.arcLength(c, True)
-    circ = 4 * np.pi * area / (peri ** 2) if peri > 0 else 0
-    x, y, w, h = cv2.boundingRect(c)
-    aspect = w / h if h > 0 else 1
-    feats.append({'contour': c, 'area': area, 'circularity': circ,
-                  'aspect': aspect})
-
-# 5. Phân loại rule-based theo percentile diện tích
-area_vals = np.array([f['area'] for f in feats])
-thresh_small = np.percentile(area_vals, 33)
-thresh_large = np.percentile(area_vals, 66)
-
-def classify(f):
-    if f['area'] < thresh_small:   return 'small'
-    if f['area'] < thresh_large:   return 'medium'
+def classify(area):
+    if area < thresh_small: return 'small'
+    if area < thresh_large: return 'medium'
     return 'large'
 
-for f in feats:
-    f['class'] = classify(f)
+labels = [classify(a) for a in areas]
+counts = Counter(labels)
+print(f"Bước 5: Ngưỡng diện tích nhỏ/vừa: {thresh_small:.0f}/{thresh_large:.0f}")
 
-counts = Counter(f['class'] for f in feats)
-print(f"Ngưỡng nhỏ/vừa: {thresh_small:.0f} / {thresh_large:.0f}")
-print(f"Số đối tượng: {counts}")
+# === BƯỚC 6 — ĐÁNH GIÁ ===
+# Không có ground truth → in kết quả
+print(f"Bước 6: Số đối tượng = {len(valid)}")
+print(f"         Phân loại   = {dict(counts)}")
 
-# 6. Vẽ theo nhóm màu
-color_map = {'small':  (255, 100, 100),
+# === BƯỚC 7 — TRIỂN KHAI ===
+color_map = {'small': (255, 100, 100),
              'medium': (100, 255, 100),
-             'large':  (255, 200,   0)}
-out = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-for f in feats:
-    c = color_map[f['class']]
-    cv2.drawContours(out, [f['contour']], -1, c, 2)
-    M = cv2.moments(f['contour'])
+             'large': (255, 200, 0)}
+result = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+for c, lbl in zip(valid, labels):
+    cv2.drawContours(result, [c], -1, color_map[lbl], 2)
+    M = cv2.moments(c)
     if M['m00'] > 0:
         cx = int(M['m10'] / M['m00'])
         cy = int(M['m01'] / M['m00'])
-        cv2.putText(out, f['class'][0].upper(),
-                    (cx - 6, cy + 6),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(result, lbl[0].upper(), (cx-8, cy+8),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+print("Bước 7: Đã xuất kết quả")
 
-# 7. Hiển thị
-fig, axes = plt.subplots(1, 5, figsize=(22, 5))
-for ax, (im, t) in zip(axes, [
-    (img, '1. Ảnh gốc'),
-    (blur, '2. Gaussian Blur'),
-    (th, '3. Otsu'),
-    (closed, '4. Morphology'),
-    (out, f'5. Contour + Classify\nS={counts["small"]}, M={counts["medium"]}, L={counts["large"]}')
-]):
-    ax.imshow(im, cmap='gray' if im.ndim == 2 else None)
-    ax.set_title(t); ax.axis('off')
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+axes[0].imshow(img, cmap='gray');    axes[0].set_title('1. Ảnh gốc')
+axes[1].imshow(closed, cmap='gray'); axes[1].set_title('4. Tiền xử lý')
+axes[2].imshow(result)
+axes[2].set_title(f'7. Kết quả\nS={counts["small"]}, M={counts["medium"]}, L={counts["large"]}')
+for ax in axes: ax.axis('off')
+plt.suptitle('Pipeline 7 bước xây dựng hệ thống CV',
+             fontsize=13, fontweight='bold')
 plt.tight_layout(); plt.show()
 ```
 
 **Kết quả mong đợi:**
-- Pipeline phân loại đồng xu thành 3 nhóm kích thước.
-- Minh họa toàn bộ kiến thức từ Chương 1 → 5.
+- Cả 7 bước đều được in ra console.
+- Đối tượng được phân loại thành 3 nhóm kích thước.
+- Kết quả trực quan với màu khác nhau cho từng nhóm.
 
 ---
 
-
-## 6. Tổng kết
-
----
-
-
-### 6.1. Bảng tổng hợp — Ví dụ theo slide lý thuyết
-
-| Slide lý thuyết | Bài tập | Chủ đề |
-|-----------------|:-------:|--------|
-| Feature extraction | 1 | Color histogram |
-| Classification | 2 | Đặc trưng hình học + k-NN/SVM |
-| Classification (HOG) | 3 | HOG + SVM |
-| Object Detection | 4 | Haar Cascade — khuôn mặt |
-| Object Detection (parts) | 5 | Phát hiện mặt/mắt/miệng |
-| Template Matching | 6 | Phát hiện đồng xu |
-| Keypoint Detection | 7 | ORB detector |
-| Keypoint Comparison | 8 | ORB vs SIFT |
-| Image Stitching | 9 | Panorama |
-| Instance Counting | 10 | Đếm đối tượng |
-| Measurement | 11 | Đo kích thước |
-| Semantic Segmentation | 12 | Phân đoạn theo ngưỡng |
-| OCR | 13 | Template matching |
-| Full Pipeline | 14 | Pipeline CV hoàn chỉnh |
+## 4. Ứng dụng mô hình AI trong Thị giác máy tính
 
 ---
 
+### 4.1. Mô hình AI — So sánh với lập trình truyền thống
 
-### 6.2. Lưu ý quan trọng khi chạy code
+**📌 Bài tập 10:**
+Minh họa sự khác biệt giữa **lập trình truyền thống** và **mô hình AI** qua bài toán phân loại hình học đơn giản.
+
+```python
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# ============================================================
+# CÁCH 1: LẬP TRÌNH TRUYỀN THỐNG
+# Con người viết quy tắc: đếm số đỉnh
+# ============================================================
+def traditional_classify(img):
+    """Rule-based: đếm số đỉnh của contour."""
+    _, th = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    cnts, _ = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    c = max(cnts, key=cv2.contourArea)
+    peri = cv2.arcLength(c, True)
+    approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+    n = len(approx)
+    if n == 3: return 0     # tam giác
+    if n == 4: return 1     # vuông
+    return 2                # tròn
+
+# ============================================================
+# CÁCH 2: MÔ HÌNH AI
+# Máy tự học quy tắc từ dữ liệu
+# ============================================================
+def gen_shape(shape_type, size=64):
+    img = np.zeros((size, size), dtype=np.uint8)
+    c = (size // 2, size // 2)
+    if shape_type == 'circle':
+        cv2.circle(img, c, size // 3, 255, -1)
+    elif shape_type == 'square':
+        s = size // 3
+        cv2.rectangle(img, (c[0]-s, c[1]-s), (c[0]+s, c[1]+s), 255, -1)
+    elif shape_type == 'triangle':
+        s = size // 3
+        pts = np.array([[c[0], c[1]-s], [c[0]-s, c[1]+s], [c[0]+s, c[1]+s]])
+        cv2.fillPoly(img, [pts], 255)
+    return img
+
+def extract_features(img):
+    _, th = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    cnts, _ = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    c = max(cnts, key=cv2.contourArea)
+    area = cv2.contourArea(c)
+    peri = cv2.arcLength(c, True)
+    approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+    circ = 4 * np.pi * area / (peri ** 2) if peri > 0 else 0
+    return np.array([len(approx), circ, area])
+
+# Sinh dataset
+np.random.seed(42)
+X, y = [], []
+for label, shape in enumerate(['triangle', 'square', 'circle']):
+    for _ in range(30):
+        img = gen_shape(shape)
+        X.append(extract_features(img))
+        y.append(label)
+
+X = np.array(X); y = np.array(y)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Huấn luyện k-NN
+knn = KNeighborsClassifier(n_neighbors=3).fit(X_tr, y_tr)
+y_pred = knn.predict(X_te)
+acc = accuracy_score(y_te, y_pred)
+
+print("=== SO SÁNH 2 CÁCH TIẾP CẬN ===")
+print(f"Lập trình truyền thống: Con người viết quy tắc 'n == 3 → tam giác'")
+print(f"Mô hình AI:            Máy học từ {len(X_tr)} mẫu")
+print(f"\nAccuracy của mô hình AI: {acc*100:.2f}%")
+
+# Trực quan hóa
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for i, shape in enumerate(['triangle', 'square', 'circle']):
+    axes[i].imshow(gen_shape(shape), cmap='gray')
+    axes[i].set_title(f'{shape}\n(label={i})')
+    axes[i].axis('off')
+plt.suptitle('Lập trình truyền thống (rules) vs Mô hình AI (học từ data)',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Lập trình truyền thống: cần **định nghĩa quy tắc** thủ công.
+- Mô hình AI: **học từ dữ liệu**, không cần viết quy tắc.
+- Minh họa rõ sự khác biệt cốt lõi.
+
+---
+
+### 4.2. Mô hình ResNet — Minh họa Transfer Learning
+
+**📌 Bài tập 11:**
+Minh họa **Transfer Learning** với ResNet18. Yêu cầu:
+1. Load ResNet18 pretrained.
+2. Đóng băng các lớp đầu, thay lớp FC cuối cho 3 lớp mới.
+3. In số tham số huấn luyện được so với tổng.
+
+```python
+# Cài đặt: !pip install torch torchvision -q
+import torch
+import torch.nn as nn
+import torchvision.models as models
+
+# Load ResNet18 pretrained
+model = models.resnet18(pretrained=True)
+
+# Đếm tham số trước khi đóng băng
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Tổng số tham số ResNet18: {total_params:,}")
+
+# Đóng băng các lớp đầu
+for param in model.parameters():
+    param.requires_grad = False
+
+# Thay lớp FC cuối cho 3 lớp mới
+num_classes = 3
+model.fc = nn.Linear(512, num_classes)
+
+# Đếm tham số huấn luyện được
+trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+frozen = total_params - trainable
+
+print(f"\n=== SAU KHI TRANSFER LEARNING ===")
+print(f"Tham số đóng băng  : {frozen:,} ({frozen/total_params*100:.1f}%)")
+print(f"Tham số huấn luyện : {trainable:,} ({trainable/total_params*100:.1f}%)")
+print(f"→ Chỉ cần huấn luyện ~{trainable/1e3:.0f}K tham số")
+print(f"→ Thay vì {total_params/1e6:.1f}M tham số!")
+
+# Forward pass với input giả
+dummy = torch.randn(1, 3, 224, 224)
+model.eval()
+with torch.no_grad():
+    output = model(dummy)
+print(f"\nInput shape : {tuple(dummy.shape)}")
+print(f"Output shape: {tuple(output.shape)}")
+```
+
+**Kết quả mong đợi:**
+- ResNet18 có ~11.7M tham số.
+- Sau khi đóng băng chỉ còn ~1.5K tham số cần huấn luyện (~0.013%).
+- Minh họa hiệu quả của **Transfer Learning** với dữ liệu nhỏ.
+
+---
+
+### 4.3. Mô hình YOLO — Xử lý output detection
+
+**📌 Bài tập 12:**
+Mô phỏng **xử lý output của YOLO**. Tạo output giả (shape `(N, 85)`) và xử lý: lọc confidence, chuyển đổi tọa độ, vẽ bounding box.
+
+```python
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from skimage import data
+
+# Tải ảnh
+img = data.astronaut()
+h, w = img.shape[:2]
+
+# === MÔ PHỎNG OUTPUT YOLO ===
+# YOLO output: (N, 85) = [x_center, y_center, w, h, objectness, 80 class_scores]
+np.random.seed(42)
+mock_output = np.zeros((5, 85))
+mock_output[:, 4] = [0.92, 0.85, 0.78, 0.45, 0.30]   # objectness
+mock_output[:, 5] = 1   # class "person"
+mock_output[:, :4] = [
+    [0.50, 0.20, 0.20, 0.30],   # đầu
+    [0.50, 0.55, 0.45, 0.40],   # áo
+    [0.50, 0.85, 0.35, 0.20],   # chân
+    [0.20, 0.50, 0.15, 0.25],   # vai trái
+    [0.80, 0.50, 0.15, 0.25],   # vai phải
+]
+
+# === XỬ LÝ OUTPUT ===
+conf_threshold = 0.5
+class_names = {1: 'person'}
+
+out = img.copy()
+detections = []
+
+for det in mock_output:
+    conf = det[4]
+    if conf < conf_threshold:
+        continue
+    class_id = int(np.argmax(det[5:]))
+    xc, yc, bw, bh = det[:4]
+    # Chuyển từ tọa độ chuẩn hóa → pixel
+    x1 = int((xc - bw/2) * w)
+    y1 = int((yc - bh/2) * h)
+    x2 = int((xc + bw/2) * w)
+    y2 = int((yc + bh/2) * h)
+    detections.append((x1, y1, x2, y2, class_names[class_id], conf))
+
+    cv2.rectangle(out, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    cv2.putText(out, f'{class_names[class_id]} {conf:.2f}',
+                (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                (0, 255, 0), 1)
+
+print(f"Ngưỡng confidence: {conf_threshold}")
+print(f"Tổng số detection ban đầu: {len(mock_output)}")
+print(f"Sau khi lọc: {len(detections)}")
+print(f"\n{'STT':>4}{'Class':>8}{'Conf':>8}{'x1':>6}{'y1':>6}{'x2':>6}{'y2':>6}")
+print("-" * 44)
+for i, d in enumerate(detections, 1):
+    print(f"{i:>4}{d[4]:>8}{d[5]:>8.2f}{d[0]:>6}{d[1]:>6}{d[2]:>6}{d[3]:>6}")
+
+plt.figure(figsize=(8, 8))
+plt.imshow(out)
+plt.title(f'YOLO output processing\n{len(detections)} detection hợp lệ')
+plt.axis('off'); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Chỉ giữ detection có confidence > 0.5.
+- Tọa độ chuẩn hóa được chuyển sang pixel.
+- Minh họa pipeline xử lý output của YOLO.
+
+---
+
+### 4.4. Mô hình U-Net — Minh họa kiến trúc
+
+**📌 Bài tập 13:**
+Minh họa **kiến trúc U-Net** bằng PyTorch. Yêu cầu:
+1. Xây dựng U-Net mini với 2 encoder + 2 decoder.
+2. Forward pass với input giả.
+3. Chứng minh **output cùng kích thước input** (semantic segmentation).
+
+```python
+import torch
+import torch.nn as nn
+import numpy as np
+import matplotlib.pyplot as plt
+
+class DoubleConv(nn.Module):
+    def __init__(self, in_ch, out_ch):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_ch, out_ch, 3, padding=1),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, 3, padding=1),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+        )
+    def forward(self, x):
+        return self.conv(x)
+
+class MiniUNet(nn.Module):
+    def __init__(self, in_ch=3, out_ch=3):
+        super().__init__()
+        # Encoder
+        self.enc1 = DoubleConv(in_ch, 32)
+        self.enc2 = DoubleConv(32, 64)
+        self.pool = nn.MaxPool2d(2)
+        # Bottleneck
+        self.bottleneck = DoubleConv(64, 128)
+        # Decoder
+        self.up2  = nn.ConvTranspose2d(128, 64, 2, stride=2)
+        self.dec2 = DoubleConv(128, 64)
+        self.up1  = nn.ConvTranspose2d(64, 32, 2, stride=2)
+        self.dec1 = DoubleConv(64, 32)
+        self.out  = nn.Conv2d(32, out_ch, 1)
+
+    def forward(self, x):
+        # Encoder
+        e1 = self.enc1(x)
+        e2 = self.enc2(self.pool(e1))
+        # Bottleneck
+        b = self.bottleneck(self.pool(e2))
+        # Decoder + skip connections
+        d2 = self.up2(b)
+        d2 = torch.cat([d2, e2], dim=1)   # skip
+        d2 = self.dec2(d2)
+        d1 = self.up1(d2)
+        d1 = torch.cat([d1, e1], dim=1)   # skip
+        d1 = self.dec1(d1)
+        return self.out(d1)
+
+model = MiniUNet(in_ch=3, out_ch=3)
+dummy_input = torch.randn(1, 3, 64, 64)
+
+with torch.no_grad():
+    output = model(dummy_input)
+
+total = sum(p.numel() for p in model.parameters())
+print(f"=== KIẾN TRÚC U-NET MINI ===")
+print(f"Tổng số tham số: {total:,}")
+print(f"Input shape : {tuple(dummy_input.shape)}")
+print(f"Output shape: {tuple(output.shape)}")
+print(f"→ Output cùng kích thước input (pixel-wise classification)")
+
+# Trực quan
+mask = output.argmax(dim=1)[0].numpy()
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+axes[0].imshow(dummy_input[0].permute(1, 2, 0).numpy() * 0.5 + 0.5)
+axes[0].set_title('Input (random)')
+axes[1].imshow(mask, cmap='viridis')
+axes[1].set_title('Segmentation mask (argmax)')
+axes[2].imshow(output[0, 0].numpy(), cmap='gray')
+axes[2].set_title('Class 0 logits')
+for ax in axes: ax.axis('off')
+plt.suptitle('Minh họa U-Net: input → mask cùng kích thước',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Input `(1, 3, 64, 64)` → Output `(1, 3, 64, 64)`.
+- Skip connections giữ chi tiết từ encoder sang decoder.
+- Minh họa nguyên lý semantic segmentation.
+
+---
+
+### 4.5. Mô hình OpenPose — Keypoint giả lập
+
+**📌 Bài tập 14:**
+Minh họa **Pose Estimation** bằng cách vẽ **17 keypoint chuẩn COCO** và **16 cạnh skeleton** trên ảnh `data.astronaut()`.
+
+```python
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from skimage import data
+
+img = data.astronaut()
+h, w = img.shape[:2]
+
+# 17 keypoint chuẩn COCO với tọa độ giả lập (tỷ lệ ảnh)
+keypoints = {
+    'nose':           (0.50, 0.18),
+    'left_eye':       (0.47, 0.16),
+    'right_eye':      (0.53, 0.16),
+    'left_ear':       (0.44, 0.17),
+    'right_ear':      (0.56, 0.17),
+    'left_shoulder':  (0.35, 0.30),
+    'right_shoulder': (0.65, 0.30),
+    'left_elbow':     (0.28, 0.45),
+    'right_elbow':    (0.72, 0.45),
+    'left_wrist':     (0.22, 0.60),
+    'right_wrist':    (0.78, 0.60),
+    'left_hip':       (0.40, 0.60),
+    'right_hip':      (0.60, 0.60),
+    'left_knee':      (0.38, 0.78),
+    'right_knee':     (0.62, 0.78),
+    'left_ankle':     (0.36, 0.95),
+    'right_ankle':    (0.64, 0.95),
+}
+
+# Chuyển sang pixel
+points = {k: (int(x * w), int(y * h)) for k, (x, y) in keypoints.items()}
+
+# 16 cạnh skeleton chuẩn COCO
+skeleton = [
+    ('nose', 'left_eye'), ('nose', 'right_eye'),
+    ('left_eye', 'left_ear'), ('right_eye', 'right_ear'),
+    ('left_shoulder', 'right_shoulder'),
+    ('left_shoulder', 'left_elbow'), ('left_elbow', 'left_wrist'),
+    ('right_shoulder', 'right_elbow'), ('right_elbow', 'right_wrist'),
+    ('left_shoulder', 'left_hip'), ('right_shoulder', 'right_hip'),
+    ('left_hip', 'right_hip'),
+    ('left_hip', 'left_knee'), ('left_knee', 'left_ankle'),
+    ('right_hip', 'right_knee'), ('right_knee', 'right_ankle'),
+]
+
+# Vẽ skeleton
+out = img.copy()
+for p1, p2 in skeleton:
+    cv2.line(out, points[p1], points[p2], (0, 255, 255), 3)
+
+# Vẽ keypoint
+for (x, y) in points.values():
+    cv2.circle(out, (x, y), 6, (255, 0, 0), -1)
+    cv2.circle(out, (x, y), 8, (255, 255, 255), 2)
+
+print(f"=== POSE ESTIMATION ===")
+print(f"Số keypoint: {len(points)}")
+print(f"Số cạnh skeleton: {len(skeleton)}")
+print(f"\nTọa độ 5 keypoint đầu:")
+for i, (name, (x, y)) in enumerate(list(points.items())[:5], 1):
+    print(f"  {i}. {name:<15} → ({x}, {y})")
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+axes[0].imshow(img); axes[0].set_title('Ảnh gốc')
+axes[1].imshow(out)
+axes[1].set_title(f'Pose Estimation\n{len(points)} keypoint | {len(skeleton)} cạnh')
+for ax in axes: ax.axis('off')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- 17 keypoint được vẽ đúng vị trí.
+- 16 cạnh skeleton kết nối thành hình người.
+- Minh họa nguyên lý Pose Estimation.
+
+---
+
+### 4.6. Foundation Model — Zero-shot CLIP mô phỏng
+
+**📌 Bài tập 15:**
+Minh họa **Zero-shot Classification** của CLIP bằng cách so sánh **image embedding** với **text embedding** (giả lập) qua **cosine similarity**.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+
+img = data.astronaut()
+
+# === EMBEDDING ẢNH (giả lập 5 đặc trưng ngữ nghĩa) ===
+def image_embedding(img):
+    img_f = img.astype(np.float32) / 255.0
+    return np.array([
+        img_f.mean(),               # độ sáng
+        img_f[:,:,0].mean(),        # tông đỏ
+        img_f[:,:,1].mean(),        # tông xanh lá
+        img_f[:,:,2].mean(),        # tông xanh dương
+        img_f.std(),                # độ tương phản
+    ])
+
+# === EMBEDDING TEXT (giả lập dựa trên keyword) ===
+def text_embedding(text):
+    text = text.lower()
+    v = np.array([0.5, 0.4, 0.4, 0.4, 0.25])
+    if 'bright' in text or 'light' in text: v[0] = 0.7
+    if 'dark' in text:                      v[0] = 0.3
+    if 'red' in text:                       v[1] = 0.7
+    if 'green' in text:                     v[2] = 0.7
+    if 'blue' in text:                      v[3] = 0.7
+    if 'colorful' in text or 'vivid' in text: v[4] = 0.5
+    return v
+
+# Cosine similarity
+def cosine_sim(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+# === ZERO-SHOT CLASSIFICATION ===
+img_emb = image_embedding(img)
+class_prompts = [
+    "a bright colorful image",
+    "a dark image",
+    "an image with a lot of red",
+    "an image with a lot of green",
+    "an image with a lot of blue",
+]
+
+scores = []
+print(f"=== ZERO-SHOT CLASSIFICATION ===")
+print(f"{'Prompt':<35}{'Cosine Sim':>12}")
+print("-" * 47)
+for prompt in class_prompts:
+    sim = cosine_sim(img_emb, text_embedding(prompt))
+    scores.append((prompt, sim))
+    print(f"{prompt:<35}{sim:>12.4f}")
+
+# Sắp xếp và hiển thị
+scores.sort(key=lambda x: -x[1])
+print(f"\n→ CLIP dự đoán: '{scores[0][0]}'")
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+axes[0].imshow(img); axes[0].set_title('Ảnh query'); axes[0].axis('off')
+
+prompts_sorted = [s[0] for s in scores]
+scores_sorted  = [s[1] for s in scores]
+axes[1].barh(range(len(prompts_sorted)), scores_sorted, color='steelblue')
+axes[1].set_yticks(range(len(prompts_sorted)))
+axes[1].set_yticklabels([p[:28] for p in prompts_sorted])
+axes[1].set_xlabel('Cosine similarity')
+axes[1].set_title('Xếp hạng prompt theo độ tương đồng')
+axes[1].invert_yaxis()
+plt.suptitle('CLIP Zero-shot: ảnh + text cùng không gian vector',
+             fontsize=13, fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Prompt có cosine similarity cao nhất được chọn.
+- Không cần huấn luyện, chỉ cần định nghĩa prompt.
+- Minh họa nguyên lý **Zero-shot Classification** của CLIP.
+
+---
+
+## 5. Tổng kết
+
+---
+
+### 5.1. Bảng tổng hợp bài tập theo lý thuyết
+
+| Slide lý thuyết | Bài tập | Nội dung |
+|-----------------|:-------:|----------|
+| Kiến trúc hệ thống CV | 1 | Pipeline 4 giai đoạn |
+| So sánh CV vs Xử lý ảnh | 2 | Hai vai trò trên cùng ảnh |
+| Bài toán Classification | 3 | Color histogram + k-NN |
+| Bài toán Object Detection | 4 | Haar Cascade |
+| Bài toán Segmentation | 5 | Otsu + Morphology + Label |
+| Bài toán Keypoint | 6 | ORB detector |
+| Bài toán OCR | 7 | Template Matching |
+| Bài toán 3D | 8 | Stereo Vision |
+| Pipeline xây dựng hệ thống | 9 | Pipeline 7 bước |
+| Mô hình AI vs lập trình truyền thống | 10 | Rule-based vs k-NN |
+| ResNet | 11 | Transfer Learning |
+| YOLO | 12 | Xử lý output detection |
+| U-Net | 13 | Kiến trúc encoder-decoder |
+| OpenPose | 14 | Vẽ keypoint + skeleton |
+| CLIP | 15 | Zero-shot classification |
+
+---
+
+### 5.2. Lưu ý quan trọng khi chạy code
 
 | Vấn đề | Cách xử lý |
 |--------|-----------|
-| **`cv2.CascadeClassifier` không tồn tại** | Cài `opencv-contrib-python`, restart kernel |
-| **File XML Haar không có sẵn** | Tải thủ công qua `urllib` vào thư mục `images/` |
-| **`!empty()` assertion failed** | Kiểm tra file XML tồn tại + không rỗng |
-| **`cv2.AKAZE_create` không tồn tại** | Chỉ dùng ORB hoặc SIFT |
-| **`cv2.BRISK_create` không tồn tại** | Chỉ dùng ORB hoặc SIFT |
-| **Hiển thị ảnh màu đọc từ OpenCV** | Đổi `BGR → RGB` trước khi `imshow` |
-| **Haar Cascade bỏ sót mắt/miệng** | Nới lỏng `minNeighbors`, dùng CLAHE |
+| **`cv2.CascadeClassifier` không tồn tại** | Cài `opencv-contrib-python` + restart kernel |
+| **File XML Haar không có sẵn** | Tải tự động vào `/tmp/` qua `urllib` |
+| **PyTorch chưa cài** | `!pip install torch torchvision -q` |
+| **Tải ResNet18 pretrained** | Cần mạng (~45MB) |
+| **Hiển thị ảnh màu đọc từ OpenCV** | Đổi `BGR → RGB` trước `imshow` |
+| **OverflowError** với `uint8` | Ép về `int`/`float`, `clip` sau |
 
 ---
 
+### 5.3. Tổng kết
 
-### 6.3. Tổng kết
-
-**Năm nhóm nội dung chính Chương 5:**
+**Bốn nhóm nội dung chính Chương 5:**
 
 | Nhóm | Số bài tập | Kỹ thuật chủ đạo |
 |------|:----------:|------------------|
-| **1. Trích xuất đặc trưng & phân loại** | 1 → 3 | Color hist, HOG, k-NN, SVM |
-| **2. Phát hiện đối tượng & khuôn mặt** | 4 → 6 | Haar Cascade, Template Matching |
-| **3. Đặc trưng & ghép ảnh** | 7 → 9 | ORB, SIFT, Homography |
-| **4. Phân đoạn & đếm đối tượng** | 10 → 12 | Contour, đo lường, ngưỡng |
-| **5. OCR & pipeline** | 13 → 14 | Template matching, tổng hợp |
+| **1. Tổng quan về CV** | 1 → 2 | Kiến trúc 4 giai đoạn, so sánh CV vs IP |
+| **2. Các bài toán trong CV** | 3 → 8 | Classification, Detection, Segmentation, Keypoint, OCR, 3D |
+| **3. Quy trình và công cụ** | 9 | Pipeline 7 bước |
+| **4. Mô hình AI** | 10 → 15 | ResNet, YOLO, U-Net, OpenPose, CLIP |
 
-**📌 Nhớ 3 điều:**
-1. **Feature extraction** là bước quyết định — pixel thô đủ cho ảnh nhỏ, HOG/SIFT/ORB cho ảnh lớn.
-2. **Haar Cascade** hoạt động tốt trong điều kiện lý tưởng, có thể bỏ sót khi ảnh phức tạp.
-3. **Pipeline CV hoàn chỉnh** kết hợp nhiều chương: tiền xử lý → phân đoạn → trích xuất → phân loại.
+**Nhớ 3 điều:**
+1. **Computer Vision = hiểu nội dung ảnh** — không chỉ xử lý pixel.
+2. **OpenCV** cung cấp công cụ cổ điển (Haar, ORB) + chạy DL models (DNN module).
+3. **Mô hình AI hiện đại** (ResNet, YOLO, U-Net) đạt độ chính xác vượt trội — **Transfer Learning** là cách thực tế nhất cho sinh viên.
