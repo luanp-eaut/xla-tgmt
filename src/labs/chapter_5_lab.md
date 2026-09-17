@@ -2,12 +2,14 @@
 
 ---
 
+
 ## 1. Tổng quan về Thị giác máy tính
 
 ---
 
-### 1.1. Kiến trúc hệ thống Computer Vision
 
+
+### 1.1. Kiến trúc hệ thống Computer Vision
 **📌 Bài tập 1:**
 Mô phỏng **kiến trúc 4 giai đoạn** của hệ thống Computer Vision bằng OpenCV trên ảnh `data.coins()`. Yêu cầu:
 1. Giai đoạn 1 — Tiền xử lý: lọc nhiễu Gaussian, resize.
@@ -77,8 +79,11 @@ plt.tight_layout(); plt.show()
 
 ---
 
-### 1.2. So sánh Computer Vision và Xử lý ảnh
 
+
+
+
+### 1.2. So sánh Computer Vision và Xử lý ảnh
 **📌 Bài tập 2:**
 Minh họa sự khác biệt giữa **xử lý ảnh** và **Computer Vision** trên cùng một ảnh. Yêu cầu:
 1. Xử lý ảnh: tăng cường chất lượng (cân bằng histogram, khử nhiễu).
@@ -132,9 +137,11 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ## 2. Các bài toán trong Thị giác máy tính
 
 ---
+
 
 ### 2.1. Bài toán Classification — Color Histogram + k-NN
 
@@ -202,6 +209,7 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ### 2.2. Bài toán Object Detection — Haar Cascade
 
 **📌 Bài tập 4:**
@@ -209,6 +217,11 @@ Mô phỏng bài toán **Object Detection** với Haar Cascade. Yêu cầu:
 1. Tải Haar Cascade XML tự động vào `/tmp/`.
 2. Phát hiện khuôn mặt trong `data.astronaut()`.
 3. Vẽ bounding box và in tọa độ từng đối tượng.
+
+```python
+%pip uninstall -y opencv-python opencv-python-headless opencv-contrib-python -q
+%pip install "opencv-contrib-python==4.10.0.84" -q
+```
 
 ```python
 import os
@@ -265,6 +278,7 @@ plt.axis('off'); plt.show()
 - Minh họa nguyên lý Detection: **ảnh → danh sách + bounding box + nhãn**.
 
 ---
+
 
 ### 2.3. Bài toán Segmentation — Otsu + Morphology + Contour
 
@@ -330,6 +344,7 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ### 2.4. Bài toán Keypoint — ORB Detector
 
 **📌 Bài tập 6:**
@@ -389,6 +404,7 @@ plt.tight_layout(); plt.show()
 - Nhiều match thành công → chứng minh tính **bất biến với rotation**.
 
 ---
+
 
 ### 2.5. Bài toán OCR — Template Matching
 
@@ -462,6 +478,7 @@ plt.axis('off'); plt.show()
 
 ---
 
+
 ### 2.6. Bài toán 3D — Stereo Vision đơn giản
 
 **📌 Bài tập 8:**
@@ -527,9 +544,11 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ## 3. Quy trình và công cụ
 
 ---
+
 
 ### 3.1. Pipeline hoàn chỉnh
 
@@ -618,9 +637,11 @@ plt.tight_layout(); plt.show()
 
 ---
 
-## 4. Ứng dụng mô hình AI trong Thị giác máy tính
+
+## 4. Mô hình AI trong Thị giác máy tính
 
 ---
+
 
 ### 4.1. Mô hình AI — So sánh với lập trình truyền thống
 
@@ -719,6 +740,7 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ### 4.2. Mô hình ResNet — Minh họa Transfer Learning
 
 **📌 Bài tập 11:**
@@ -728,7 +750,7 @@ Minh họa **Transfer Learning** với ResNet18. Yêu cầu:
 3. In số tham số huấn luyện được so với tổng.
 
 ```python
-# Cài đặt: !pip install torch torchvision -q
+# Cài đặt: %pip install torch torchvision -q
 import torch
 import torch.nn as nn
 import torchvision.models as models
@@ -774,6 +796,7 @@ print(f"Output shape: {tuple(output.shape)}")
 
 ---
 
+
 ### 4.3. Mô hình YOLO — Xử lý output detection
 
 **📌 Bài tập 12:**
@@ -790,11 +813,11 @@ img = data.astronaut()
 h, w = img.shape[:2]
 
 # === MÔ PHỎNG OUTPUT YOLO ===
-# YOLO output: (N, 85) = [x_center, y_center, w, h, objectness, 80 class_scores]
+# Output shape: (N, 85) = [x_center, y_center, w, h, objectness, 80 class_scores]
 np.random.seed(42)
 mock_output = np.zeros((5, 85))
 mock_output[:, 4] = [0.92, 0.85, 0.78, 0.45, 0.30]   # objectness
-mock_output[:, 5] = 1   # class "person"
+mock_output[:, 5] = 1   # class index 0 (person) có score = 1
 mock_output[:, :4] = [
     [0.50, 0.20, 0.20, 0.30],   # đầu
     [0.50, 0.55, 0.45, 0.40],   # áo
@@ -805,7 +828,7 @@ mock_output[:, :4] = [
 
 # === XỬ LÝ OUTPUT ===
 conf_threshold = 0.5
-class_names = {1: 'person'}
+class_names = {0: 'person'}   # ✅ SỬA: class 0 là "person" (COCO dataset)
 
 out = img.copy()
 detections = []
@@ -814,13 +837,17 @@ for det in mock_output:
     conf = det[4]
     if conf < conf_threshold:
         continue
+
+    # argmax trả về index trong mảng class scores → đây chính là class_id
     class_id = int(np.argmax(det[5:]))
+
     xc, yc, bw, bh = det[:4]
     # Chuyển từ tọa độ chuẩn hóa → pixel
     x1 = int((xc - bw/2) * w)
     y1 = int((yc - bh/2) * h)
     x2 = int((xc + bw/2) * w)
     y2 = int((yc + bh/2) * h)
+
     detections.append((x1, y1, x2, y2, class_names[class_id], conf))
 
     cv2.rectangle(out, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -848,6 +875,7 @@ plt.axis('off'); plt.show()
 - Minh họa pipeline xử lý output của YOLO.
 
 ---
+
 
 ### 4.4. Mô hình U-Net — Minh họa kiến trúc
 
@@ -943,6 +971,7 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ### 4.5. Mô hình OpenPose — Keypoint giả lập
 
 **📌 Bài tập 14:**
@@ -1026,6 +1055,7 @@ plt.tight_layout(); plt.show()
 
 ---
 
+
 ### 4.6. Foundation Model — Zero-shot CLIP mô phỏng
 
 **📌 Bài tập 15:**
@@ -1108,60 +1138,923 @@ plt.tight_layout(); plt.show()
 - Prompt có cosine similarity cao nhất được chọn.
 - Không cần huấn luyện, chỉ cần định nghĩa prompt.
 - Minh họa nguyên lý **Zero-shot Classification** của CLIP.
+---
+
+
+## 5. Ứng dụng mô hình AI trong các bài toán thực tế
 
 ---
 
-## 5. Tổng kết
+
+### 5.1. Phân loại chữ số viết tay với MNIST
+**📌 Bài tập 16:**
+Sử dụng tập dữ liệu **MNIST** có sẵn trong `sklearn.datasets.load_digits()`. Huấn luyện mô hình **k-NN** và **SVM**, sau đó **dự đoán trên tập test** và hiển thị kết quả trực quan (đúng/sai).
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
+# ============ BƯỚC 1: TẢI DỮ LIỆU ============
+digits = load_digits()
+X, y = digits.data, digits.target
+print(f"Shape: {X.shape}, Số lớp: {len(digits.target_names)}")
+
+# ============ BƯỚC 2: CHIA TRAIN/TEST ============
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2,
+                                           random_state=42, stratify=y)
+
+# ============ BƯỚC 3: HUẤN LUYỆN ============
+knn = KNeighborsClassifier(n_neighbors=3).fit(X_tr, y_tr)
+svm = SVC(kernel='rbf', C=10.0, random_state=42).fit(X_tr, y_tr)
+
+# ============ BƯỚC 4: DỰ ĐOÁN TRÊN TẬP TEST ============
+y_pred_knn = knn.predict(X_te)
+y_pred_svm = svm.predict(X_te)
+
+print(f"k-NN Accuracy: {accuracy_score(y_te, y_pred_knn)*100:.2f}%")
+print(f"SVM  Accuracy: {accuracy_score(y_te, y_pred_svm)*100:.2f}%")
+
+# ============ BƯỚC 5: DỰ ĐOÁN 1 MẪU MỚI (PREDICT) ============
+# Chọn ngẫu nhiên 10 mẫu từ tập test để dự đoán
+np.random.seed(7)
+sample_idx = np.random.choice(len(X_te), 10, replace=False)
+X_sample = X_te[sample_idx]
+y_true = y_te[sample_idx]
+y_pred = svm.predict(X_sample)
+
+print(f"\n=== DỰ ĐOÁN 10 MẪU NGẪU NHIÊN (SVM) ===")
+print(f"{'STT':>4}{'Nhãn thật':>12}{'Dự đoán':>10}{'Đúng?':>8}")
+print("-" * 36)
+for i, (t, p) in enumerate(zip(y_true, y_pred), 1):
+    status = '✓' if t == p else '✗'
+    print(f"{i:>4}{t:>12}{p:>10}{status:>8}")
+
+# ============ BƯỚC 6: HIỂN THỊ TRỰC QUAN ============
+fig, axes = plt.subplots(2, 5, figsize=(14, 7))
+for i, ax in enumerate(axes.ravel()):
+    img = X_sample[i].reshape(8, 8)
+    ax.imshow(img, cmap='gray_r')
+    color = 'green' if y_true[i] == y_pred[i] else 'red'
+    ax.set_title(f'Thật: {y_true[i]}\nDự đoán: {y_pred[i]}',
+                 color=color, fontweight='bold', fontsize=11)
+    ax.axis('off')
+
+plt.suptitle('Dự đoán 10 mẫu — Xanh: đúng | Đỏ: sai',
+             fontsize=14, fontweight='bold', color='darkblue')
+plt.tight_layout(); plt.show()
+
+# ============ BƯỚC 7: CONFUSION MATRIX ============
+fig, ax = plt.subplots(figsize=(8, 7))
+ConfusionMatrixDisplay(confusion_matrix(y_te, y_pred_svm),
+                        display_labels=digits.target_names).plot(
+    ax=ax, cmap='Blues', colorbar=False)
+ax.set_title('Confusion Matrix — SVM', fontweight='bold')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- **Bảng dự đoán 10 mẫu:** hiển thị nhãn thật, dự đoán, đánh dấu đúng/sai.
+- **Hình ảnh trực quan:** 10 chữ số với tiêu đề **màu xanh** (đúng) hoặc **màu đỏ** (sai).
+- **Confusion matrix:** thấy rõ mô hình nhầm lẫn cặp chữ số nào.
 
 ---
 
-### 5.1. Bảng tổng hợp bài tập theo lý thuyết
 
-| Slide lý thuyết | Bài tập | Nội dung |
-|-----------------|:-------:|----------|
-| Kiến trúc hệ thống CV | 1 | Pipeline 4 giai đoạn |
-| So sánh CV vs Xử lý ảnh | 2 | Hai vai trò trên cùng ảnh |
-| Bài toán Classification | 3 | Color histogram + k-NN |
-| Bài toán Object Detection | 4 | Haar Cascade |
-| Bài toán Segmentation | 5 | Otsu + Morphology + Label |
-| Bài toán Keypoint | 6 | ORB detector |
-| Bài toán OCR | 7 | Template Matching |
-| Bài toán 3D | 8 | Stereo Vision |
-| Pipeline xây dựng hệ thống | 9 | Pipeline 7 bước |
-| Mô hình AI vs lập trình truyền thống | 10 | Rule-based vs k-NN |
-| ResNet | 11 | Transfer Learning |
-| YOLO | 12 | Xử lý output detection |
-| U-Net | 13 | Kiến trúc encoder-decoder |
-| OpenPose | 14 | Vẽ keypoint + skeleton |
-| CLIP | 15 | Zero-shot classification |
+### 5.2. Phân loại ảnh màu với CIFAR-10
+
+**📌 Bài tập 17:**
+Sử dụng tập **CIFAR-10** với **HOG + SVM**. Sau khi huấn luyện, dự đoán trên 10 ảnh mới và hiển thị trực quan.
+
+```python
+import torchvision
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage.feature import hog
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# ============ BƯỚC 1: TẢI DỮ LIỆU ============
+train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True)
+test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True)
+
+X_train = np.array([np.array(img) for img, _ in train_set])[:2000]
+y_train = np.array([label for _, label in train_set])[:2000]
+X_test = np.array([np.array(img) for img, _ in test_set])[:500]
+y_test = np.array([label for _, label in test_set])[:500]
+
+class_names = train_set.classes
+print(f"Classes: {class_names}")
+
+# ============ BƯỚC 2: TRÍCH XUẤT HOG ============
+def extract_hog(img):
+    gray = np.dot(img[..., :3], [0.299, 0.587, 0.114]).astype(np.uint8)
+    return hog(gray, orientations=9, pixels_per_cell=(8, 8),
+               cells_per_block=(2, 2))
+
+print("Đang trích xuất HOG...")
+X_tr_hog = np.array([extract_hog(img) for img in X_train])
+X_te_hog = np.array([extract_hog(img) for img in X_test])
+
+# ============ BƯỚC 3: HUẤN LUYỆN SVM ============
+svm = SVC(kernel='rbf', C=10.0, gamma='scale').fit(X_tr_hog, y_train)
+acc = accuracy_score(y_test, svm.predict(X_te_hog))
+print(f"SVM + HOG — Accuracy: {acc*100:.2f}%")
+
+# ============ BƯỚC 4: DỰ ĐOÁN 10 ẢNH MỚI ============
+np.random.seed(123)
+sample_idx = np.random.choice(len(X_test), 10, replace=False)
+X_sample = X_test[sample_idx]
+y_true = y_test[sample_idx]
+y_pred = svm.predict(X_te_hog[sample_idx])
+
+print(f"\n=== DỰ ĐOÁN 10 ẢNH CIFAR-10 ===")
+print(f"{'STT':>4}{'Nhãn thật':<15}{'Dự đoán':<15}{'Đúng?':>8}")
+print("-" * 45)
+n_correct = 0
+for i, (t, p) in enumerate(zip(y_true, y_pred), 1):
+    status = '✓' if t == p else '✗'
+    if t == p: n_correct += 1
+    print(f"{i:>4}{class_names[t]:<15}{class_names[p]:<15}{status:>8}")
+print(f"\nSố ảnh dự đoán đúng: {n_correct}/10")
+
+# ============ BƯỚC 5: HIỂN THỊ TRỰC QUAN ============
+fig, axes = plt.subplots(2, 5, figsize=(16, 7))
+for i, ax in enumerate(axes.ravel()):
+    ax.imshow(X_sample[i])
+    color = 'green' if y_true[i] == y_pred[i] else 'red'
+    ax.set_title(f'Thật: {class_names[y_true[i]]}\nDự đoán: {class_names[y_pred[i]]}',
+                 color=color, fontweight='bold', fontsize=10)
+    ax.axis('off')
+
+plt.suptitle(f'CIFAR-10 — Dự đoán {n_correct}/10 đúng (Xanh: đúng | Đỏ: sai)',
+             fontsize=14, fontweight='bold', color='darkblue')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Accuracy khoảng 40–55% (do subset nhỏ).
+- Hình ảnh 10 mẫu với nhãn màu xanh/đỏ.
+- Sinh viên thấy được mô hình dễ nhầm lẫn giữa các lớp giống nhau (cat ↔ dog).
 
 ---
 
-### 5.2. Lưu ý quan trọng khi chạy code
 
-| Vấn đề | Cách xử lý |
-|--------|-----------|
-| **`cv2.CascadeClassifier` không tồn tại** | Cài `opencv-contrib-python` + restart kernel |
-| **File XML Haar không có sẵn** | Tải tự động vào `/tmp/` qua `urllib` |
-| **PyTorch chưa cài** | `!pip install torch torchvision -q` |
-| **Tải ResNet18 pretrained** | Cần mạng (~45MB) |
-| **Hiển thị ảnh màu đọc từ OpenCV** | Đổi `BGR → RGB` trước `imshow` |
-| **OverflowError** với `uint8` | Ép về `int`/`float`, `clip` sau |
+### 5.3. Phát hiện đối tượng với YOLO qua OpenCV DNN
+
+**📌 Bài tập 18:**
+Sử dụng **YOLOv8n ONNX** pretrained. Sau khi inference, hiển thị **từng đối tượng phát hiện** dưới dạng crop riêng biệt.
+
+```python
+%pip install ultralytics -q
+```
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+import urllib.request
+from ultralytics import YOLO
+import os
+
+# ============ BƯỚC 1: TẢI MODEL ============
+MODEL_PATH = "/tmp/yolov8n.onnx"
+if not os.path.exists(MODEL_PATH):
+    print("Đang tải và export YOLOv8n sang ONNX...")
+    model_pt = YOLO("yolov8n.pt")          # tự động tải .pt (~6MB)
+    model_pt.export(format="onnx")          # export → yolov8n.onnx
+    # Di chuyển file về /tmp/
+    import shutil
+    shutil.move("yolov8n.onnx", MODEL_PATH)
+    print("Export xong!")
+
+net = cv2.dnn.readNetFromONNX(MODEL_PATH)
+
+# ============ BƯỚC 2: CHUẨN BỊ ẢNH ============
+img_rgb = data.astronaut()
+h, w = img_rgb.shape[:2]
+blob = cv2.dnn.blobFromImage(img_rgb, 1/255.0, (640, 640),
+                              swapRB=True, crop=False)
+net.setInput(blob)
+
+# ============ BƯỚC 3: INFERENCE ============
+outputs = np.squeeze(net.forward()).T
+
+conf_threshold = 0.4
+scores = np.max(outputs[:, 4:], axis=1)
+class_ids = np.argmax(outputs[:, 4:], axis=1)
+boxes = outputs[:, :4]
+
+mask = scores > conf_threshold
+boxes, scores, class_ids = boxes[mask], scores[mask], class_ids[mask]
+
+# ============ BƯỚC 4: VẼ KẾT QUẢ ============
+out = img_rgb.copy()
+detections = []
+for box, score, cls_id in zip(boxes, scores, class_ids):
+    xc, yc, bw, bh = box
+    x1 = max(0, int((xc - bw/2) * w / 640))
+    y1 = max(0, int((yc - bh/2) * h / 640))
+    x2 = min(w, int((xc + bw/2) * w / 640))
+    y2 = min(h, int((yc + bh/2) * h / 640))
+    detections.append((x1, y1, x2, y2, score, cls_id))
+    cv2.rectangle(out, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    cv2.putText(out, f'class_{cls_id} {score:.2f}', (x1, y1-5),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+print(f"Số đối tượng phát hiện: {len(boxes)}")
+for i, (x1, y1, x2, y2, score, cls_id) in enumerate(detections, 1):
+    print(f"  #{i}: class_{cls_id}, conf={score:.3f}, box=({x1},{y1},{x2},{y2})")
+
+# ============ BƯỚC 5: HIỂN THỊ TỔNG QUAN ============
+fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+axes[0].imshow(img_rgb); axes[0].set_title('Ảnh gốc', fontweight='bold')
+axes[0].axis('off')
+axes[1].imshow(out); axes[1].set_title(f'YOLOv8n — {len(boxes)} đối tượng',
+                                         fontweight='bold')
+axes[1].axis('off')
+plt.tight_layout(); plt.show()
+
+# ============ BƯỚC 6: HIỂN THỊ TỪNG ĐỐI TƯỢNG ĐƯỢC PHÁT HIỆN ============
+if len(detections) > 0:
+    n_show = min(len(detections), 6)
+    fig, axes = plt.subplots(1, n_show, figsize=(3 * n_show, 4))
+    if n_show == 1:
+        axes = [axes]
+    for i, (x1, y1, x2, y2, score, cls_id) in enumerate(detections[:n_show]):
+        crop = img_rgb[y1:y2, x1:x2]
+        axes[i].imshow(crop)
+        axes[i].set_title(f'class_{cls_id}\nconf={score:.2f}',
+                          color='darkgreen', fontweight='bold')
+        axes[i].axis('off')
+    plt.suptitle('Các đối tượng được phát hiện (crop riêng)',
+                 fontsize=14, fontweight='bold', color='darkblue')
+    plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Ảnh gốc và ảnh với bounding box.
+- **Dãy ảnh crop** hiển thị từng đối tượng được phát hiện riêng biệt — sinh viên thấy trực quan mô hình "nhìn thấy" gì.
 
 ---
 
-### 5.3. Tổng kết
 
-**Bốn nhóm nội dung chính Chương 5:**
+### 5.4. Phát hiện đối tượng với RetinaNet pretrained
 
-| Nhóm | Số bài tập | Kỹ thuật chủ đạo |
-|------|:----------:|------------------|
-| **1. Tổng quan về CV** | 1 → 2 | Kiến trúc 4 giai đoạn, so sánh CV vs IP |
-| **2. Các bài toán trong CV** | 3 → 8 | Classification, Detection, Segmentation, Keypoint, OCR, 3D |
-| **3. Quy trình và công cụ** | 9 | Pipeline 7 bước |
-| **4. Mô hình AI** | 10 → 15 | ResNet, YOLO, U-Net, OpenPose, CLIP |
+**📌 Bài tập 19:**
+Sử dụng **RetinaNet ResNet50 FPN** pretrained trên **COCO**. Hiển thị kết quả và crop riêng từng đối tượng.
 
-**Nhớ 3 điều:**
-1. **Computer Vision = hiểu nội dung ảnh** — không chỉ xử lý pixel.
-2. **OpenCV** cung cấp công cụ cổ điển (Haar, ORB) + chạy DL models (DNN module).
-3. **Mô hình AI hiện đại** (ResNet, YOLO, U-Net) đạt độ chính xác vượt trội — **Transfer Learning** là cách thực tế nhất cho sinh viên.
+```python
+import torch
+import torchvision
+from torchvision.models.detection import retinanet_resnet50_fpn
+from torchvision.transforms import functional as F
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+from skimage import data
+
+# ============ BƯỚC 1: LOAD MODEL ============
+print("Đang tải RetinaNet ResNet50 FPN (~130MB)...")
+model = retinanet_resnet50_fpn(pretrained=True)
+model.eval()
+
+# ============ BƯỚC 2: CHUẨN BỊ ẢNH ============
+img_pil = Image.fromarray(data.astronaut())
+img_tensor = F.to_tensor(img_pil)
+
+# ============ BƯỚC 3: INFERENCE ============
+with torch.no_grad():
+    predictions = model([img_tensor])[0]
+
+# ============ BƯỚC 4: LỌC THEO CONFIDENCE ============
+conf_threshold = 0.5
+keep = predictions['scores'] > conf_threshold
+boxes = predictions['boxes'][keep].numpy()
+labels = predictions['labels'][keep].numpy()
+scores = predictions['scores'][keep].numpy()
+
+COCO_CLASSES = ['__background__', 'person', 'bicycle', 'car', 'motorcycle',
+                'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+                'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
+                'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
+                'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',
+                'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
+                'kite', 'baseball bat', 'baseball glove', 'skateboard',
+                'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
+                'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+                'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
+                'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed',
+                'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
+                'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
+                'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
+                'teddy bear', 'hair drier', 'toothbrush']
+
+# ============ BƯỚC 5: HIỂN THỊ KẾT QUẢ ============
+img_np = np.array(img_pil)
+fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+ax.imshow(img_np)
+
+print(f"\n{'Class':<15}{'Conf':>8}")
+print("-" * 23)
+for box, label, score in zip(boxes, labels, scores):
+    x1, y1, x2, y2 = box
+    class_name = COCO_CLASSES[label]
+    ax.add_patch(plt.Rectangle((x1, y1), x2-x1, y2-y1,
+                               fill=False, edgecolor='lime', linewidth=3))
+    ax.text(x1, y1-8, f'{class_name} {score:.2f}',
+            color='lime', fontsize=11, weight='bold',
+            bbox=dict(facecolor='black', alpha=0.6, pad=2))
+    print(f"{class_name:<15}{score:>8.2f}")
+
+ax.axis('off')
+ax.set_title(f'RetinaNet (COCO) — {len(boxes)} đối tượng',
+             fontsize=14, fontweight='bold')
+plt.tight_layout(); plt.show()
+
+# ============ BƯỚC 6: CROP RIÊNG TỪNG ĐỐI TƯỢNG ============
+if len(boxes) > 0:
+    n_show = min(len(boxes), 6)
+    fig, axes = plt.subplots(1, n_show, figsize=(3 * n_show, 4))
+    if n_show == 1:
+        axes = [axes]
+    for i in range(n_show):
+        x1, y1, x2, y2 = boxes[i].astype(int)
+        crop = img_np[y1:y2, x1:x2]
+        axes[i].imshow(crop)
+        axes[i].set_title(f'{COCO_CLASSES[labels[i]]}\nconf={scores[i]:.2f}',
+                          color='darkgreen', fontweight='bold')
+        axes[i].axis('off')
+    plt.suptitle('Các đối tượng được phát hiện (crop riêng)',
+                 fontsize=14, fontweight='bold', color='darkblue')
+    plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- Bounding box màu xanh lá với nhãn COCO.
+- **Dãy ảnh crop** từng đối tượng — sinh viên thấy rõ mô hình phát hiện gì.
+
+---
+
+
+### 5.5. Semantic Segmentation với U-Net trên Oxford-IIIT Pet
+
+**📌 Bài tập 20:**
+Sử dụng **Oxford-IIIT Pet** huấn luyện **U-Net**. Sau khi huấn luyện, **dự đoán** trên 3 ảnh mới và hiển thị **mask dự đoán** so với mask thật.
+
+```python
+import os
+import glob
+import tarfile
+import urllib.request
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+# ============ BƯỚC 1: TẢI VÀ GIẢI NÉN DATASET ============
+DATA_DIR = "/tmp/oxford_pet"
+os.makedirs(DATA_DIR, exist_ok=True)
+
+URLS = {
+    "images.tar.gz":      "https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz",
+    "annotations.tar.gz": "https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz",
+}
+
+for filename, url in URLS.items():
+    filepath = os.path.join(DATA_DIR, filename)
+    if not os.path.exists(filepath):
+        print(f"Đang tải {filename}...")
+        urllib.request.urlretrieve(url, filepath)
+        print(f"  ✓ Đã tải {filename}")
+
+    # Giải nén nếu chưa có thư mục đích
+    extract_dir = os.path.join(DATA_DIR, filename.replace(".tar.gz", ""))
+    if not os.path.exists(extract_dir):
+        print(f"Đang giải nén {filename}...")
+        with tarfile.open(filepath) as tar:
+            tar.extractall(path=DATA_DIR)
+        print(f"  ✓ Đã giải nén")
+
+# Kiểm tra cấu trúc thư mục
+IMG_DIR = os.path.join(DATA_DIR, "images")
+MASK_DIR = os.path.join(DATA_DIR, "annotations", "trimaps")
+SPLIT_DIR = os.path.join(DATA_DIR, "annotations")
+
+print(f"\nSố ảnh      : {len(os.listdir(IMG_DIR))}")
+print(f"Số mask     : {len(os.listdir(MASK_DIR))}")
+
+# ============ BƯỚC 2: ĐỌC DANH SÁCH TRAIN / TEST ============
+def read_split(filename):
+    """Đọc file split (trainval.txt hoặc test.txt) → danh sách tên ảnh."""
+    filepath = os.path.join(SPLIT_DIR, filename)
+    names = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                names.append(line.split()[0])
+    return names
+
+train_names = read_split("trainval.txt")
+test_names  = read_split("test.txt")
+print(f"Train: {len(train_names)} ảnh")
+print(f"Test : {len(test_names)} ảnh")
+
+# ============ BƯỚC 3: PIPELINE ĐỌC ẢNH + MASK ============
+IMG_SIZE = 128
+
+def load_sample(name):
+    """Đọc 1 ảnh + mask, resize về IMG_SIZE."""
+    # Ảnh gốc (.jpg)
+    img_path = os.path.join(IMG_DIR, name + ".jpg")
+    img = tf.io.read_file(img_path)
+    img = tf.image.decode_jpeg(img, channels=3)
+    img = tf.image.resize(img, (IMG_SIZE, IMG_SIZE)) / 255.0
+
+    # Mask (.png), giá trị gốc: 1=pet, 2=background, 3=boundary
+    # → trừ 1 để về [0, 1, 2] cho sparse_categorical_crossentropy
+    mask_path = os.path.join(MASK_DIR, name + ".png")
+    mask = tf.io.read_file(mask_path)
+    mask = tf.image.decode_png(mask, channels=1)
+    mask = tf.image.resize(mask, (IMG_SIZE, IMG_SIZE),
+                            method='nearest')  # nearest để giữ giá trị nguyên
+    mask = tf.squeeze(mask, axis=-1) - 1
+    mask = tf.cast(mask, tf.int32)
+
+    return img, mask
+
+def make_dataset(names, batch_size=32, shuffle=True):
+    ds = tf.data.Dataset.from_tensor_slices(names)
+    if shuffle:
+        ds = ds.shuffle(len(names), seed=42)
+    ds = ds.map(load_sample, num_parallel_calls=tf.data.AUTOTUNE)
+    ds = ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+    return ds
+
+train_ds = make_dataset(train_names, shuffle=True)
+test_ds  = make_dataset(test_names, shuffle=False)
+
+print(f"\nSố batch train: {len(train_ds)}")
+print(f"Số batch test : {len(test_ds)}")
+
+# ============ BƯỚC 4: XÂY DỰNG U-NET MINI ============
+def unet_model():
+    inputs = tf.keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+
+    # --- Encoder ---
+    c1 = tf.keras.layers.Conv2D(16, 3, activation='relu', padding='same')(inputs)
+    p1 = tf.keras.layers.MaxPooling2D()(c1)
+
+    c2 = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(p1)
+    p2 = tf.keras.layers.MaxPooling2D()(c2)
+
+    # --- Bottleneck ---
+    b = tf.keras.layers.Conv2D(64, 3, activation='relu', padding='same')(p2)
+
+    # --- Decoder + Skip connections ---
+    u2 = tf.keras.layers.Conv2DTranspose(32, 2, strides=2, padding='same')(b)
+    u2 = tf.keras.layers.Concatenate()([u2, c2])
+    c3 = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(u2)
+
+    u1 = tf.keras.layers.Conv2DTranspose(16, 2, strides=2, padding='same')(c3)
+    u1 = tf.keras.layers.Concatenate()([u1, c1])
+    c4 = tf.keras.layers.Conv2D(16, 3, activation='relu', padding='same')(u1)
+
+    # --- Output: 3 lớp ---
+    outputs = tf.keras.layers.Conv2D(3, 1, activation='softmax')(c4)
+
+    return tf.keras.Model(inputs, outputs)
+
+model = unet_model()
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.summary()
+
+# ============ BƯỚC 5: HUẤN LUYỆN ============
+history = model.fit(train_ds, validation_data=test_ds, epochs=5)
+
+# ============ BƯỚC 6: VẼ ĐƯỜNG CONG ============
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+axes[0].plot(history.history['loss'], label='Train Loss', marker='o')
+axes[0].plot(history.history['val_loss'], label='Val Loss', marker='s')
+axes[0].set_title('Loss qua các epoch', fontweight='bold')
+axes[0].legend(); axes[0].grid(alpha=0.3)
+
+axes[1].plot(history.history['accuracy'], label='Train Acc', marker='o')
+axes[1].plot(history.history['val_accuracy'], label='Val Acc', marker='s')
+axes[1].set_title('Accuracy qua các epoch', fontweight='bold')
+axes[1].legend(); axes[1].grid(alpha=0.3)
+plt.tight_layout(); plt.show()
+
+# ============ BƯỚC 7: DỰ ĐOÁN TRÊN 3 ẢNH MỚI ============
+for images, masks in test_ds.take(1):
+    # Chọn 3 ảnh ngẫu nhiên
+    idx = np.random.choice(len(images), 3, replace=False)
+    sample_imgs  = tf.gather(images, idx)
+    sample_masks = tf.gather(masks, idx)
+
+    # DỰ ĐOÁN
+    preds = model.predict(sample_imgs, verbose=0)
+    pred_masks = np.argmax(preds, axis=-1)
+
+    # HIỂN THỊ
+    fig, axes = plt.subplots(3, 3, figsize=(9, 9))
+    for i in range(3):
+        axes[i, 0].imshow(sample_imgs[i])
+        axes[i, 0].set_title('Ảnh gốc', fontweight='bold')
+        axes[i, 1].imshow(sample_masks[i], cmap='viridis', vmin=0, vmax=2)
+        axes[i, 1].set_title('Mask thật', fontweight='bold')
+        axes[i, 2].imshow(pred_masks[i], cmap='viridis', vmin=0, vmax=2)
+        axes[i, 2].set_title('Mask dự đoán', fontweight='bold',
+                              color='darkgreen')
+        for ax in axes[i]: ax.axis('off')
+
+    plt.suptitle('U-Net — Dự đoán phân đoạn trên 3 ảnh mới',
+                 fontsize=13, fontweight='bold', color='darkblue')
+    plt.tight_layout(); plt.show()
+
+    # Đo IoU cho ảnh đầu tiên
+    print(f"\n=== Chỉ số IoU cho ảnh #1 ===")
+    mask_true = sample_masks[0].numpy()
+    mask_pred = pred_masks[0]
+    for cls in range(3):
+        inter = np.logical_and(mask_true == cls, mask_pred == cls).sum()
+        union = np.logical_or(mask_true == cls, mask_pred == cls).sum()
+        iou = inter / union if union > 0 else 0
+        class_name = ['Pet', 'Background', 'Boundary'][cls]
+        print(f"  Class {cls} ({class_name:<10}) — IoU: {iou:.3f}")
+
+    break
+```
+
+**Kết quả mong đợi:**
+- **Đồ thị loss/accuracy** qua 5 epoch.
+- **3 hàng ảnh:** ảnh gốc / mask thật / mask dự đoán.
+- **Chỉ số IoU** cho từng lớp — đánh giá chất lượng phân đoạn.
+
+---
+
+
+### 5.6. Phát hiện tư thế người với MediaPipe
+
+**📌 Bài tập 21:**
+Sử dụng **MediaPipe Pose** phát hiện **33 keypoint**. Hiển thị skeleton và tọa độ từng keypoint.
+
+```python
+# Cài đặt mediapipe (nếu chưa có)
+%pip install -q mediapipe
+
+# Tải model Pose Landmarker
+%wget -q -O pose_landmarker.task https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task
+```
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import data
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+
+# ============ BƯỚC 1: KHỞI TẠO POSE LANDMARKER (API MỚI) ============
+base_options = python.BaseOptions(model_asset_path='pose_landmarker.task')
+options = vision.PoseLandmarkerOptions(
+    base_options=base_options,
+    running_mode=vision.RunningMode.IMAGE,
+    min_pose_detection_confidence=0.5
+)
+landmarker = vision.PoseLandmarker.create_from_options(options)
+
+# ============ BƯỚC 2: CHUẨN BỊ ẢNH ============
+img_rgb = data.astronaut()
+img_rgb = cv2.resize(img_rgb, (512, 512))
+
+# Chuyển sang mediapipe.Image
+mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
+
+# ============ BƯỚC 3: DỰ ĐOÁN POSE ============
+results = landmarker.detect(mp_image)
+
+if results.pose_landmarks:
+    # results.pose_landmarks là list các NormalizedLandmarkList
+    # Lấy danh sách landmark của người đầu tiên
+    landmarks = results.pose_landmarks[0]
+    n_landmarks = len(landmarks)
+    print(f"Số keypoint phát hiện: {n_landmarks}")
+
+    # ============ BƯỚC 4: IN TỌA ĐỘ TỪNG KEYPOINT ============
+    POSE_NAMES = [
+        'nose', 'left_eye_inner', 'left_eye', 'left_eye_outer',
+        'right_eye_inner', 'right_eye', 'right_eye_outer',
+        'left_ear', 'right_ear', 'mouth_left', 'mouth_right',
+        'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
+        'left_wrist', 'right_wrist', 'left_pinky', 'right_pinky',
+        'left_index', 'right_index', 'left_thumb', 'right_thumb',
+        'left_hip', 'right_hip', 'left_knee', 'right_knee',
+        'left_ankle', 'right_ankle', 'left_heel', 'right_heel',
+        'left_foot_index', 'right_foot_index'
+    ]
+    print(f"\n{'Keypoint':<22}{'x':>8}{'y':>8}{'visibility':>12}")
+    print("-" * 50)
+    for i, lm in enumerate(landmarks[:10]):
+        name = POSE_NAMES[i] if i < len(POSE_NAMES) else f"kp_{i}"
+        print(f"{name:<22}{lm.x:>8.3f}{lm.y:>8.3f}{lm.visibility:>12.3f}")
+
+    # ============ BƯỚC 5: VẼ SKELETON ============
+    out = img_rgb.copy()
+    h, w = out.shape[:2]
+
+    # Vẽ keypoint
+    for lm in landmarks:
+        x, y = int(lm.x * w), int(lm.y * h)
+        cv2.circle(out, (x, y), 4, (255, 0, 0), -1)
+
+    # Vẽ các cạnh skeleton dựa trên kết nối chuẩn của MediaPipe Pose
+    # (Bạn cần định nghĩa các cặp keypoint cần nối)
+    POSE_CONNECTIONS = [
+        (0, 1), (1, 2), (2, 3), (3, 7), (0, 4), (4, 5), (5, 6), (6, 8),
+        (9, 10), (11, 12), (11, 13), (13, 15), (15, 17), (15, 19), (15, 21),
+        (17, 19), (12, 14), (14, 16), (16, 18), (16, 20), (16, 22), (18, 20),
+        (11, 23), (12, 24), (23, 24), (23, 25), (24, 26), (25, 27), (26, 28),
+        (27, 29), (28, 30), (29, 31), (30, 32), (27, 31), (28, 32)
+    ]
+    for p1, p2 in POSE_CONNECTIONS:
+        if p1 < len(landmarks) and p2 < len(landmarks):
+            x1, y1 = int(landmarks[p1].x * w), int(landmarks[p1].y * h)
+            x2, y2 = int(landmarks[p2].x * w), int(landmarks[p2].y * h)
+            cv2.line(out, (x1, y1), (x2, y2), (0, 255, 255), 2)
+
+    # ============ BƯỚC 6: HIỂN THỊ ============
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    axes[0].imshow(img_rgb)
+    axes[0].set_title('Ảnh gốc', fontweight='bold')
+
+    img_dots = img_rgb.copy()
+    for lm in landmarks:
+        x, y = int(lm.x * w), int(lm.y * h)
+        cv2.circle(img_dots, (x, y), 5, (255, 0, 0), -1)
+    axes[1].imshow(img_dots)
+    axes[1].set_title(f'Keypoint ({n_landmarks} điểm)', fontweight='bold')
+
+    axes[2].imshow(out)
+    axes[2].set_title('Skeleton đầy đủ', fontweight='bold', color='darkgreen')
+
+    for ax in axes: ax.axis('off')
+    plt.suptitle('MediaPipe Pose Landmarker (Tasks API) — Dự đoán tư thế người',
+                 fontsize=14, fontweight='bold', color='darkblue')
+    plt.tight_layout(); plt.show()
+else:
+    print("Không phát hiện được người trong ảnh.")
+
+# Đóng landmarker sau khi dùng xong
+landmarker.close()
+```
+
+**Kết quả mong đợi:**
+- **3 ảnh:** ảnh gốc, keypoint riêng lẻ, skeleton đầy đủ.
+- **Bảng tọa độ** 10 keypoint đầu với độ tin cậy visibility.
+- Sinh viên thấy mô hình "nhìn thấy" các khớp như thế nào.
+
+---
+
+
+### 5.7. OCR với EasyOCR
+
+**📌 Bài tập 22:**
+Sử dụng **EasyOCR** đọc chữ trong ảnh. Tạo 3 ảnh biển số khác nhau và **dự đoán trên từng ảnh**.
+
+```python
+%pip install easyocr -q
+```
+
+```python
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import easyocr
+
+# ============ BƯỚC 1: KHỞI TẠO ============
+reader = easyocr.Reader(['en'], gpu=False)
+
+# ============ BƯỚC 2: TẠO 3 ẢNH BIỂN SỐ ============
+def make_plate(text):
+    plate = np.zeros((100, 400, 3), dtype=np.uint8)
+    cv2.putText(plate, text, (20, 70),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.8, (255, 255, 255), 4)
+    return plate
+
+plates = [
+    ("29A-12345", "Biển 1"),
+    ("51F-67890", "Biển 2"),
+    ("ABC-9999",  "Biển 3"),
+]
+
+# ============ BƯỚC 3: DỰ ĐOÁN TRÊN TỪNG ẢNH ============
+fig, axes = plt.subplots(3, 2, figsize=(14, 10))
+
+for i, (text, name) in enumerate(plates):
+    plate = make_plate(text)
+
+    # DỰ ĐOÁN
+    results = reader.readtext(plate)
+
+    # Vẽ kết quả
+    out = plate.copy()
+    detected_text = ""
+    for bbox, txt, conf in results:
+        pts = np.array(bbox, dtype=np.int32)
+        cv2.polylines(out, [pts], True, (0, 255, 0), 2)
+        detected_text += txt + " "
+
+    # Hiển thị
+    axes[i, 0].imshow(cv2.cvtColor(plate, cv2.COLOR_BGR2RGB))
+    axes[i, 0].set_title(f'{name} — Gốc', fontweight='bold')
+    axes[i, 0].axis('off')
+
+    axes[i, 1].imshow(cv2.cvtColor(out, cv2.COLOR_BGR2RGB))
+    match = "✓" if text.replace("-", "") in detected_text.replace(" ", "").replace("-", "") else "?"
+    axes[i, 1].set_title(f'Dự đoán: "{detected_text.strip()}" {match}',
+                          fontweight='bold',
+                          color='darkgreen' if match == "✓" else 'darkorange')
+    axes[i, 1].axis('off')
+
+    # In bảng chi tiết
+    print(f"\n=== {name} ===")
+    print(f"Text gốc: {text}")
+    for bbox, txt, conf in results:
+        print(f"  Text: {txt:<15} Conf: {conf:.3f}")
+
+plt.suptitle('EasyOCR — Dự đoán trên 3 ảnh biển số',
+             fontsize=14, fontweight='bold', color='darkblue')
+plt.tight_layout(); plt.show()
+```
+
+**Kết quả mong đợi:**
+- **3 hàng ảnh:** mỗi hàng gồm ảnh gốc + ảnh với bounding box.
+- **Text dự đoán** so với text gốc, đánh dấu ✓ nếu khớp.
+- **Bảng confidence** cho từng vùng chữ.
+
+---
+
+<!-- #region -->
+# Hướng dẫn điều chỉnh kích thước ảnh hiển thị
+
+Ảnh bị vỡ thường do **`figsize` quá lớn** kết hợp với **ảnh gốc có kích thước nhỏ**. Dưới đây là các cách điều chỉnh:
+
+## 1. Giảm `figsize` trong `plt.subplots`
+
+Đây là cách đơn giản nhất. Nếu đang dùng `figsize=(20, 5)`, giảm xuống `(12, 3)` hoặc `(10, 2.5)`.
+
+```python
+# Trước — quá lớn
+fig, axes = plt.subplots(1, 5, figsize=(20, 4))
+
+# Sau — nhỏ hơn, ảnh không bị vỡ
+fig, axes = plt.subplots(1, 5, figsize=(12, 2.5))
+```
+
+**Quy tắc chung:** mỗi subplot nên rộng khoảng **2–3 inch**, không nên vượt quá 4 inch.
+
+## 2. Giảm số ảnh trên một hàng (tăng `nrows`)
+
+Nếu hiển thị 10 ảnh trên 1 hàng, mỗi ảnh sẽ rất nhỏ và dễ vỡ. Chia thành 2 hàng × 5 cột sẽ đẹp hơn.
+
+```python
+# Trước — 10 ảnh trên 1 hàng, mỗi ảnh ~2 inch
+fig, axes = plt.subplots(1, 10, figsize=(20, 3))
+
+# Sau — 2 hàng × 5 cột, mỗi ảnh ~3 inch
+fig, axes = plt.subplots(2, 5, figsize=(14, 6))
+for ax in axes.ravel():
+    ax.axis('off')
+```
+
+## 3. Set DPI hiển thị toàn cục
+
+Thêm dòng này **1 lần duy nhất** ở đầu notebook:
+
+```python
+import matplotlib.pyplot as plt
+plt.rcParams['figure.dpi'] = 80       # mặc định là 100
+plt.rcParams['savefig.dpi'] = 100     # khi lưu file
+```
+
+Hoặc set trong từng figure:
+
+```python
+fig = plt.figure(figsize=(10, 3), dpi=80)
+```
+
+## 4. Dùng `interpolation` phù hợp cho ảnh nhỏ
+
+Ảnh nhỏ như **MNIST (8×8)** khi phóng to sẽ bị "pixel hóa". Dùng `interpolation='nearest'` để giữ nét vuông, hoặc `'bilinear'` để làm mượt.
+
+```python
+# Cho MNIST — giữ nét pixel rõ ràng
+ax.imshow(img, cmap='gray_r', interpolation='nearest')
+
+# Cho ảnh tự nhiên — làm mượt
+ax.imshow(img, interpolation='bilinear')
+```
+
+## 5. Dùng `plt.tight_layout()` và `subplots_adjust`
+
+Giảm khoảng trắng giữa các ảnh để tận dụng không gian:
+
+```python
+plt.tight_layout()                              # tự động
+# Hoặc điều chỉnh thủ công
+plt.subplots_adjust(wspace=0.1, hspace=0.2)     # giảm khoảng cách
+```
+
+## 6. Giảm số ảnh hiển thị (chỉ show 5–6 ảnh)
+
+Nếu có 20 ảnh, chỉ hiển thị **6 ảnh đại diện** thay vì tất cả:
+
+```python
+n_show = 6
+fig, axes = plt.subplots(2, 3, figsize=(10, 6))
+for i, ax in enumerate(axes.ravel()):
+    ax.imshow(images[i])
+    ax.axis('off')
+```
+
+## 7. Với ảnh crop từ object detection (dãy ngang dài)
+
+Nếu có nhiều ảnh crop (5–6 ảnh), đừng dùng `figsize=(3*n, 4)`. Thay bằng:
+
+```python
+n_show = min(len(detections), 6)
+fig, axes = plt.subplots(2, 3, figsize=(10, 6))   # lưới 2×3 thay vì 1×6
+for i, ax in enumerate(axes.ravel()[:n_show]):
+    ax.imshow(crop_list[i])
+    ax.axis('off')
+for j in range(n_show, 6):
+    axes.ravel()[j].axis('off')
+```
+
+## 8. Với confusion matrix (thường bị to)
+
+```python
+# Trước
+fig, ax = plt.subplots(figsize=(8, 7))
+
+# Sau
+fig, ax = plt.subplots(figsize=(6, 5))
+```
+
+## 9. Với `InsightFace` / `label2rgb` / ảnh output
+
+Nếu output là **ảnh 512×512 hoặc lớn hơn**, `figsize` chỉ cần **4×4 inch** là đủ:
+
+```python
+plt.figure(figsize=(5, 5))    # thay vì (10, 8)
+plt.imshow(result)
+plt.axis('off'); plt.show()
+```
+
+## 10. Bảng tóm tắt kích thước gợi ý
+
+| Loại hiển thị | `figsize` gợi ý |
+|---------------|:---------------:|
+| 1 ảnh đơn | `(5, 5)` hoặc `(6, 6)` |
+| 2 ảnh ngang | `(10, 4)` |
+| 3 ảnh ngang | `(12, 4)` |
+| 4 ảnh ngang | `(14, 4)` |
+| 5 ảnh ngang | `(15, 3)` |
+| Lưới 2×3 | `(12, 7)` |
+| Lưới 3×3 | `(12, 12)` |
+| Confusion matrix 10×10 | `(6, 5)` |
+
+## 11. Mẹo nhanh — công thức chung
+
+> **Chiều rộng figure ≈ số cột × 2.5 đến 3 inch**  
+> **Chiều cao figure ≈ số hàng × 2.5 đến 3 inch**
+
+Ví dụ: lưới `2×5` → `figsize ≈ (5 × 2.8, 2 × 2.8) = (14, 5.6)`.
+
+## 12. Nếu vẫn bị vỡ sau khi in ra file
+
+Nguyên nhân có thể do **`savefig` với DPI quá cao** → file nặng nhưng khi hiển thị lại bị thu nhỏ. Sửa:
+
+```python
+plt.savefig('output.png', dpi=100, bbox_inches='tight')   # thay vì dpi=300
+```
+
+---
+
+## Quy trình điều chỉnh nhanh
+
+1. **Giảm `figsize`** xuống 50–60% so với hiện tại.
+2. **Thêm `interpolation='nearest'`** cho ảnh nhỏ (MNIST, mask).
+3. **Đổi layout** từ `1×N` sang `2×ceil(N/2)` nếu N > 4.
+4. **Set `plt.rcParams['figure.dpi'] = 80`** ở đầu notebook.
+5. **Chỉ show 5–6 ảnh** đại diện nếu có quá nhiều.
+<!-- #endregion -->

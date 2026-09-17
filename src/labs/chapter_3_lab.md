@@ -82,7 +82,7 @@ print(f"Số bit gốc b = {b:,} bit = {b/8/1024:.1f} KB\n")
 C_list = [2, 5, 10, 20]
 
 # 3. In bảng: b', C, R
-print(f"{'C giả định':>12}{'b\\' (bit)':>15}{'C tính':>12}{'R = 1 - 1/C':>16}")
+print(f"{'C giả định':>12}{'b-prime (bit)':>15}{'C tính':>12}{'R = 1 - 1/C':>16}")
 print("-" * 55)
 for C in C_list:
     b_prime = b // C
@@ -1136,61 +1136,3 @@ plt.tight_layout(); plt.show()
 | **Wavelet + ngưỡng** | Nén mạnh, không blocking artifact |
 
 **Trade-off:** Tỷ lệ nén càng cao → RMSE tăng, SNR giảm.
-
----
-
-
-## 4. Tổng kết
-
----
-
-
-### 4.1. Bảng tổng hợp — Ví dụ theo slide lý thuyết
-
-| Slide lý thuyết | Bài tập | Chủ đề |
-|-----------------|:-------:|--------|
-| Entropy | 1 | Đo lượng tin trung bình |
-| Tỷ lệ nén & dư thừa | 2 | Công thức C, R |
-| RMSE & SNR | 3 | Đánh giá chất lượng |
-| Mã Huffman | 4 | Xây dựng cây + mã hóa |
-| Golomb-Rice | 5 | Mã hóa số nguyên |
-| Mã số học | 6 | Arithmetic Coding |
-| Mã LZW | 7 | Từ điển động |
-| Mã RLE | 8 | Chuỗi lặp |
-| Bit-Plane | 9 | Mã hóa bit-plane |
-| Block Transform Coding | 10 | DCT 8×8 |
-| Pipeline JPEG | 11 | DCT + Zigzag + RLE |
-| DPCM | 12 | Mã hóa dự đoán |
-| Wavelet | 13 | DWT Haar |
-| So sánh nén | 14 | Lossless vs Lossy |
-
----
-
-
-### 4.2. Lưu ý quan trọng khi chạy code
-
-| Vấn đề | Cách xử lý |
-|--------|-----------|
-| **OverflowError** khi cộng/trừ `uint8` | Ép về `int`/`float` trước, `clip` sau |
-| **Entropy sai số** có giá trị âm | Histogram bin `[-256, 256]` với 512 bin |
-| **DCT** yêu cầu `float32` | `.astype(np.float32)` trước `cv2.dct` |
-| **RLE round-trip** | Lưu cả `shape` để reshape khi giải nén |
-| **Notch filter** (nếu tái sử dụng) | Khai báo `u0`, `v0`, `A` ở phạm vi toàn cục |
-
----
-
-
-### 4.3. Tổng kết
-
-**Ba nhóm nội dung chính Chương 3:**
-
-| Nhóm | Số bài tập | Kỹ thuật chủ đạo |
-|------|:----------:|------------------|
-| **1. Đo lường & đánh giá** | 1 → 3 | Entropy, C, R, RMSE, SNR |
-| **2. Nén Lossless** | 4 → 9 | Huffman, Golomb-Rice, Arithmetic, LZW, RLE, Bit-Plane |
-| **3. Nén Lossy** | 10 → 14 | DCT, JPEG pipeline, DPCM, Wavelet |
-
-**📌 Nhớ 3 điều:**
-1. **Entropy** là giới hạn dưới lý thuyết của nén lossless (định lý Shannon).
-2. **Nén Lossless:** giữ nguyên dữ liệu, tỷ lệ nén thấp (2:1 → 4:1).
-3. **Nén Lossy:** loại bỏ thông tin không quan trọng, tỷ lệ nén cao (10:1 → 20:1+).
