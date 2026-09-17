@@ -68,7 +68,7 @@ transition: zoom
 
 
 ---
-<!--_class: text-2xs-->
+<!--_class: text-xs-->
 
 # Kiến trúc hệ thống Computer Vision
 
@@ -89,17 +89,18 @@ transition: zoom
 </div>
 <div class="col-3">
 
-![](images/cv_architecture.png)
+![height:300](images/cv_architecture.png)
 
 - **Giai đoạn 3 - Hiểu và nhận thức**
   - Phân loại đối tượng, phát hiện đối tượng, ước lượng thuộc tính.
   - Đây là bước suy luận về nội dung ảnh.
-
-</div>
-</div>
-
 - **Giai đoạn 4 - Ra quyết định**
   - Đưa ra kết quả cuối cùng dựa trên bài toán cụ thể.
+
+</div>
+</div>
+
+
 
 ---
 <!--_class: text-xs-->
