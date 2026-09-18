@@ -1,5 +1,5 @@
 [project]
-name = "xla_tgmt"
+name = "xla-tgmt"
 version = "0.1.0"
 description = "Computer Vision and Machine Learning experiments"
 readme = "README.md"
