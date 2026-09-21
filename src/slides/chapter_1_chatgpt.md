@@ -41,7 +41,7 @@ paginate: true
 
 ### Tên học phần
 
-**Xử lý ảnh và Thị giác máy tính**
+>**Xử lý ảnh và Thị giác máy tính**
 
 ### Quy mô
 
