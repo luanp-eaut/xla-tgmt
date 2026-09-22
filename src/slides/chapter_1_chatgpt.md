@@ -1880,5 +1880,3 @@ Understanding
 ### Các chương tiếp theo sẽ trả lời:
 
 > **Làm thế nào để xử lý và biến đổi ảnh hiệu quả?**
-
----

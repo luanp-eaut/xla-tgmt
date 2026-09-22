@@ -48,7 +48,7 @@ Sau chương này, sinh viên có thể:
 
 ---
 
-### Slide 3 — NỘI DUNG
+# SLIDE 3 — NỘI DUNG
 
 # NỘI DUNG
 
@@ -91,7 +91,7 @@ Sau chương này, sinh viên có thể:
 
 ---
 
-### Slide 4 — HAI CÁCH NHÌN VỀ ẢNH
+# SLIDE 4 — HAI CÁCH NHÌN VỀ ẢNH
 
 # XỬ LÝ ẢNH: HAI MIỀN BIỂU DIỄN
 
@@ -124,14 +124,15 @@ Ví dụ:
 * Band-reject / Notch Filter
 
 ---
+<!--_class: section-->
 
-# PHẦN II — BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
+# BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
 ---
 
-### Slide 5 — BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
+# SLIDE 5 — BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
-# BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
+### BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
 **Spatial-domain processing**
 
@@ -153,50 +154,42 @@ Transform    Filtering
 
 ---
 
-### Slide 6 — POINT PROCESSING VÀ NEIGHBORHOOD PROCESSING
+# SLIDE 6 — POINT PROCESSING VÀ NEIGHBORHOOD PROCESSING
 
-# PHÂN LOẠI XỬ LÝ TRONG MIỀN KHÔNG GIAN
+### PHÂN LOẠI XỬ LÝ TRONG MIỀN KHÔNG GIAN
 
-### Point Processing
-
-Giá trị pixel đầu ra chỉ phụ thuộc vào **pixel tương ứng ở ảnh đầu vào**.
-
+- **Point Processing**: Giá trị pixel đầu ra chỉ phụ thuộc vào **pixel tương ứng ở ảnh đầu vào**.
 $$
 g(x,y)=T[f(x,y)]
 $$
 
-Ví dụ:
+- Ví dụ:
 
-* Negative
-* Log
-* Gamma
-* Contrast stretching
+    * Negative
+    * Log
+    * Gamma
+    * Contrast stretching
 
-### Neighborhood Processing
-
-Giá trị pixel đầu ra phụ thuộc vào **một vùng lân cận** quanh pixel đó.
-
+- **Neighborhood Processing**: Giá trị pixel đầu ra phụ thuộc vào **một vùng lân cận** quanh pixel đó.
 $$
 g(x,y)=T\{f(s,t)\mid(s,t)\in N(x,y)\}
 $$
 
-Ví dụ:
+- Ví dụ:
 
-* Mean Filter
-* Gaussian Filter
-* Median Filter
-* Sobel
-* Laplacian
+    * Mean Filter
+    * Gaussian Filter
+    * Median Filter
+    * Sobel
+    * Laplacian
 
 ---
 
-### Slide 7 — BIẾN ĐỔI CƯỜNG ĐỘ
+# SLIDE 7 — BIẾN ĐỔI CƯỜNG ĐỘ
 
-# BIẾN ĐỔI CƯỜNG ĐỘ
+### BIẾN ĐỔI CƯỜNG ĐỘ
 
-**Intensity Transformation**
-
-Là kỹ thuật **point processing**:
+- **Intensity Transformation** Là kỹ thuật **point processing**:
 
 > Mỗi pixel được biến đổi độc lập dựa trên giá trị cường độ của chính nó.
 
@@ -221,9 +214,9 @@ Mục đích:
 
 ---
 
-### Slide 8 — ẢNH ÂM BẢN
+# SLIDE 8 — ẢNH ÂM BẢN
 
-# ẢNH ÂM BẢN
+### ẢNH ÂM BẢN
 
 **Image Negative**
 
@@ -253,9 +246,9 @@ $$
 
 ---
 
-### Slide 9 — BIẾN ĐỔI LOGARITHM
+# SLIDE 9 — BIẾN ĐỔI LOGARITHM
 
-# BIẾN ĐỔI LOGARITHM
+### BIẾN ĐỔI LOGARITHM
 
 **Log Transformation**
 
@@ -280,9 +273,9 @@ Do đó, các chi tiết trong vùng tối có thể được làm nổi bật.
 
 ---
 
-### Slide 10 — BIẾN ĐỔI GAMMA
+# SLIDE 10 — BIẾN ĐỔI GAMMA
 
-# BIẾN ĐỔI LŨY THỪA / GAMMA
+### BIẾN ĐỔI LŨY THỪA / GAMMA
 
 **Power-Law / Gamma Transformation**
 
@@ -308,9 +301,9 @@ với \(r\) thường được chuẩn hóa về \([0,1]\).
 
 ---
 
-### Slide 11 — TRỰC QUAN VỀ GAMMA
+# SLIDE 11 — TRỰC QUAN VỀ GAMMA
 
-# ẢNH HƯỞNG CỦA THAM SỐ GAMMA
+### ẢNH HƯỞNG CỦA THAM SỐ GAMMA
 
 ```text
 Output
@@ -339,13 +332,11 @@ $$
 
 ---
 
-### Slide 12 — BIẾN ĐỔI HÀM BẬC THANG
+# SLIDE 12 — BIẾN ĐỔI HÀM BẬC THANG
 
-# BIẾN ĐỔI HÀM BẬC THANG
+### BIẾN ĐỔI HÀM BẬC THANG
 
-**Piecewise-Linear Transformation**
-
-Thay vì sử dụng một hàm duy nhất trên toàn bộ dải cường độ, ta chia dải giá trị thành nhiều đoạn.
+- **Piecewise-Linear Transformation**: Thay vì sử dụng một hàm duy nhất trên toàn bộ dải cường độ, ta chia dải giá trị thành nhiều đoạn.
 
 $$
 s=
@@ -366,14 +357,11 @@ Các kỹ thuật:
 
 ---
 
-### Slide 13 — CONTRAST STRETCHING
+# SLIDE 13 — CONTRAST STRETCHING
 
-# TĂNG CƯỜNG ĐỘ TƯƠNG PHẢN
+### TĂNG CƯỜNG ĐỘ TƯƠNG PHẢN
 
-**Contrast Stretching**
-
-Mục tiêu:
-
+- **Contrast Stretching**: Mục tiêu:
 > Mở rộng khoảng giá trị cường độ của ảnh để tăng sự khác biệt giữa các vùng sáng và tối.
 
 Ví dụ:
@@ -405,9 +393,9 @@ $$
 
 ---
 
-### Slide 14 — GRAY-LEVEL SLICING
+# SLIDE 14 — GRAY-LEVEL SLICING
 
-# CẮT MỨC XÁM
+### CẮT MỨC XÁM
 
 **Gray-Level Slicing**
 
@@ -437,9 +425,9 @@ Có thể:
 
 ---
 
-### Slide 15 — BIT-PLANE SLICING
+# SLIDE 15 — BIT-PLANE SLICING
 
-# TRÍCH XUẤT MẶT PHẲNG BIT
+### TRÍCH XUẤT MẶT PHẲNG BIT
 
 **Bit-Plane Slicing**
 
@@ -469,9 +457,9 @@ Trong đó:
 
 ---
 
-### Slide 16 — THỰC HÀNH BIẾN ĐỔI CƯỜNG ĐỘ
+# SLIDE 16 — THỰC HÀNH BIẾN ĐỔI CƯỜNG ĐỘ
 
-# BÀI TẬP THỰC HÀNH
+### BÀI TẬP THỰC HÀNH
 
 Sử dụng Python + OpenCV:
 
@@ -488,18 +476,17 @@ Sử dụng Python + OpenCV:
 **Yêu cầu:** Giải thích tại sao các giá trị gamma khác nhau tạo ra kết quả khác nhau.
 
 ---
-
-# PHẦN III — LỌC KHÔNG GIAN
-
----
-
-### Slide 17 — LỌC KHÔNG GIAN
+<!--_class: section-->
 
 # LỌC KHÔNG GIAN
 
-**Spatial Filtering**
+---
 
-Là kỹ thuật thay đổi giá trị pixel dựa trên **các pixel trong vùng lân cận**.
+# SLIDE 17 — LỌC KHÔNG GIAN
+
+### LỌC KHÔNG GIAN
+
+**Spatial Filtering**: Là kỹ thuật thay đổi giá trị pixel dựa trên **các pixel trong vùng lân cận**.
 
 Cơ chế:
 
@@ -519,9 +506,9 @@ Kernel được dịch chuyển qua toàn bộ ảnh.
 
 ---
 
-### Slide 18 — KERNEL VÀ PHÉP LỌC
+# SLIDE 18 — KERNEL VÀ PHÉP LỌC
 
-# KERNEL / MASK
+### KERNEL / MASK
 
 Với kernel \(w(s,t)\):
 
@@ -547,11 +534,11 @@ $$
 
 ---
 
-### Slide 19 — PHÂN LOẠI BỘ LỌC
+# SLIDE 19 — PHÂN LOẠI BỘ LỌC
 
-# PHÂN LOẠI BỘ LỌC KHÔNG GIAN
+### PHÂN LOẠI BỘ LỌC KHÔNG GIAN
 
-### Smoothing Filters
+- #### Smoothing Filters
 
 **Làm mịn / Low-pass**
 
@@ -560,7 +547,7 @@ $$
 * Giảm chi tiết nhỏ.
 * Làm giảm các thay đổi cường độ nhanh.
 
-### Sharpening Filters
+- #### Sharpening Filters
 
 **Làm nét / High-pass**
 
@@ -570,7 +557,7 @@ $$
 
 ---
 
-### Slide 20 — BỘ LỌC TRUNG BÌNH
+# SLIDE 20 — BỘ LỌC TRUNG BÌNH
 
 # BỘ LỌC TRUNG BÌNH
 
@@ -605,7 +592,7 @@ $$
 
 ---
 
-### Slide 21 — BỘ LỌC GAUSSIAN
+# SLIDE 21 — BỘ LỌC GAUSSIAN
 
 # BỘ LỌC GAUSSIAN
 
@@ -631,7 +618,7 @@ $$
 
 ---
 
-### Slide 22 — BỘ LỌC TRUNG VỊ
+# SLIDE 22 — BỘ LỌC TRUNG VỊ
 
 # BỘ LỌC TRUNG VỊ
 
@@ -666,7 +653,7 @@ $$
 
 ---
 
-### Slide 23 — SO SÁNH CÁC BỘ LỌC LÀM MỊN
+# SLIDE 23 — SO SÁNH CÁC BỘ LỌC LÀM MỊN
 
 # TỔNG HỢP CÁC BỘ LỌC LÀM MỊN
 
@@ -682,7 +669,7 @@ $$
 
 ---
 
-### Slide 24 — LÀM MỊN ẢNH VỚI OPENCV
+# SLIDE 24 — LÀM MỊN ẢNH VỚI OPENCV
 
 # BÀI TẬP THỰC HÀNH
 
@@ -720,7 +707,7 @@ Original | Mean | Gaussian | Median
 
 ---
 
-### Slide 25 — ĐẠO HÀM VÀ BIÊN ẢNH
+# SLIDE 25 — ĐẠO HÀM VÀ BIÊN ẢNH
 
 # ĐẠO HÀM VÀ BIÊN ẢNH
 
@@ -750,7 +737,7 @@ Nhạy với các thay đổi cường độ nhanh và được sử dụng tron
 
 ---
 
-### Slide 26 — GRADIENT
+# SLIDE 26 — GRADIENT
 
 # GRADIENT CỦA ẢNH
 
@@ -793,7 +780,7 @@ $$
 
 ---
 
-### Slide 27 — SOBEL
+# SLIDE 27 — SOBEL
 
 # TOÁN TỬ SOBEL
 
@@ -831,7 +818,7 @@ $$
 
 ---
 
-### Slide 28 — PREWITT
+# SLIDE 28 — PREWITT
 
 # TOÁN TỬ PREWITT
 
@@ -863,7 +850,7 @@ $$
 
 ---
 
-### Slide 29 — PHÁT HIỆN BIÊN VỚI SOBEL
+# SLIDE 29 — PHÁT HIỆN BIÊN VỚI SOBEL
 
 # BÀI TẬP THỰC HÀNH
 
@@ -896,7 +883,7 @@ Gradient Magnitude
 
 ---
 
-### Slide 30 — LAPLACIAN
+# SLIDE 30 — LAPLACIAN
 
 # BỘ LỌC LAPLACIAN
 
@@ -933,7 +920,7 @@ $$
 
 ---
 
-### Slide 31 — PHÁT HIỆN BIÊN VÀ LÀM NÉT BẰNG LAPLACIAN
+# SLIDE 31 — PHÁT HIỆN BIÊN VÀ LÀM NÉT BẰNG LAPLACIAN
 
 # ỨNG DỤNG LAPLACIAN
 
@@ -960,7 +947,7 @@ Trong đó dấu \(c\) phụ thuộc quy ước kernel.
 
 ---
 
-### Slide 32 — LÀM NÉT ẢNH VỚI LAPLACIAN
+# SLIDE 32 — LÀM NÉT ẢNH VỚI LAPLACIAN
 
 # CÁC BƯỚC LÀM NÉT ẢNH
 
@@ -988,7 +975,7 @@ Cần kiểm soát:
 
 ---
 
-### Slide 33 — UNSHARP MASKING
+# SLIDE 33 — UNSHARP MASKING
 
 # UNSHARP MASKING
 
@@ -1024,7 +1011,7 @@ với \(k>0\).
 
 ---
 
-### Slide 34 — HIGHBOOST FILTERING
+# SLIDE 34 — HIGHBOOST FILTERING
 
 # HIGHBOOST FILTERING
 
@@ -1062,7 +1049,7 @@ Nếu tăng quá mạnh:
 
 ---
 
-### Slide 35 — SO SÁNH CÁC PHƯƠNG PHÁP LÀM NÉT
+# SLIDE 35 — SO SÁNH CÁC PHƯƠNG PHÁP LÀM NÉT
 
 # TỔNG HỢP CÁC BỘ LỌC LÀM NÉT
 
@@ -1075,7 +1062,7 @@ Nếu tăng quá mạnh:
 
 ---
 
-### Slide 36 — BÀI TẬP THỰC HÀNH SHARPENING
+# SLIDE 36 — BÀI TẬP THỰC HÀNH SHARPENING
 
 # BÀI TẬP THỰC HÀNH
 
@@ -1100,7 +1087,7 @@ Với cùng một ảnh:
 
 ---
 
-### Slide 37 — HISTOGRAM LÀ GÌ?
+# SLIDE 37 — HISTOGRAM LÀ GÌ?
 
 # HISTOGRAM ẢNH
 
@@ -1127,7 +1114,7 @@ với ảnh kích thước \(M\times N\).
 
 ---
 
-### Slide 38 — ĐỌC HISTOGRAM
+# SLIDE 38 — ĐỌC HISTOGRAM
 
 # HISTOGRAM CHO BIẾT ĐIỀU GÌ?
 
@@ -1151,7 +1138,7 @@ Histogram trải rộng trên một khoảng lớn.
 
 ---
 
-### Slide 39 — ỨNG DỤNG CỦA HISTOGRAM
+# SLIDE 39 — ỨNG DỤNG CỦA HISTOGRAM
 
 # HISTOGRAM ĐƯỢC SỬ DỤNG ĐỂ LÀM GÌ?
 
@@ -1182,7 +1169,7 @@ So sánh hoặc điều chỉnh ảnh có điều kiện chiếu sáng khác nha
 
 ---
 
-### Slide 40 — HISTOGRAM EQUALIZATION
+# SLIDE 40 — HISTOGRAM EQUALIZATION
 
 # CÂN BẰNG HISTOGRAM
 
@@ -1219,7 +1206,7 @@ Trong đó:
 
 ---
 
-### Slide 41 — HISTOGRAM EQUALIZATION: TRỰC QUAN
+# SLIDE 41 — HISTOGRAM EQUALIZATION: TRỰC QUAN
 
 # CƠ CHẾ CÂN BẰNG HISTOGRAM
 
@@ -1252,7 +1239,7 @@ Histogram sau cân bằng **không nhất thiết phẳng hoàn toàn** vì:
 
 ---
 
-### Slide 42 — HẠN CHẾ CỦA HISTOGRAM EQUALIZATION
+# SLIDE 42 — HẠN CHẾ CỦA HISTOGRAM EQUALIZATION
 
 # HẠN CHẾ
 
@@ -1267,7 +1254,7 @@ Do đó cần các phương pháp **local/adaptive enhancement**.
 
 ---
 
-### Slide 43 — HISTOGRAM MATCHING
+# SLIDE 43 — HISTOGRAM MATCHING
 
 # KHỚP HISTOGRAM
 
@@ -1301,7 +1288,7 @@ Target Image ──→ Equalization ──→ CDF_target
 
 ---
 
-### Slide 44 — LOCAL HISTOGRAM PROCESSING
+# SLIDE 44 — LOCAL HISTOGRAM PROCESSING
 
 # XỬ LÝ HISTOGRAM CỤC BỘ
 
@@ -1333,7 +1320,7 @@ Tại mỗi vị trí:
 
 ---
 
-### Slide 45 — CLAHE
+# SLIDE 45 — CLAHE
 
 # CLAHE
 
@@ -1367,7 +1354,7 @@ Nội suy giữa các tile
 
 ---
 
-### Slide 46 — THỰC HÀNH HISTOGRAM
+# SLIDE 46 — THỰC HÀNH HISTOGRAM
 
 # BÀI TẬP THỰC HÀNH
 
@@ -1402,7 +1389,7 @@ Vẽ histogram của cả ba ảnh.
 
 ---
 
-### Slide 47 — BIẾN ĐỔI TRONG MIỀN TẦN SỐ
+# SLIDE 47 — BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
 # BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
@@ -1430,7 +1417,7 @@ Spatial Domain
 
 ---
 
-### Slide 48 — LOW FREQUENCY VÀ HIGH FREQUENCY
+# SLIDE 48 — LOW FREQUENCY VÀ HIGH FREQUENCY
 
 # TẦN SỐ THẤP VÀ TẦN SỐ CAO
 
@@ -1460,7 +1447,7 @@ Sharp edge    → High frequency
 
 ---
 
-### Slide 49 — FOURIER TRANSFORM
+# SLIDE 49 — FOURIER TRANSFORM
 
 # BIẾN ĐỔI FOURIER
 
@@ -1498,7 +1485,7 @@ $$
 
 ---
 
-### Slide 50 — 2D DISCRETE FOURIER TRANSFORM
+# SLIDE 50 — 2D DISCRETE FOURIER TRANSFORM
 
 # 2D DFT
 
@@ -1526,7 +1513,7 @@ Kết quả DFT là **giá trị phức**.
 
 ---
 
-### Slide 51 — MAGNITUDE VÀ PHASE
+# SLIDE 51 — MAGNITUDE VÀ PHASE
 
 # PHỔ FOURIER
 
@@ -1564,7 +1551,7 @@ $$
 
 ---
 
-### Slide 52 — Ý NGHĨA CỦA PHỔ FOURIER
+# SLIDE 52 — Ý NGHĨA CỦA PHỔ FOURIER
 
 # FOURIER MAGNITUDE SPECTRUM
 
@@ -1599,7 +1586,7 @@ Khi dịch phổ để thành phần DC nằm ở giữa:
 
 ---
 
-### Slide 53 — TÍNH CHẤT CỦA 2D DFT
+# SLIDE 53 — TÍNH CHẤT CỦA 2D DFT
 
 # CÁC TÍNH CHẤT CỦA 2D DFT
 
@@ -1631,7 +1618,7 @@ Dịch ảnh trong miền không gian làm thay đổi **phase**, nhưng không 
 
 ---
 
-### Slide 54 — TỪ SPATIAL FILTER ĐẾN FREQUENCY FILTER
+# SLIDE 54 — TỪ SPATIAL FILTER ĐẾN FREQUENCY FILTER
 
 # HAI MIỀN — CÙNG MỘT Ý TƯỞNG
 
@@ -1649,7 +1636,7 @@ Dịch ảnh trong miền không gian làm thay đổi **phase**, nhưng không 
 
 ---
 
-### Slide 55 — ĐỊNH LÝ TÍCH CHẬP
+# SLIDE 55 — ĐỊNH LÝ TÍCH CHẬP
 
 # CONVOLUTION THEOREM
 
@@ -1686,7 +1673,7 @@ Cho phép thực hiện một số phép lọc lớn hiệu quả hơn bằng FF
 
 ---
 
-### Slide 56 — QUY TRÌNH LỌC TRONG MIỀN TẦN SỐ
+# SLIDE 56 — QUY TRÌNH LỌC TRONG MIỀN TẦN SỐ
 
 # FREQUENCY-DOMAIN FILTERING
 
@@ -1722,7 +1709,7 @@ Output Image
 
 ---
 
-### Slide 57 — LOW-PASS FILTER
+# SLIDE 57 — LOW-PASS FILTER
 
 # LỌC THÔNG THẤP
 
@@ -1752,7 +1739,7 @@ Trong phổ đã dịch tâm:
 
 ---
 
-### Slide 58 — IDEAL LOW-PASS FILTER
+# SLIDE 58 — IDEAL LOW-PASS FILTER
 
 # IDEAL LPF
 
@@ -1781,7 +1768,7 @@ $$
 
 ---
 
-### Slide 59 — GAUSSIAN LOW-PASS FILTER
+# SLIDE 59 — GAUSSIAN LOW-PASS FILTER
 
 # GAUSSIAN LPF
 
@@ -1808,7 +1795,7 @@ $$
 
 ---
 
-### Slide 60 — BUTTERWORTH LOW-PASS FILTER
+# SLIDE 60 — BUTTERWORTH LOW-PASS FILTER
 
 # BUTTERWORTH LPF
 
@@ -1833,7 +1820,7 @@ Trong đó:
 
 ---
 
-### Slide 61 — SO SÁNH LPF
+# SLIDE 61 — SO SÁNH LPF
 
 # SO SÁNH CÁC LPF
 
@@ -1853,7 +1840,7 @@ Trong đó:
 
 ---
 
-### Slide 62 — HIGH-PASS FILTER
+# SLIDE 62 — HIGH-PASS FILTER
 
 # LỌC THÔNG CAO
 
@@ -1881,7 +1868,7 @@ Trong phổ đã dịch tâm:
 
 ---
 
-### Slide 63 — HPF VÀ THÀNH PHẦN DC
+# SLIDE 63 — HPF VÀ THÀNH PHẦN DC
 
 # HPF VÀ THÀNH PHẦN DC
 
@@ -1911,7 +1898,7 @@ Sử dụng:
 
 ---
 
-### Slide 64 — LAPLACIAN TRONG MIỀN TẦN SỐ
+# SLIDE 64 — LAPLACIAN TRONG MIỀN TẦN SỐ
 
 # TOÁN TỬ LAPLACIAN TRONG MIỀN TẦN SỐ
 
@@ -1947,7 +1934,7 @@ $$
 
 ---
 
-### Slide 65 — HIGH-FREQUENCY EMPHASIS
+# SLIDE 65 — HIGH-FREQUENCY EMPHASIS
 
 # HIGH-FREQUENCY EMPHASIS
 
@@ -1982,7 +1969,7 @@ $$
 
 ---
 
-### Slide 66 — BAND-PASS VÀ BAND-REJECT
+# SLIDE 66 — BAND-PASS VÀ BAND-REJECT
 
 # LỌC CHỌN LỌC
 
@@ -2014,7 +2001,7 @@ $$
 
 ---
 
-### Slide 67 — NOTCH FILTER
+# SLIDE 67 — NOTCH FILTER
 
 # NOTCH FILTER
 
@@ -2042,7 +2029,7 @@ Inverse Fourier Transform
 
 ---
 
-### Slide 68 — VÍ DỤ NHIỄU TUẦN HOÀN
+# SLIDE 68 — VÍ DỤ NHIỄU TUẦN HOÀN
 
 # NHIỄU TUẦN HOÀN TRONG MIỀN TẦN SỐ
 
@@ -2070,7 +2057,7 @@ Các điểm bất thường này có thể được loại bỏ bằng notch fi
 
 ---
 
-### Slide 69 — FAST FOURIER TRANSFORM
+# SLIDE 69 — FAST FOURIER TRANSFORM
 
 # BIẾN ĐỔI FOURIER NHANH
 
@@ -2109,7 +2096,7 @@ FFT là thuật toán hiệu quả để tính DFT.
 
 ---
 
-### Slide 70 — FFT 2D
+# SLIDE 70 — FFT 2D
 
 # FFT CHO ẢNH
 
@@ -2138,7 +2125,7 @@ F_shift = np.fft.fftshift(F)
 
 ---
 
-### Slide 71 — HIỂN THỊ FOURIER SPECTRUM
+# SLIDE 71 — HIỂN THỊ FOURIER SPECTRUM
 
 # MAGNITUDE SPECTRUM
 
@@ -2167,7 +2154,7 @@ spectrum = np.log(
 
 ---
 
-### Slide 72 — THỰC HÀNH FFT + LOW-PASS
+# SLIDE 72 — THỰC HÀNH FFT + LOW-PASS
 
 # BÀI TẬP THỰC HÀNH
 
@@ -2213,7 +2200,7 @@ result = np.abs(result)
 
 ---
 
-### Slide 73 — QUAN SÁT KẾT QUẢ LỌC TẦN SỐ
+# SLIDE 73 — QUAN SÁT KẾT QUẢ LỌC TẦN SỐ
 
 # PHÂN TÍCH KẾT QUẢ
 
@@ -2248,7 +2235,7 @@ $$
 
 ---
 
-### Slide 74 — QUY TRÌNH XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
+# SLIDE 74 — QUY TRÌNH XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
 
 # CÁC BƯỚC XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
 
@@ -2292,7 +2279,7 @@ $$
 
 ---
 
-### Slide 75 — SPATIAL DOMAIN VS FREQUENCY DOMAIN
+# SLIDE 75 — SPATIAL DOMAIN VS FREQUENCY DOMAIN
 
 # SO SÁNH HAI MIỀN
 
@@ -2313,7 +2300,7 @@ $$
 
 ---
 
-### Slide 76 — TỔNG KẾT CHƯƠNG
+# SLIDE 76 — TỔNG KẾT CHƯƠNG
 
 # TÓM TẮT CHƯƠNG 2
 
@@ -2369,7 +2356,7 @@ $$
 
 ---
 
-### Slide 77 — KIẾN THỨC CẦN GHI NHỚ
+# SLIDE 77 — KIẾN THỨC CẦN GHI NHỚ
 
 # KEY TAKEAWAYS
 
