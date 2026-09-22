@@ -1,7 +1,7 @@
 {
     "scripts": {
-        "marp": "npx @marp-team/marp-cli src/slides/*.md --theme theme/styles.css --html",
-        "marp-pdf": "npx @marp-team/marp-cli src/slides/*.md --theme theme/styles.css --pdf --allow-local-files"
+        "marp": "npx @marp-team/marp-cli slides/*.md --theme theme/styles.css --html",
+        "marp-pdf": "npx @marp-team/marp-cli slides/*.md --theme theme/styles.css --pdf --allow-local-files"
     },
     "devDependencies": {
         "@marp-team/marp-cli":"latest"

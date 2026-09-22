@@ -142,3 +142,8 @@ int main() {
 | **Nạp chồng**       | Không hỗ trợ nạp chồng hàm                | Hỗ trợ nạp chồng hàm và toán tử                   |
 | **Tính an toàn**    | Ít an toàn hơn (con trỏ dễ gây lỗi)       | An toàn hơn nhờ hệ thống kiểu dữ liệu nghiêm ngặt |
 | **Thư viện**        | Hạn chế (chủ yếu là các hàm C tiêu chuẩn) | Phong phú (Standard Template Library - STL)       |
+
+---
+<!--_class: subsection-->
+
+# subsection heading
