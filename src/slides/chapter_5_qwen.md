@@ -18,6 +18,15 @@ transition: zoom
 ### Giảng viên: Nguyễn Phồn Lữa
 
 ---
+<!--_class: toc-->
+# NỘI DUNG
+
+- Tổng quan về Thị giác máy tính
+- Các bài toán trong Computer Vision
+- Quy trình và công cụ
+- Mô hình Deep Learning và Foundation Models
+
+---
 
 # MỤC TIÊU HỌC TẬP
 
@@ -34,7 +43,6 @@ Sau khi hoàn thành chương này, sinh viên có thể:
 - Hiểu nguyên lý **Transfer Learning** và biết khi nào nên sử dụng
 
 ---
-
 # NỘI DUNG CHƯƠNG
 
 **Phần 1 – Tổng quan về Thị giác máy tính**
@@ -65,7 +73,7 @@ Sau khi hoàn thành chương này, sinh viên có thể:
 ---
 <!--_class: section-->
 
-# PHẦN 1. TỔNG QUAN VỀ COMPUTER VISION
+# TỔNG QUAN VỀ COMPUTER VISION
 
 ---
 
@@ -357,7 +365,7 @@ Computer Vision có thể trả lời các câu hỏi khác nhau về ảnh:
 ---
 <!--_class: section-->
 
-# PHẦN 2. CÁC BÀI TOÁN TRONG COMPUTER VISION
+# CÁC BÀI TOÁN TRONG COMPUTER VISION
 
 ---
 
@@ -767,7 +775,7 @@ Trong đó $K$ là số keypoint.
 ---
 <!--_class: section-->
 
-# PHẦN 3. QUY TRÌNH XÂY DỰNG HỆ THỐNG
+# QUY TRÌNH XÂY DỰNG HỆ THỐNG
 
 ---
 
@@ -1108,7 +1116,7 @@ $$
 ---
 <!--_class: section-->
 
-# PHẦN 4. CÔNG CỤ VÀ THƯ VIỆN
+# CÔNG CỤ VÀ THƯ VIỆN
 
 ---
 
@@ -1176,7 +1184,7 @@ $$
 ---
 <!--_class: section-->
 
-# PHẦN 5. MÔ HÌNH AI TRONG COMPUTER VISION
+# MÔ HÌNH AI TRONG COMPUTER VISION
 
 ---
 

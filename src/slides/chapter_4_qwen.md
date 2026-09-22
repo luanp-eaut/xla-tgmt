@@ -41,6 +41,11 @@ Sau khi hoàn thành chương này sinh viên có thể
 - Ứng dụng K-Means và SLIC để phân đoạn ảnh
 
 ---
+<!--_class: section-->
+
+# TỔNG QUAN BÀI TOÁN PHÂN ĐOẠN ẢNH
+
+---
 
 # SLIDE 2. BÀI TOÁN PHÂN ĐOẠN ẢNH
 
@@ -129,6 +134,11 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 **3. Dựa trên vùng:** Nhóm các pixel lân cận có tính chất tương đồng (Ví dụ: Region Growing, Split & Merge)
 **4. Dựa trên phân cụm:** Nhóm các pixel có đặc trưng gần nhau (Ví dụ: K-Means, Gaussian Mixture Model)
 **5. Dựa trên Deep Learning:** Học trực tiếp từ dữ liệu (Ví dụ: U-Net, Mask R-CNN, SAM)
+
+---
+<!--_class: section-->
+
+# <!--fit-->Phát hiện điểm, đường và biên trong ảnh
 
 ---
 
@@ -634,6 +644,11 @@ $$\rho = x\cos\theta + y\sin\theta$$
 Edge Image $\rightarrow$ Các điểm biên $\rightarrow$ Hough Space $(\rho, \theta)$ $\rightarrow$ Accumulator $\rightarrow$ Peak $\rightarrow$ Đường thẳng
 
 ---
+<!--_class: section-->
+
+# Kỹ thuật phân ngưỡng (Thresholding)
+
+---
 
 # SLIDE 35. KHÁI NIỆM PHÂN NGƯỠNG
 
@@ -795,6 +810,11 @@ $$T_1 < T_2 < \cdots < T_{K-1}$$
 
 **Hạn chế:**
 - Số ngưỡng tăng $\rightarrow$ số khả năng cần xem xét tăng $\rightarrow$ chi phí tính toán tăng
+
+---
+<!--_class: section-->
+
+# Phân đoạn dựa trên vùng
 
 ---
 
