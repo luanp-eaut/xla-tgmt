@@ -646,10 +646,13 @@ $$MAX_I = 2^8 - 1 = 255$$
 **Kết luận:** Đánh giá chủ quan bổ sung cho đánh giá khách quan, giúp hiểu rõ hơn về chất lượng thực tế của ảnh nén.
 
 ---
+<!--_class: section-->
 
 # NÉN KHÔNG TỔN THẤT VÀ NÉN CÓ TỔN THẤT
 
-**Hai nhóm phương pháp nén chính:**
+---
+
+# Hai nhóm phương pháp nén chính
 
 **1. Lossless (Không tổn thất)**
 
@@ -932,8 +935,13 @@ Encoder ── Quantization ──► Decoder
 **Điểm quan trọng:** Quantization là một điểm quan trọng gây tổn thất. Đây là bước duy nhất trong quy trình nén JPEG gây mất thông tin.
 
 ---
+<!--_class: subsection-->
 
-# NÉN KHÔNG TỔN THẤT - CÁC KỸ THUẬT TIÊU BIỂU
+# NÉN KHÔNG TỔN THẤT
+
+---
+
+# CÁC KỸ THUẬT TIÊU BIỂU
 
 **Các kỹ thuật Lossless phổ biến:**
 
@@ -1850,6 +1858,11 @@ $$173 = (10101101)_2$$
 - Phụ thuộc vào loại dữ liệu
 - Phụ thuộc vào phân bố xác suất
 - Phụ thuộc vào yêu cầu ứng dụng
+
+---
+<!--_class: subsection-->
+
+# NÉN CÓ TỔN THẤT
 
 ---
 
