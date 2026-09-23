@@ -114,57 +114,117 @@ transition: zoom
 
 ---
 
-# Khái niệm cơ bản về xử lý ảnh số
+# TỪ THẾ GIỚI THỰC ĐẾN MÁY TÍNH
 
-- **Định nghĩa ảnh:** Là một hàm hai chiều $f(x, y)$, trong đó $x$ và $y$ là tọa độ không gian. Biên độ của $f$ tại $(x, y)$ được gọi là cường độ (intensity) hoặc mức xám (gray level).
-- **Ảnh số (Digital Image):** Là ảnh khi $x$, $y$ và các giá trị cường độ của $f$ đều là các đại lượng hữu hạn và rời rạc.
-- **Pixel (Picture Element):** Các phần tử cơ bản cấu tạo nên ảnh số. Mỗi pixel có một vị trí xác định và một giá trị cường độ cụ thể.
-- **Tầm nhìn của con người vs. Máy móc:**
-  - Con người chỉ nhìn thấy dải ánh sáng khả kiến của phổ điện từ (EM).
-  - Máy móc có thể xử lý ảnh từ toàn bộ phổ EM (từ tia gamma đến sóng vô tuyến) và các nguồn năng lượng khác (siêu âm, kính hiển vi điện tử, ảnh tổng hợp).
-
----
-
-# Phân cấp trong xử lý ảnh
-
-Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 mức độ:
-
-- **Mức thấp (Low-level):**
-  - Đầu vào là ảnh, đầu ra cũng là ảnh.
-  - Ví dụ: Giảm nhiễu, tăng cường độ tương phản, làm sắc nét ảnh.
-- **Mức trung bình (Mid-level):**
-  - Đầu vào là ảnh, đầu ra là các thuộc tính trích xuất từ ảnh.
-  - Ví dụ: Phân vùng ảnh (segmentation), mô tả đối tượng, nhận dạng đối tượng.
-- **Mức cao (High-level):**
-  - "Hiểu" tập hợp các đối tượng đã nhận dạng, thực hiện các chức năng nhận thức giống thị giác con người.
-  - Thuộc về lĩnh vực Thị giác máy tính (Computer Vision) và Trí tuệ nhân tạo (AI).
-
----
-
-# Lịch sử hình thành xử lý ảnh số
+- **Con người nhìn thấy:** Người, xe, nhà, cây, chữ, khuôn mặt – những đối tượng có ý nghĩa.
 
 <div class="columns">
-<div class="col-5">
+<div class="col-2">
 
-- **Thập niên 1920:** Ứng dụng sớm nhất trong ngành báo chí. Hệ truyền ảnh qua cáp Bartlane (London - New York) giúp giảm thời gian truyền ảnh từ >1 tuần xuống <3 giờ (chưa sử dụng máy tính số).
-- **Thập niên 1960:** Đánh dấu sự ra đời của máy tính số đủ mạnh và chương trình không gian.
-  - Mốc quan trọng: Năm 1964, Phòng thí nghiệm Sức đẩy Phản lực (JPL) xử lý ảnh mặt trăng từ tàu Ranger 7 để hiệu chỉnh biến dạng.
-- **Thập niên 1970:** Ứng dụng đột phá trong y tế.
-  - Phát minh ra chụp cắt lớp vi tính (CT scan) bởi Sir Godfrey N. Hounsfield và Allan M. Cormack (Giải Nobel Y học 1979).
+- **Máy tính không "nhìn" ảnh theo cách con người nhìn.** Máy tính chỉ nhận được dữ liệu số biểu diễn năng lượng ánh sáng hoặc các dạng tín hiệu khác.
+- **Ví dụ:** Khi bạn chụp một bức ảnh con mèo, mắt bạn nhận ra ngay "con mèo", nhưng máy tính chỉ thấy một ma trận các con số biểu diễn cường độ sáng tại từng vị trí.
 
 </div>
-<div class ="col-2">
-<br/>
+<div class="col-3">
 
-![](images/1.1.png)
+<gap></gap>
+
+![](images/cat.png)
 
 </div>
 </div>
-
 
 ---
 
-# Các lĩnh vực ứng dụng (Dựa trên phổ điện từ)
+# KHÁI NIỆM ẢNH SỐ
+
+- **Ảnh**: Một cách mô hình hóa ảnh mức xám: $f(x,y)$, trong đó:
+  - $(x, y)$: tọa độ không gian
+  - $f(x,y)$: cường độ tại vị trí $(x,y)$
+  - **Có thể hiểu đơn giản:** Ảnh là một hàm mô tả cường độ tại mỗi vị trí trong không gian.
+- **Ảnh số**
+
+<div class="columns">
+<div>
+<ul>
+
+- Ảnh số là ảnh mà:
+  - Tọa độ không gian được số hóa
+  - Giá trị cường độ được số hóa
+  - Các giá trị chỉ nhận một tập hữu hạn các giá trị rời rạc
+</ul>
+</div>
+<div>
+
+**Biểu diễn bằng ma trận:**
+
+$$f(x,y) \rightarrow \begin{bmatrix} f(0,0) & f(0,1) & \cdots \\ f(1,0) & f(1,1) & \cdots \\ \vdots & \vdots & \ddots \end{bmatrix}$$
+
+</div>
+</div>
+<ul>
+
+- **Ví dụ:** Một ảnh 640×480 sẽ được biểu diễn bằng ma trận có 480 hàng và 640 cột.
+
+</ul>
+
+---
+
+# PIXEL – PHẦN TỬ ẢNH
+
+**Pixel** (viết tắt của *Picture Element*) là phần tử cơ bản cấu tạo nên ảnh số.
+
+Mỗi pixel có:
+
+
+<div class="columns">
+<div class="col-2">
+
+
+- Một vị trí (tọa độ)
+- Một giá trị (cường độ sáng hoặc màu sắc)
+
+**Ví dụ ảnh mức xám:**
+
+```
+┌────┬────┬────┬────┐
+│  12│  30│  45│  70│
+├────┼────┼────┼────┤
+│  18│  42│  80│ 100│
+├────┼────┼────┼────┤
+│  25│  60│ 110│ 150│
+└────┴────┴────┴────┘
+```
+
+</div>
+<div class="col-3">
+
+![](images/2cat.png)
+</div>
+</div>
+
+- Giá trị càng lớn thì pixel càng sáng. Pixel có giá trị 150 sẽ sáng hơn pixel có giá trị 12.
+
+---
+
+# ẢNH XÁM VÀ ẢNH MÀU
+
+**Ảnh mức xám:**
+
+- Mỗi pixel có một giá trị duy nhất: $0 \leq f(x,y) \leq 255$ (với ảnh 8-bit)
+- 0 → đen, 255 → trắng
+- **Ví dụ:** Một bức ảnh chân dung đen trắng
+
+**Ảnh màu:**
+
+- Mỗi pixel được biểu diễn bởi nhiều thành phần màu
+- **Ví dụ RGB:** $Pixel = (R, G, B)$
+- Mỗi kênh R, G, B thường có giá trị từ 0 đến 255
+- **Ví dụ:** Pixel $(255, 0, 0)$ là màu đỏ thuần, $(0, 255, 0)$ là màu xanh lá thuần
+
+---
+
+# Ảnh dựa trên phổ điện từ
 
 - **Ảnh tia Gamma:** Y học hạt nhân (PET scan, quét xương), thiên văn học (vụ nổ sao).
 - **Ảnh tia X:** Chẩn đoán y tế (chụp X-quang), kiểm tra công nghiệp, thiên văn học.
@@ -201,146 +261,259 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 
 ---
 
-# Quy trình xử lý ảnh số (1)
+# IMAGE PROCESSING
 
-<div class="columns">
-<div class="col-5">
+**Image Processing – Xử lý ảnh** là tập hợp các phương pháp dùng để:
 
-1. **Thu nhận ảnh (Image Acquisition):** Tiền xử lý như thay đổi kích thước, chuyển đổi định dạng.
-2. **Tăng cường ảnh (Image Enhancement):** Làm ảnh phù hợp hơn cho ứng dụng cụ thể (mang tính chủ quan). Ví dụ: làm sáng ảnh tối.
-3. **Khôi phục ảnh (Image Restoration):** Cải thiện chất lượng ảnh dựa trên mô hình toán học/xác suất của sự suy giảm (mang tính khách quan).
-4. **Xử lý ảnh màu (Color Image Processing):** Trích xuất đặc trưng, phân vùng dựa trên màu sắc.
+- Biến đổi ảnh
+- Cải thiện chất lượng ảnh
+- Khôi phục ảnh
+- Trích xuất thông tin từ ảnh
 
-</div>
-<div class="col-4">
-<br/>
+**Ví dụ:**
 
-![](images/1.4.png)
+- Ảnh tối → Tăng độ sáng → Ảnh sáng hơn
+- Ảnh nhiễu → Lọc nhiễu → Ảnh ít nhiễu hơn
 
-</div>
-</div>
+**Bản chất:** Đầu vào là ảnh, đầu ra cũng là ảnh (hoặc tập hợp các đặc trưng từ ảnh).
 
-5. **Wavelets & Đa phân giải:** Nén dữ liệu và biểu diễn ảnh ở các độ phân giải khác nhau.
+![width:900](images/soften_sharpen.png)
 
 ---
-<!--_class: text-sm-->
 
-# Quy trình xử lý ảnh số (2)
+# COMPUTER VISION
 
-<div class="columns">
-<div class="col-5">
+**Computer Vision – Thị giác máy tính** là lĩnh vực nghiên cứu cách máy tính thu nhận, xử lý, phân tích và suy luận thông tin từ hình ảnh hoặc video.
 
-6. **Nén ảnh (Compression):** Giảm dung lượng lưu trữ và băng thông truyền tải (Ví dụ: JPEG, PNG).
-7. **Xử lý hình thái học (Morphological Processing):** Trích xuất các thành phần ảnh hữu ích cho biểu diễn và mô tả hình dạng (dựa trên lý thuyết tập hợp).
-8. **Phân vùng ảnh (Segmentation):** Chia ảnh thành các phần hoặc đối tượng cấu thành. Đây là bước khó nhất và quan trọng nhất để nhận dạng tự động.
-9. **Trích xuất đặc trưng (Feature Extraction):** Phát hiện và mô tả định lượng các đặc trưng của đối tượng (ví dụ: góc, cạnh, hướng, diện tích).
+**Ví dụ:**
 
-</div>
-<div class="col-4">
-<br/>
-
-![](images/1.5.png)
-</div>
-</div>
-
-10. **Phân loại mẫu ảnh (Image Pattern Classification):** Gán nhãn cho đối tượng dựa trên các đặc trưng đã trích xuất.
-
----
-<!--_class: text-sm-->
-
-# Các thành phần của hệ thống xử lý ảnh
+Camera → Image → Object Detection → Kết quả:
 
 <div class="columns">
-<div class="col-5">
-
-1. **Cảm biến ảnh & Bộ số hóa:** Chuyển đổi năng lượng vật lý thành tín hiệu điện và sau đó thành dữ liệu số.
-2. **Phần cứng chuyên dụng:** ALU (xử lý song song tốc độ cao), GPU (tính toán ma trận, deep learning), Frame buffers.
-3. **Máy tính:** Từ PC cá nhân đến các siêu máy tính phục vụ xử lý dữ liệu lớn.
-4. **Phần mềm:** Các module chuyên biệt (Ví dụ: MATLAB Image Processing Toolbox, OpenCV).
-5. **Lưu trữ lớn:** Ngắn hạn (RAM), Trực tuyến (Ổ cứng/SSD), Dài hạn (Băng từ, Cloud).
-6. **Hiển thị ảnh:** Màn hình màu, thiết bị in ấn (laser, film).
-
-
-</div>
 <div class="col-3">
+<gap></gap>
 
-![](images/1.6.png)
+![height:400](images/car.png)
+</div>
+<div class="col-2">
+
+```
+┌──────────────────┐
+│ 2 người          │
+│ 1 chiếc xe ô tô  │
+│ 1 chiếc xe máy   │
+└──────────────────┘
+```
+
+**Bản chất:** Đầu vào là ảnh, đầu ra là *thông tin có ý nghĩa* hoặc *quyết định*.
+</div>
+</div>
+
+
+---
+
+# IMAGE PROCESSING vs COMPUTER VISION
+
+| Image Processing | Computer Vision |
+| --- | --- |
+| Biến đổi ảnh | Hiểu nội dung ảnh |
+| Cải thiện ảnh | Nhận biết đối tượng |
+| Lọc nhiễu | Phát hiện đối tượng |
+| Tăng tương phản | Phân loại |
+| Sharpening | Tracking |
+| Geometric transform | Recognition |
+
+- **Lưu ý:** Hai lĩnh vực không có ranh giới tuyệt đối. Computer Vision thường sử dụng nhiều kỹ thuật Image Processing làm nền tảng.
+
+- **Ví dụ:** Trước khi nhận dạng khuôn mặt (CV), thường cần lọc nhiễu và chuẩn hóa ảnh (IP).
+
+---
+
+# BA MỨC ĐỘ XỬ LÝ
+
+**Low-level (Mức thấp):**
+
+- Input: ảnh → Output: ảnh
+- **Ví dụ:** Denoising, Enhancement, Sharpening
+
+**Mid-level (Mức trung bình):**
+
+- Input: ảnh → Output: đặc trưng / cấu trúc
+- **Ví dụ:** Segmentation, Edge detection, Feature extraction
+
+**High-level (Mức cao):**
+
+- Input: thông tin hình ảnh → Output: hiểu biết / quyết định
+- **Ví dụ:** Object recognition, Scene understanding, Activity recognition
+
+**Ví dụ minh họa:** Từ ảnh chụp đường phố (low-level) → phát hiện các xe và người (mid-level) → nhận ra "đang có tắc nghẽn giao thông" (high-level).
+
+---
+
+# PIPELINE TỔNG QUÁT
+
+<div class="columns">
+<div>
+
+```
+ẢNH / VIDEO / CAMERA
+         │
+         ▼
+  Image Acquisition
+         │
+         ▼
+   Pre-processing
+         │
+         ▼
+Representation / Features
+         │
+         ▼
+┌────────┼─────────┐
+▼        ▼         ▼
+Class. Detection Segmentation
+└────────┼─────────┘
+         ▼
+  Interpretation
+         │
+         ▼
+     Decision
+```
+
+</div>
+<div class="col-2">
+
+![height:500](images/ip_process.png)
+
+<gap></gap>
+
+**Mục tiêu:** Biến dữ liệu hình ảnh thành thông tin hữu ích.
 
 </div>
 </div>
 
-7. **Mạng & Điện toán đám mây:** Truyền tải dữ liệu ảnh (yêu cầu băng thông lớn, nén ảnh là bắt buộc).
+---
+
+# ỨNG DỤNG
+
+<div class="columns">
+<div>
+
+- **Y tế:** X-quang, CT, MRI, phân tích ảnh y tế
+- **Công nghiệp:** Kiểm tra lỗi sản phẩm, đếm sản phẩm, đo kích thước
+- **Giao thông:** Nhận dạng biển số, phát hiện phương tiện, giám sát giao thông
+  - **Ví dụ:** Hệ thống camera giao thông sử dụng CV để tự động phát hiện xe vượt đèn đỏ và ghi lại biển số.
+- **An ninh:** Nhận dạng khuôn mặt, theo dõi đối tượng
+
+</div>
+<div>
+
+![](images/photos.png)
+
+</div>
+</div>
+
+- **Viễn thám:** Ảnh vệ tinh, theo dõi môi trường, phân tích đất đai
+
+---
+
+# Lịch sử hình thành xử lý ảnh số
+
+<div class="columns">
+<div class="col-5">
+
+- **Thập niên 1920:** Ứng dụng sớm nhất trong ngành báo chí. Hệ truyền ảnh qua cáp Bartlane (London - New York) giúp giảm thời gian truyền ảnh từ >1 tuần xuống <3 giờ (chưa sử dụng máy tính số).
+- **Thập niên 1960:** Đánh dấu sự ra đời của máy tính số đủ mạnh và chương trình không gian.
+  - Mốc quan trọng: Năm 1964, Phòng thí nghiệm Sức đẩy Phản lực (JPL) xử lý ảnh mặt trăng từ tàu Ranger 7 để hiệu chỉnh biến dạng.
+- **Thập niên 1970:** Ứng dụng đột phá trong y tế.
+  - Phát minh ra chụp cắt lớp vi tính (CT scan) bởi Sir Godfrey N. Hounsfield và Allan M. Cormack (Giải Nobel Y học 1979).
+
+</div>
+<div class ="col-2">
+<br/>
+
+![](images/1.1.png)
+
+</div>
+</div>
+
 ---
 
 <!-- _class: section -->
 
-# KHÁI NIỆM NỀN TẢNG
+# Từ thế giới thực đến ảnh số
 
 ---
 
-# Thị giác con người và ánh sáng
+# THỊ GIÁC CON NGƯỜI
+
+Mắt người là một hệ thống thu nhận và xử lý thông tin quang học phức tạp.
 
 <div class="columns">
-<div class="col-4">
+<div class="col-2">
 
-- **Cấu tạo mắt người:**
-  - **Giác mạc (Cornea):** Mô trong suốt, bảo vệ bề mặt trước của mắt.
-  - **Màng cứng (Sclera):** Màng đục bao bọc phần còn lại của mắt.
-  - **Màng mạch (Choroid):** Chứa mạch máu, giảm tán xạ ánh sáng.
-  - **Mống mắt (Iris):** Điều chỉnh lượng ánh sáng vào mắt thông qua đồng tử (2-8mm).
-  - **Thủy tinh thể (Lens):** Hội tụ ánh sáng lên võng mạc.
-  
+**Một số thành phần chính:**
+
+- **Cornea** (giác mạc): lớp ngoài cùng, bảo vệ mắt
+- **Iris** (mống mắt): điều chỉnh lượng ánh sáng vào
+- **Lens** (thủy tinh thể): hội tụ ánh sáng
+- **Retina** (võng mạc): nơi tiếp nhận ánh sáng
+- **Rods** (tế bào hình que): cảm nhận độ sáng, hoạt động tốt trong điều kiện thiếu sáng
+- **Cones** (tế bào hình nón): cảm nhận màu sắc, hoạt động tốt trong điều kiện đủ sáng
 
 </div>
-<div class="col-2">
+<div>
 
 ![](images/1.7.png)
 
 </div>
 </div>
 
-- **Võng mạc (Retina):** Chứa thụ thể ánh sáng:
-    - **Tế bào hình nón (Cones):** Nhìn màu, chi tiết cao, hoạt động tốt ở ánh sáng mạnh.
-    - **Tế bào hình que (Rods):** Nhìn sáng yếu, không phân biệt màu sắc.
+**Ý nghĩa đối với Computer Vision:** Nghiên cứu thị giác người giúp chúng ta hiểu về ánh sáng, độ sáng, độ tương phản, màu sắc và nhận thức thị giác.
 
 ---
 
-# Sự thích nghi và phân biệt độ sáng
+# ÁNH SÁNG VÀ ĐỘ SÁNG
+
+Khả năng cảm nhận của mắt không đơn giản là: *"Giá trị pixel lớn → luôn cảm thấy sáng hơn."*
+
+- **Nhận thức phụ thuộc vào:**
 
 <div class="columns">
-<div class="col-3">
+<div class="col-2">
+<ul>
 
-- **Thích nghi độ sáng:** Mắt người có thể thích nghi với dải cường độ ánh sáng rất rộng (~$10^{10}$), nhưng không thể hoạt động trên toàn bộ dải này cùng một lúc.
-- **Tỷ lệ Weber (Weber Ratio):** $\Delta I_c / I$. Giá trị càng nhỏ thì khả năng phân biệt độ sáng càng tốt. Khả năng này kém ở vùng ánh sáng yếu (do tế bào que) và tốt ở vùng ánh sáng mạnh (do tế bào nón).
-- **Hiện tượng quang học:**
-  - **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
+  - Cường độ ánh sáng
+  - Nền xung quanh
+  - Tương phản
+  - Điều kiện quan sát
+
+</ul>
+
+- **Ví dụ:** Một vùng xám có cùng giá trị pixel có thể được cảm nhận khác nhau khi đặt trên nền sáng so với khi đặt trên nền tối. Đây là hiệu ứng *simultaneous contrast* – một hiện tượng quan trọng trong tâm lý học thị giác.
+
+- **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
 
 </div>
 <div>
 
-![](images/1.8.png)
+![height:480](images/1.8.png)
 
 </div>
 </div>
-<ul>
-
-- **Tương phản đồng thời:** Độ sáng cảm nhận của một vùng phụ thuộc vào nền xung quanh nó.
-
-</ul>
 
 ---
 
-# Ánh sáng và phổ điện từ
-
-- **Phổ điện từ (EM):** Bao gồm sóng vô tuyến, vi sóng, hồng ngoại, ánh sáng khả kiến, tử ngoại, tia X, tia gamma.
-
+# Phổ điện từ
+- **Phổ điện từ (EM)**: Bao gồm sóng vô tuyến, vi sóng, hồng ngoại, ánh sáng khả kiến, tử ngoại, tia X, tia gamma.
 <div class="columns">
 <div class="col-5">
 
-- **Công thức cơ bản:**
-  - Bước sóng ($\lambda$) và Tần số ($\nu$): $\lambda \nu = c$ (với $c \approx 3 \times 10^8$ m/s).
-  - Năng lượng photon: $E = h\nu$.
-- **Ánh sáng khả kiến:** Khoảng từ ~0.43 $\mu m$ (tím) đến ~0.79 $\mu m$ (đỏ).
+- **Quan hệ tần số, bước sóng:** $c = \lambda \nu$. Trong đó:
+  - $c$: tốc độ ánh sáng ($\approx 3 \times 10^8$ m/s)
+  - $\lambda$: bước sóng
+  - $\nu$: tần số
+
+- **Năng lượng photon:** $E = h\nu$, với $h$ là hằng số Planck.
 
 </div>
 <div  class="col-5">
@@ -350,93 +523,376 @@ Không có ranh giới tuyệt đối, nhưng thường được chia thành 3 m
 </div>
 </div>
 
-- **Thuật ngữ:**
-  - **Đơn sắc (Monochromatic):** Chỉ có cường độ (mức xám).
-  - **Đa sắc (Chromatic):** Có 3 đặc tính: Bức xạ (Radiance - tổng năng lượng), Độ chói (Luminance - năng lượng cảm nhận được), Độ sáng (Brightness - mô tả chủ quan).
+- **Ánh sáng khả kiến** có bước sóng chỉ nằm trong một khoảng hẹp của phổ điện từ (khoảng 380nm – 750nm).
 
 ---
 
-# Mô hình thu nhận ảnh
+# Thu nhận ảnh
+
+Một hệ thống thu nhận ảnh có thể được mô hình hóa:
 
 <div class="columns">
 <div>
 
-- **Nguyên lý:** Dựa trên nguồn chiếu sáng và sự phản xạ/hấp thụ của vật thể.
-- **3 phương pháp cảm biến chính:**
-  1. **Phần tử cảm biến đơn (Single sensor):** Cần chuyển động cơ học theo 2 chiều (x, y) để quét. Ví dụ: Máy quét phim.
-  2. **Dải cảm biến (Sensor strip):** Cảm biến 1 chiều, chuyển động cơ học 1 chiều. Ví dụ: Máy scan phẳng, chụp ảnh hàng không, CT scan.
+1. **Nguồn năng lượng** (ánh sáng, tia X, ...)
+2. **Vật thể** (đối tượng cần chụp)
+3. **Phản xạ / truyền qua** (tương tác giữa năng lượng và vật thể)
+4. **Cảm biến** (thu nhận tín hiệu)
+
+</div>
+<div>
+
+5. **Tín hiệu điện** (chuyển đổi từ năng lượng sang điện)
+6. **Số hóa** (chuyển sang dạng số)
+7. **Ảnh số** (kết quả cuối cùng)
+
+</div>
+</div>
+<gap></gap>
+
+![width:800](images/photo_capture.png)
+
+---
+
+# CẢM BIẾN ẢNH
+
+<div class="columns">
+<div>
+
+Ba mô hình cảm biến cơ bản:
+
+**1. Single sensor (cảm biến đơn):**
+
+- Một cảm biến duy nhất
+- Cần chuyển động để quét ảnh
+- **Ví dụ:** Máy quét ảnh cũ
+
+**2. Sensor strip (dải cảm biến):**
+
+- Một dải cảm biến
+- Cần chuyển động theo một chiều
+- **Ví dụ:** Máy fax, máy scan dòng
+
+**3. Sensor array (mảng cảm biến):**
+
+- Mảng cảm biến 2D
 
 </div>
 <div>
 
 ![](images/1.10.png)
-
 </div>
 </div>
-<ul>
 
-  3. **Mảng cảm biến (Sensor array):** Mảng 2D (ví dụ: CCD, CMOS trong camera kỹ thuật số). Không cần chuyển động cơ học, thu nhận ảnh toàn phần ngay lập tức.
-
-</ul>
+- Thu nhận toàn bộ ảnh trong một lần chụp
+- **Ví dụ:** CCD, CMOS trong máy ảnh kỹ thuật số, điện thoại
 
 ---
 
-# Mô hình hình thành ảnh đơn giản
+# MÔ HÌNH HÌNH THÀNH ẢNH
+
+Một mô hình đơn giản:
+
+$$f(x,y) = i(x,y) \cdot r(x,y)$$
+
+Trong đó:
+
+- $i(x,y)$: **Illumination** – thành phần chiếu sáng
+- $r(x,y)$: **Reflectance** – thành phần phản xạ
+
+**Ý nghĩa:** Độ sáng quan sát được phụ thuộc cả vào *nguồn sáng* và *đặc tính bề mặt vật thể*.
+
+**Ví dụ:** Một tờ giấy trắng dưới ánh sáng yếu có thể trông xám, nhưng dưới ánh sáng mạnh sẽ trông trắng. Vật thể có hệ số phản xạ cao (như gương) sẽ sáng hơn vật thể có hệ số phản xạ thấp (như vải đen).
+
+>Một hệ thống Computer Vision phải quan tâm đến điều kiện ánh sáng. Đây là lý do vì sao các thuật toán xử lý ảnh thường cần bước chuẩn hóa ánh sáng (illumination normalization) trước khi phân tích.
+
+---
+
+# TỪ ẢNH LIÊN TỤC ĐẾN ẢNH SỐ
+
+Ảnh thực tế có thể được xem là tín hiệu liên tục. Để máy tính xử lý, cần **số hóa**:
+
+```
+Ảnh liên tục
+     │
+     ├──────────────┐
+     ▼              ▼
+ Sampling       Quantization
+     │              │
+     ▼              ▼
+Tọa độ rời rạc   Mức cường độ rời rạc
+     └──────────────┘
+             │
+             ▼
+          Ảnh số
+```
+
+**Ví dụ:** Một bức ảnh chụp trên phim (liên tục) khi được quét sẽ trải qua quá trình lấy mẫu và lượng tử hóa để trở thành ảnh số.
+
+---
+
+# Lấy mẫu (SAMPLING)
+
+**Sampling – Lấy mẫu** là quá trình số hóa tọa độ không gian.
+
+**Nó quyết định:** Độ phân giải không gian của ảnh.
+
+**Sampling nhiều:**
+
+```
+● ● ● ● ● ● ●
+● ● ● ● ● ● ●
+● ● ● ● ● ● ●
+```
+
+**Sampling ít:**
+
+```
+●     ●     ●
+●     ●     ●
+```
+
+**Kết luận:** Sampling thấp → ít pixel → mất chi tiết không gian.
+
+**Ví dụ:** Khi bạn phóng to một ảnh có độ phân giải thấp, bạn sẽ thấy các "ô vuông" – đó là do sampling không đủ dày.
+
+---
+
+# Lượng tử hoá (QUANTIZATION)
+
+**Quantization – Lượng tử hóa** là quá trình số hóa biên độ cường độ.
+
+**Ví dụ:**
+
+- **Nhiều mức xám:** 0, 20, 40, 60, 80, 100, ..., 255
+- **Ít mức xám:** 0, 85, 170, 255
+
+**Kết luận:** Quantization thấp → ít mức cường độ → dễ xuất hiện **false contouring** (hiện tượng xuất hiện các đường viền giả do không đủ mức xám để thể hiện chuyển tiếp mượt).
+
+**Ví dụ:** Khi giảm ảnh màu 24-bit xuống còn 8-bit (256 màu), bạn có thể thấy các vệt màu không tự nhiên trên bầu trời – đó là false contouring.
+
+---
+
+# SAMPLING vs QUANTIZATION
+
+| | Sampling | Quantization |
+| --- | --- | --- |
+| Số hóa | Tọa độ | Cường độ |
+| Ảnh hưởng | Spatial resolution | Intensity resolution |
+| Quá thấp | Mất chi tiết không gian | Mất chi tiết mức xám |
+| Liên quan | Số pixel | Số mức xám |
+
+**Ghi nhớ:**
+
+- **Sampling → Where?** (Vị trí nào được lấy mẫu?)
+- **Quantization → How much?** (Cường độ được làm tròn đến mức nào?)
+
+---
+
+# ĐỘ PHÂN GIẢI
+
+**Spatial Resolution (Độ phân giải không gian):**
+
+- Khả năng biểu diễn chi tiết không gian
+- Liên quan đến: kích thước ảnh, mật độ pixel, kích thước pixel
+- **Ví dụ:** Ảnh 4K (3840×2160) có độ phân giải không gian cao hơn ảnh HD (1920×1080)
+
+**Intensity Resolution (Độ phân giải cường độ):**
+
+- Khả năng phân biệt các mức cường độ
+- **Ví dụ:** Ảnh 8-bit có $L = 2^8 = 256$ mức xám
+
+---
+
+# BITS VÀ MỨC XÁM
+
+Nếu sử dụng $k$ bit cho mỗi pixel:
+
+$$L = 2^k$$
+
+| Bit | Mức |
+| --- | --- |
+| 1-bit | 2 |
+| 2-bit | 4 |
+| 4-bit | 16 |
+| 8-bit | 256 |
+| 16-bit | 65,536 |
+
+**Ví dụ:** Ảnh 8-bit thường dùng trong các bài toán xử lý ảnh mức xám cơ bản vì cân bằng giữa chất lượng và dung lượng.
+
+---
+
+# NỘI SUY ẢNH
+
+Khi thay đổi kích thước hoặc biến đổi hình học, ta thường cần ước lượng giá trị tại vị trí mới.
+
+**Interpolation – Nội suy** có ba phương pháp phổ biến:
 
 <div class="columns">
-<div class="col-2">
+<div class="col-4">
 
-- **Hàm ảnh 2D:** $f(x, y) = i(x, y) \times r(x, y)$
-  - $i(x, y)$: Thành phần chiếu sáng (Illumination) - $0 \le i(x, y) < \infty$.
-  - $r(x, y)$: Thành phần phản xạ (Reflectance) - $0 \le r(x, y) \le 1$.
+**1. Nearest Neighbor (láng giềng gần nhất):**
+
+- Nhanh, đơn giản
+- Có thể tạo răng cưa
+- **Ví dụ:** Phóng to ảnh pixel art
+
+**2. Bilinear (tuyến tính kép):**
+
+- Sử dụng các pixel lân cận
+- Kết quả mượt hơn
+- **Ví dụ:** Phóng to ảnh thông thường
 
 </div>
-<div class="col-3">
+<div class="col-5">
 
-![](images/1.11.png)
+**3. Bicubic (bậc ba):**
+
+- Sử dụng nhiều điểm lân cận hơn
+- Kết quả thường mượt và giữ chi tiết tốt hơn
+- **Ví dụ:** Phóng to ảnh chất lượng cao
+
+![](images/interpolation.png)
 
 </div>
 </div>
 
-- **Ví dụ thực tế:**
-  - Ánh sáng văn phòng: ~1000 lm/m².
-  - Phản xạ của tuyết: ~0.93 (gần như phản xạ toàn phần).
-  - Phản xạ của vải nhung đen: ~0.01 (hấp thụ hầu hết ánh sáng).
+---
+<!--_class: section-->
+
+# Biểu diễn và các quan hệ trong ảnh
 
 ---
 
-# Lấy mẫu và lượng tử hóa
+# ẢNH NHƯ MỘT MA TRẬN
 
-<div class="columns">
-<div class="col-3">
+Một ảnh xám có thể biểu diễn:
 
-- **Lấy mẫu (Sampling):** Quá trình số hóa tọa độ không gian (x, y). Bước này quyết định độ phân giải không gian (Spatial Resolution) của ảnh.
-- **Lượng tử hóa (Quantization):** Quá trình số hóa biên độ cường độ sáng. Bước này quyết định độ phân giải cường độ (Intensity Resolution).
-- **Biểu diễn ảnh số:** Dưới dạng ma trận kích thước $M \times N$.
-  - Tọa độ $(x, y)$ với $x \in [0, M-1]$, $y \in [0, N-1]$.
-  - Gốc tọa độ (0,0) thường ở góc trên bên trái.
+$$I \in R^{M \times N}$$
 
-</div>
-<div class="col-2">
+**Ví dụ:**
 
-![](images/1.12.png)
+```
+        x →
+      0   1   2   3
+    ┌───┬───┬───┬───┐
+ y 0│12 │30 │45 │70 │
+ ↓  ├───┼───┼───┼───┤
+   1│18 │42 │80 │100│
+    ├───┼───┼───┼───┤
+   2│25 │60 │110│150│
+    └───┴───┴───┴───┘
+```
 
-</div>
-</div>
-
-- **Số bit lưu trữ:** $b = M \times N \times k$ (với $L = 2^k$ là số mức xám).
+**Ý nghĩa:** Đây là nền tảng để sử dụng **NumPy** trong Python. Mỗi ảnh được lưu dưới dạng mảng 2 chiều (hoặc 3 chiều với ảnh màu).
 
 ---
 
-# Độ phân giải và nội suy
+# 34. LÁNG GIỀNG CỦA PIXEL (here)
 
-- **Độ phân giải không gian:** Số cặp đường (line pairs) trên một đơn vị khoảng cách, hoặc số điểm ảnh trên mỗi inch (dpi).
-- **Độ phân giải cường độ:** Số bit dùng để lượng tử hóa mức xám (thường là 8-bit = 256 mức xám).
-- **Nhiễu vân giả (False contouring):** Xuất hiện khi số mức xám quá thấp (thường $\le$ 16 mức) ở các vùng chuyển màu mượt mà, tạo ra các đường viền giả.
-- **Nội suy ảnh (Interpolation):** Ước lượng giá trị mới của ảnh tại những vị trí không có điểm ảnh gốc (dùng khi thay đổi kích thước, xoay ảnh).
-  - **Láng giềng gần nhất (Nearest Neighbor):** Nhanh, nhưng gây răng cưa.
-  - **Tuyến tính kép (Bilinear):** Mượt hơn, sử dụng 4 láng giềng.
-  - **Bicubic:** Mượt nhất, giữ chi tiết tốt, sử dụng 16 láng giềng (chuẩn trong Photoshop).
+Với pixel $p(x,y)$:
+
+- **4-láng giềng (4-neighbors):**
+
+$$N_4(p) = \{(x-1,y), (x+1,y), (x,y-1), (x,y+1)\}$$
+
+- **Láng giềng chéo (diagonal neighbors):** Gồm bốn pixel theo đường chéo: $(x-1,y-1), (x-1,y+1), (x+1,y-1), (x+1,y+1)$
+
+- **8-láng giềng (8-neighbors):** Kết hợp 4-láng giềng và láng giềng chéo.
+- **Ví dụ:** Khi xét pixel trung tâm trong một cửa sổ 3×3, 4-láng giềng là 4 pixel ở trên/dưới/trái/phải, 8-láng giềng là tất cả 8 pixel xung quanh.
+
+---
+
+# 35. TÍNH KỀ VÀ LIÊN THÔNG
+
+Các pixel có thể được xem là kề nhau dựa trên:
+
+- **4-connectivity:** kề theo 4 hướng (trên, dưới, trái, phải)
+- **8-connectivity:** kề theo 8 hướng (bao gồm cả đường chéo)
+- **m-connectivity (mixed connectivity):** kết hợp để tránh các vấn đề về đường đi kép
+
+**Tại sao cần?** Để xác định:
+
+- Pixel nào thuộc cùng một đối tượng
+- Đường đi giữa các pixel
+- Một vùng ảnh gồm những pixel nào
+
+**Ví dụ:** Trong trò chơi Caro, nếu dùng 4-connectivity thì chỉ cần 4 quân liên tiếp theo hàng ngang/dọc để thắng; nếu dùng 8-connectivity thì đường chéo cũng được tính.
+
+---
+
+# 36. ĐƯỜNG ĐI VÀ VÙNG
+
+**Path – Đường đi:** Một chuỗi các pixel liên tiếp thỏa mãn điều kiện kề nhau.
+
+**Region – Vùng:** Một tập các pixel liên thông.
+
+**Boundary – Biên:** Tập các pixel thuộc vùng nhưng có ít nhất một láng giềng nằm ngoài vùng.
+
+```
+████████
+██    ██
+██    ██
+████████
+```
+
+Phần bao quanh → boundary.
+
+**Ví dụ:** Khi phân vùng ảnh để tách nền và đối tượng, ta cần xác định vùng liên thông của đối tượng và biên của nó.
+
+---
+
+# 37. KHOẢNG CÁCH GIỮA CÁC PIXEL
+
+Ba khoảng cách phổ biến:
+
+**Euclidean (khoảng cách Euclid):**
+
+$$D_E(p,q) = \sqrt{(x-s)^2 + (y-t)^2}$$
+
+**City-block (khoảng cách Manhattan):**
+
+$$D_4(p,q) = |x-s| + |y-t|$$
+
+**Chessboard (khoảng cách bàn cờ):**
+
+$$D_8(p,q) = \max(|x-s|, |y-t|)$$
+
+**Ví dụ:** Từ $(0,0)$ đến $(3,4)$:
+- Euclidean: 5
+- City-block: 7
+- Chessboard: 4
+
+---
+
+# 38. SO SÁNH CÁC KHOẢNG CÁCH
+
+**Euclidean:**
+
+```
+    ○
+```
+
+**City-block:**
+
+```
+    ◇
+```
+
+**Chessboard:**
+
+```
+    □
+```
+
+**Ý nghĩa:** Cách định nghĩa khoảng cách phụ thuộc vào mô hình láng giềng và bài toán cần giải.
+
+**Các khái niệm này sẽ được sử dụng trong:**
+
+- Segmentation (phân vùng)
+- Morphology (hình thái học)
+- Connected components (thành phần liên thông)
+- Feature extraction (trích xuất đặc trưng)
 
 ---
 
