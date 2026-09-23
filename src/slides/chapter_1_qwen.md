@@ -143,43 +143,57 @@ Sau học phần, sinh viên có thể:
 # TỪ THẾ GIỚI THỰC ĐẾN MÁY TÍNH
 
 - **Con người nhìn thấy:** Người, xe, nhà, cây, chữ, khuôn mặt – những đối tượng có ý nghĩa.
+
+<div class="columns">
+<div class="col-2">
+
 - **Máy tính không "nhìn" ảnh theo cách con người nhìn.** Máy tính chỉ nhận được dữ liệu số biểu diễn năng lượng ánh sáng hoặc các dạng tín hiệu khác.
 - **Ví dụ:** Khi bạn chụp một bức ảnh con mèo, mắt bạn nhận ra ngay "con mèo", nhưng máy tính chỉ thấy một ma trận các con số biểu diễn cường độ sáng tại từng vị trí.
 
-![width:650](images/cat.png)
+</div>
+<div class="col-3">
+
+<gap></gap>
+
+![](images/cat.png)
+
+</div>
+</div>
+
 
 ---
 
-# ẢNH LÀ GÌ?
+# KHÁI NIỆM ẢNH SỐ
 
-Một cách mô hình hóa ảnh mức xám:
+- **Ảnh**: Một cách mô hình hóa ảnh mức xám: $f(x,y)$, trong đó:
+  - $(x, y)$: tọa độ không gian
+  - $f(x,y)$: cường độ tại vị trí $(x,y)$
+  - **Có thể hiểu đơn giản:** Ảnh là một hàm mô tả cường độ tại mỗi vị trí trong không gian.
+- **Ảnh số**
 
-$$f(x,y)$$
+<div class="columns">
+<div>
+<ul>
 
-Trong đó:
-
-- $(x, y)$: tọa độ không gian
-- $f(x,y)$: cường độ tại vị trí $(x,y)$
-
-**Có thể hiểu đơn giản:** Ảnh là một hàm mô tả cường độ tại mỗi vị trí trong không gian.
-
-**Ví dụ:** Tại vị trí $(100, 200)$, nếu $f(100, 200) = 180$ thì điểm ảnh đó có cường độ sáng khá cao (gần trắng).
-
----
-
-# ẢNH SỐ
-
-Ảnh số là ảnh mà:
-
-- Tọa độ không gian được số hóa
-- Giá trị cường độ được số hóa
-- Các giá trị chỉ nhận một tập hữu hạn các giá trị rời rạc
+- Ảnh số là ảnh mà:
+  - Tọa độ không gian được số hóa
+  - Giá trị cường độ được số hóa
+  - Các giá trị chỉ nhận một tập hữu hạn các giá trị rời rạc
+</ul>
+</div>
+<div>
 
 **Biểu diễn bằng ma trận:**
 
 $$f(x,y) \rightarrow \begin{bmatrix} f(0,0) & f(0,1) & \cdots \\ f(1,0) & f(1,1) & \cdots \\ \vdots & \vdots & \ddots \end{bmatrix}$$
 
-**Ví dụ:** Một ảnh 640×480 sẽ được biểu diễn bằng ma trận có 480 hàng và 640 cột.
+</div>
+</div>
+<ul>
+
+- **Ví dụ:** Một ảnh 640×480 sẽ được biểu diễn bằng ma trận có 480 hàng và 640 cột.
+
+</ul>
 
 ---
 
@@ -188,6 +202,11 @@ $$f(x,y) \rightarrow \begin{bmatrix} f(0,0) & f(0,1) & \cdots \\ f(1,0) & f(1,1)
 **Pixel** (viết tắt của *Picture Element*) là phần tử cơ bản cấu tạo nên ảnh số.
 
 Mỗi pixel có:
+
+
+<div class="columns">
+<div class="col-2">
+
 
 - Một vị trí (tọa độ)
 - Một giá trị (cường độ sáng hoặc màu sắc)
@@ -204,7 +223,14 @@ Mỗi pixel có:
 └────┴────┴────┴────┘
 ```
 
-**Giải thích:** Giá trị càng lớn thì pixel càng sáng. Pixel có giá trị 150 sẽ sáng hơn pixel có giá trị 12.
+</div>
+<div class="col-3">
+
+![](images/2cat.png)
+</div>
+</div>
+
+- Giá trị càng lớn thì pixel càng sáng. Pixel có giá trị 150 sẽ sáng hơn pixel có giá trị 12.
 
 ---
 
@@ -225,7 +251,7 @@ Mỗi pixel có:
 
 ---
 
-# IMAGE PROCESSING LÀ GÌ?
+# IMAGE PROCESSING
 
 **Image Processing – Xử lý ảnh** là tập hợp các phương pháp dùng để:
 
@@ -245,7 +271,7 @@ Mỗi pixel có:
 
 ---
 
-# COMPUTER VISION LÀ GÌ?
+# COMPUTER VISION
 
 **Computer Vision – Thị giác máy tính** là lĩnh vực nghiên cứu cách máy tính thu nhận, xử lý, phân tích và suy luận thông tin từ hình ảnh hoặc video.
 
@@ -361,11 +387,23 @@ Class. Detection Segmentation
 
 # ỨNG DỤNG
 
+<div class="columns">
+<div>
+
 - **Y tế:** X-quang, CT, MRI, phân tích ảnh y tế
 - **Công nghiệp:** Kiểm tra lỗi sản phẩm, đếm sản phẩm, đo kích thước
 - **Giao thông:** Nhận dạng biển số, phát hiện phương tiện, giám sát giao thông
   - **Ví dụ:** Hệ thống camera giao thông sử dụng CV để tự động phát hiện xe vượt đèn đỏ và ghi lại biển số.
 - **An ninh:** Nhận dạng khuôn mặt, theo dõi đối tượng
+
+</div>
+<div>
+
+![](images/photos.png)
+
+</div>
+</div>
+
 - **Viễn thám:** Ảnh vệ tinh, theo dõi môi trường, phân tích đất đai
 
 ---
@@ -450,7 +488,7 @@ Mắt người là một hệ thống thu nhận và xử lý thông tin quang h
 
 ---
 
-# ÁNH SÁNG VÀ ĐỘ SÁNG (here)
+# ÁNH SÁNG VÀ ĐỘ SÁNG
 
 Khả năng cảm nhận của mắt không đơn giản là: *"Giá trị pixel lớn → luôn cảm thấy sáng hơn."*
 
@@ -467,9 +505,9 @@ Khả năng cảm nhận của mắt không đơn giản là: *"Giá trị pixel
 
 </ul>
 
-- **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
-
 - **Ví dụ:** Một vùng xám có cùng giá trị pixel có thể được cảm nhận khác nhau khi đặt trên nền sáng so với khi đặt trên nền tối. Đây là hiệu ứng *simultaneous contrast* – một hiện tượng quan trọng trong tâm lý học thị giác.
+
+- **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
 
 </div>
 <div>
