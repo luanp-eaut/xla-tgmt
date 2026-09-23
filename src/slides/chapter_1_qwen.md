@@ -140,17 +140,17 @@ Sau học phần, sinh viên có thể:
 
 ---
 
-# 6. TỪ THẾ GIỚI THỰC ĐẾN MÁY TÍNH
+# TỪ THẾ GIỚI THỰC ĐẾN MÁY TÍNH
 
-**Con người nhìn thấy:** Người, xe, nhà, cây, chữ, khuôn mặt – những đối tượng có ý nghĩa.
+- **Con người nhìn thấy:** Người, xe, nhà, cây, chữ, khuôn mặt – những đối tượng có ý nghĩa.
+- **Máy tính không "nhìn" ảnh theo cách con người nhìn.** Máy tính chỉ nhận được dữ liệu số biểu diễn năng lượng ánh sáng hoặc các dạng tín hiệu khác.
+- **Ví dụ:** Khi bạn chụp một bức ảnh con mèo, mắt bạn nhận ra ngay "con mèo", nhưng máy tính chỉ thấy một ma trận các con số biểu diễn cường độ sáng tại từng vị trí.
 
-**Máy tính không "nhìn" ảnh theo cách con người nhìn.** Máy tính chỉ nhận được dữ liệu số biểu diễn năng lượng ánh sáng hoặc các dạng tín hiệu khác.
-
-**Ví dụ:** Khi bạn chụp một bức ảnh con mèo, mắt bạn nhận ra ngay "con mèo", nhưng máy tính chỉ thấy một ma trận các con số biểu diễn cường độ sáng tại từng vị trí.
+![width:650](images/cat.png)
 
 ---
 
-# 7. ẢNH LÀ GÌ?
+# ẢNH LÀ GÌ?
 
 Một cách mô hình hóa ảnh mức xám:
 
@@ -167,7 +167,7 @@ Trong đó:
 
 ---
 
-# 8. ẢNH SỐ
+# ẢNH SỐ
 
 Ảnh số là ảnh mà:
 
@@ -183,7 +183,7 @@ $$f(x,y) \rightarrow \begin{bmatrix} f(0,0) & f(0,1) & \cdots \\ f(1,0) & f(1,1)
 
 ---
 
-# 9. PIXEL – PHẦN TỬ ẢNH
+# PIXEL – PHẦN TỬ ẢNH
 
 **Pixel** (viết tắt của *Picture Element*) là phần tử cơ bản cấu tạo nên ảnh số.
 
@@ -208,7 +208,7 @@ Mỗi pixel có:
 
 ---
 
-# 10. ẢNH XÁM VÀ ẢNH MÀU
+# ẢNH XÁM VÀ ẢNH MÀU
 
 **Ảnh mức xám:**
 
@@ -225,7 +225,7 @@ Mỗi pixel có:
 
 ---
 
-# 11. IMAGE PROCESSING LÀ GÌ?
+# IMAGE PROCESSING LÀ GÌ?
 
 **Image Processing – Xử lý ảnh** là tập hợp các phương pháp dùng để:
 
@@ -241,9 +241,11 @@ Mỗi pixel có:
 
 **Bản chất:** Đầu vào là ảnh, đầu ra cũng là ảnh (hoặc tập hợp các đặc trưng từ ảnh).
 
+![width:900](images/soften_sharpen.png)
+
 ---
 
-# 12. COMPUTER VISION LÀ GÌ?
+# COMPUTER VISION LÀ GÌ?
 
 **Computer Vision – Thị giác máy tính** là lĩnh vực nghiên cứu cách máy tính thu nhận, xử lý, phân tích và suy luận thông tin từ hình ảnh hoặc video.
 
@@ -251,19 +253,30 @@ Mỗi pixel có:
 
 Camera → Image → Object Detection → Kết quả:
 
+<div class="columns">
+<div class="col-3">
+<gap></gap>
+
+![height:400](images/car.png)
+</div>
+<div class="col-2">
+
 ```
-┌───────────────┐
-│ 2 người       │
-│ 1 chiếc xe    │
-│ 1 chiếc xe máy│
-└───────────────┘
+┌──────────────────┐
+│ 2 người          │
+│ 1 chiếc xe ô tô  │
+│ 1 chiếc xe máy   │
+└──────────────────┘
 ```
 
 **Bản chất:** Đầu vào là ảnh, đầu ra là *thông tin có ý nghĩa* hoặc *quyết định*.
+</div>
+</div>
+
 
 ---
 
-# 13. IMAGE PROCESSING vs COMPUTER VISION
+# IMAGE PROCESSING vs COMPUTER VISION
 
 | Image Processing | Computer Vision |
 | --- | --- |
@@ -274,13 +287,13 @@ Camera → Image → Object Detection → Kết quả:
 | Sharpening | Tracking |
 | Geometric transform | Recognition |
 
-**Lưu ý quan trọng:** Hai lĩnh vực không có ranh giới tuyệt đối. Computer Vision thường sử dụng nhiều kỹ thuật Image Processing làm nền tảng.
+- **Lưu ý:** Hai lĩnh vực không có ranh giới tuyệt đối. Computer Vision thường sử dụng nhiều kỹ thuật Image Processing làm nền tảng.
 
-**Ví dụ:** Trước khi nhận dạng khuôn mặt (CV), ta thường cần lọc nhiễu và chuẩn hóa ảnh (IP).
+- **Ví dụ:** Trước khi nhận dạng khuôn mặt (CV), thường cần lọc nhiễu và chuẩn hóa ảnh (IP).
 
 ---
 
-# 14. BA MỨC ĐỘ XỬ LÝ
+# BA MỨC ĐỘ XỬ LÝ
 
 **Low-level (Mức thấp):**
 
@@ -301,7 +314,10 @@ Camera → Image → Object Detection → Kết quả:
 
 ---
 
-# 15. PIPELINE TỔNG QUÁT
+# PIPELINE TỔNG QUÁT
+
+<div class="columns">
+<div>
 
 ```
 ẢNH / VIDEO / CAMERA
@@ -327,29 +343,39 @@ Class. Detection Segmentation
      Decision
 ```
 
-**Mục tiêu cuối cùng:** Biến dữ liệu hình ảnh thành thông tin hữu ích.
+</div>
+<div class="col-2">
+
+![height:500](images/ip_process.png)
+
+<gap></gap>
+
+**Mục tiêu:** Biến dữ liệu hình ảnh thành thông tin hữu ích.
+
+</div>
+</div>
+
+
 
 ---
 
-# 16. ỨNG DỤNG
+# ỨNG DỤNG
 
-**Y tế:** X-quang, CT, MRI, phân tích ảnh y tế
-
-**Công nghiệp:** Kiểm tra lỗi sản phẩm, đếm sản phẩm, đo kích thước
-
-**Giao thông:** Nhận dạng biển số, phát hiện phương tiện, giám sát giao thông
-
-**An ninh:** Nhận dạng khuôn mặt, theo dõi đối tượng
-
-**Viễn thám:** Ảnh vệ tinh, theo dõi môi trường, phân tích đất đai
-
-**Ví dụ:** Hệ thống camera giao thông sử dụng CV để tự động phát hiện xe vượt đèn đỏ và ghi lại biển số.
+- **Y tế:** X-quang, CT, MRI, phân tích ảnh y tế
+- **Công nghiệp:** Kiểm tra lỗi sản phẩm, đếm sản phẩm, đo kích thước
+- **Giao thông:** Nhận dạng biển số, phát hiện phương tiện, giám sát giao thông
+  - **Ví dụ:** Hệ thống camera giao thông sử dụng CV để tự động phát hiện xe vượt đèn đỏ và ghi lại biển số.
+- **An ninh:** Nhận dạng khuôn mặt, theo dõi đối tượng
+- **Viễn thám:** Ảnh vệ tinh, theo dõi môi trường, phân tích đất đai
 
 ---
-
-# 17. ẢNH KHÔNG CHỈ LÀ ÁNH SÁNG KHẢ KIẾN
+<!--_class: text-sm-->
+# ẢNH KHÔNG CHỈ LÀ ÁNH SÁNG KHẢ KIẾN
 
 Con người chủ yếu quan sát vùng ánh sáng khả kiến. Máy móc có thể thu nhận nhiều loại tín hiệu hơn:
+
+<div class="columns">
+<div>
 
 - Gamma
 - X-ray
@@ -365,11 +391,19 @@ Con người chủ yếu quan sát vùng ánh sáng khả kiến. Máy móc có 
 - Kính hiển vi điện tử
 - Các hệ thống cảm biến chuyên dụng
 
+</div>
+<div class="col-2">
+
+![](images/anhsang.jpg)
+
+</div>
+</div>
+
 **Ví dụ:** Ảnh chụp X-quang dùng trong y tế, ảnh hồng ngoại dùng để quan sát vào ban đêm.
 
 ---
 
-# 18. LỊCH SỬ PHÁT TRIỂN
+# LỊCH SỬ PHÁT TRIỂN
 
 - **1920s:** Truyền ảnh
 - **1960s:** Computer + Space Imaging
@@ -388,9 +422,12 @@ Con người chủ yếu quan sát vùng ánh sáng khả kiến. Máy móc có 
 
 ---
 
-# 19. THỊ GIÁC CON NGƯỜI
+# THỊ GIÁC CON NGƯỜI
 
 Mắt người là một hệ thống thu nhận và xử lý thông tin quang học phức tạp.
+
+<div class="columns">
+<div class="col-2">
 
 **Một số thành phần chính:**
 
@@ -401,22 +438,46 @@ Mắt người là một hệ thống thu nhận và xử lý thông tin quang h
 - **Rods** (tế bào hình que): cảm nhận độ sáng, hoạt động tốt trong điều kiện thiếu sáng
 - **Cones** (tế bào hình nón): cảm nhận màu sắc, hoạt động tốt trong điều kiện đủ sáng
 
+</div>
+<div>
+
+![](images/1.7.png)
+
+</div>
+</div>
+
 **Ý nghĩa đối với Computer Vision:** Nghiên cứu thị giác người giúp chúng ta hiểu về ánh sáng, độ sáng, độ tương phản, màu sắc và nhận thức thị giác.
 
 ---
 
-# 20. ÁNH SÁNG VÀ ĐỘ SÁNG
+# ÁNH SÁNG VÀ ĐỘ SÁNG (here)
 
 Khả năng cảm nhận của mắt không đơn giản là: *"Giá trị pixel lớn → luôn cảm thấy sáng hơn."*
 
-**Nhận thức phụ thuộc vào:**
+- **Nhận thức phụ thuộc vào:**
 
-- Cường độ ánh sáng
-- Nền xung quanh
-- Tương phản
-- Điều kiện quan sát
+<div class="columns">
+<div class="col-2">
+<ul>
 
-**Ví dụ:** Một vùng xám có cùng giá trị pixel có thể được cảm nhận khác nhau khi đặt trên nền sáng so với khi đặt trên nền tối. Đây là hiệu ứng *simultaneous contrast* – một hiện tượng quan trọng trong tâm lý học thị giác.
+  - Cường độ ánh sáng
+  - Nền xung quanh
+  - Tương phản
+  - Điều kiện quan sát
+
+</ul>
+
+- **Vạch Mach (Mach bands):** Mắt có xu hướng tăng/giảm cường độ cảm nhận ở ranh giới giữa các vùng có cường độ khác nhau.
+
+- **Ví dụ:** Một vùng xám có cùng giá trị pixel có thể được cảm nhận khác nhau khi đặt trên nền sáng so với khi đặt trên nền tối. Đây là hiệu ứng *simultaneous contrast* – một hiện tượng quan trọng trong tâm lý học thị giác.
+
+</div>
+<div>
+
+![height:480](images/1.8.png)
+
+</div>
+</div>
 
 ---
 
