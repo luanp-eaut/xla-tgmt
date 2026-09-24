@@ -21,16 +21,17 @@ paginate: true
 <!--_class: toc-->
 
 # NỘI DUNG
+1. Biến đổi trong miền không gian
 
-1. **Tổng quan**
-2. **Biến đổi trong miền không gian**
-    - Biến đổi cường độ (Point Processing)
-    - Lọc không gian (Neighborhood Processing)
-3. **Histogram** và các kỹ thuật cân bằng, khớp histogram
-4. **Biến đổi trong miền tần số**
-    - Biến đổi Fourier 2D
-    - Lọc thông thấp, thông cao, lọc chọn lọc
-    - FFT và ứng dụng
+<div style="padding-left: 20px">
+
+  - Biến đổi cường độ
+  - Lọc không gian
+
+</div>
+
+2. Histogram
+3. Biến đổi trong miền tần số
 
 ---
 
@@ -49,28 +50,14 @@ Sau chương này, sinh viên có thể:
 ---
 <!--_class: section-->
 
-# TỔNG QUAN
-
----
-
-# NỘI DUNG TỔNG QUÁT
-
-1. **Biến đổi trong miền không gian**
-    - Point Processing
-    - Neighborhood Processing
-2. **Biến đổi cường độ**
-    - Negative, Log, Gamma, Piecewise-Linear
-3. **Lọc không gian**
-    - Smoothing: Mean, Gaussian, Median
-    - Sharpening: Sobel, Laplacian, Unsharp, Highboost
-4. **Xử lý Histogram**
-    - Histogram Equalization, Matching, Local Histogram, CLAHE
-5. **Biến đổi trong miền tần số**
-    - Fourier Transform, Frequency Spectrum, LPF/HPF, FFT
+# BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
 ---
 
 # HAI CÁCH NHÌN VỀ ẢNH
+
+<div class="columns">
+<div class="col-3">
 
 **Miền không gian (Spatial Domain)**
 
@@ -84,25 +71,25 @@ Sau chương này, sinh viên có thể:
 - Quan tâm: *Ảnh thay đổi nhanh hay chậm?*
 - **Ví dụ:** Fourier Transform, Low-pass Filter, High-pass Filter, Band-reject Filter.
 
-> **Ví dụ minh họa:** Một bức ảnh khuôn mặt trong miền không gian là ma trận các pixel; trong miền tần số, nó được mô tả bằng tập hợp các sóng sin/cosin với tần số và biên độ khác nhau.
+</div>
+<div class="col-2">
 
----
-<!--_class: section-->
+![](images/mien_kg_ts.png)
 
-# BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
+</div>
+</div>
+
+- **Ví dụ:** Bức ảnh phi công trong miền không gian là ma trận các pixel; trong miền tần số, nó được mô tả bằng tập hợp các sóng sin/cosin với tần số và biên độ khác nhau.
 
 ---
 
 # KHÁI NIỆM MIỀN KHÔNG GIAN
 
-**Miền không gian (Spatial Domain)** là chính mặt phẳng ảnh, trong đó các phương pháp xử lý tác động **trực tiếp lên các pixel**.
-
-Hai nhóm chính:
-
-- **Point Processing** (Xử lý điểm): biến đổi từng pixel độc lập.
-- **Neighborhood Processing** (Xử lý lân cận): biến đổi dựa trên vùng lân cận của pixel.
-
-> **Ví dụ:** Khi bạn chỉnh độ sáng của một bức ảnh trên điện thoại, bạn đang thực hiện Point Processing. Khi bạn dùng chế độ "làm mờ" (blur), bạn đang dùng Neighborhood Processing vì giá trị mỗi pixel mới được tính từ các pixel xung quanh.
+- **Miền không gian (Spatial Domain)** là chính mặt phẳng ảnh, trong đó các phương pháp xử lý tác động **trực tiếp lên các pixel**.
+- Hai nhóm biến đổi chính:
+    - **Point Processing** (Xử lý điểm): biến đổi từng pixel độc lập.
+    - **Neighborhood Processing** (Xử lý lân cận): biến đổi dựa trên vùng lân cận của pixel.
+- **Ví dụ:** Khi chỉnh độ sáng của một bức ảnh trên điện thoại → thực hiện Point Processing. Khi dùng chế độ "làm mờ" (blur) → dùng Neighborhood Processing vì giá trị mỗi pixel mới được tính từ các pixel xung quanh.
 
 ---
 
@@ -123,29 +110,43 @@ Hai nhóm chính:
 > **Ví dụ minh họa:** Với Point Processing, pixel (x,y) mới chỉ phụ thuộc vào pixel (x,y) cũ. Với Neighborhood Processing, pixel (x,y) mới được tính từ 9 pixel xung quanh (kernel 3x3).
 
 ---
+<!--_class: subsection-->
+
+# Biến đổi cường độ
+
+---
 
 # BIẾN ĐỔI CƯỜNG ĐỘ (INTENSITY TRANSFORMATION)
 
-**Định nghĩa:** Là kỹ thuật Point Processing, mỗi pixel được biến đổi độc lập dựa trên giá trị cường độ của chính nó.
+- **Định nghĩa:** Là kỹ thuật Point Processing, mỗi pixel được biến đổi độc lập dựa trên giá trị cường độ của chính nó.
 
-**Công thức tổng quát:** $s = T(r)$
+<div class="columns">
+<div class="col-3">
 
-Trong đó:
-- $r$: cường độ pixel đầu vào
-- $s$: cường độ pixel đầu ra
-- $T$: hàm biến đổi
+- **Công thức tổng quát:** $s = T(r)$, trong đó:
+  - $r$: cường độ pixel đầu vào
+  - $s$: cường độ pixel đầu ra
+  - $T$: hàm biến đổi
 
-**Mục đích:**
+</div>
+<div class="col-2">
 
-- Thay đổi độ sáng, tăng hoặc giảm tương phản.
-- Làm nổi bật vùng ảnh quan tâm.
-- Điều chỉnh ảnh phù hợp với thiết bị hiển thị.
+![](images/gama.png)
 
-> **Ví dụ:** Khi chụp ảnh trong điều kiện thiếu sáng, ta dùng biến đổi Gamma để làm sáng các vùng tối mà không làm cháy sáng các vùng đã sáng.
+</div>
+</div>
+
+- **Mục đích:**
+  - Thay đổi độ sáng, tăng hoặc giảm tương phản.
+  - Làm nổi bật vùng ảnh quan tâm.
+  - Điều chỉnh ảnh phù hợp với thiết bị hiển thị.
+- **Ví dụ:** Khi chụp ảnh trong điều kiện thiếu sáng, ta dùng biến đổi Gamma để làm sáng các vùng tối mà không làm cháy sáng các vùng đã sáng.
 
 ---
 
 # ẢNH ÂM BẢN (IMAGE NEGATIVE)
+<div class="columns">
+<div class="col-3">
 
 **Công thức:** $s = L - 1 - r$
 
@@ -162,11 +163,22 @@ Với ảnh 8-bit ($L = 256$): $s = 255 - r$
 - Ảnh X-quang và ảnh y tế.
 - Ảnh phim âm bản.
 
+</div>
+<div class="col-2">
+
+![height:400](images/x-ray.png)
+
+</div>
+</div>
+
 > **Ví dụ:** Trên phim X-quang, vùng xương (cản tia) sẽ có màu trắng, vùng mô mềm (cho tia đi qua) có màu đen. Ảnh âm bản giúp bác sĩ quan sát chi tiết dễ hơn.
 
 ---
 
 # BIẾN ĐỔI LOGARITHM
+
+<div class="columns">
+<div class="col-3">
 
 **Công thức:** $s = c \cdot \log(1 + r)$
 
@@ -182,7 +194,14 @@ Với ảnh 8-bit ($L = 256$): $s = 255 - r$
 - Hiển thị Fourier magnitude spectrum.
 - Làm nổi bật thông tin trong vùng cường độ thấp.
 
-> **Ví dụ:** Phổ Fourier thường có giá trị rất lớn ở tâm (DC component) và rất nhỏ ở các vùng biên. Biến đổi log giúp ta nhìn thấy cả hai vùng này trên cùng một hình ảnh.
+</div>
+<div class="col-2">
+
+![height:500](images/loga.png)
+
+</div>
+</div>
+
 
 ---
 
@@ -200,11 +219,14 @@ Với $r$ thường được chuẩn hóa về $[0, 1]$.
 
 **Ứng dụng:** Hiệu chỉnh gamma, điều chỉnh ảnh theo đặc tính thiết bị hiển thị (màn hình CRT, LCD), tiền xử lý ảnh.
 
-> **Ví dụ:** Màn hình máy tính thường có gamma ≈ 2.2, nên ảnh hiển thị sẽ tối hơn ảnh gốc. Ta cần hiệu chỉnh gamma để bù lại.
+![width:700](images/luythua.png)
 
 ---
 
 # TRỰC QUAN VỀ GAMMA
+
+<div class="columns">
+<div>
 
 Đồ thị hàm biến đổi $s = r^\gamma$:
 
@@ -219,11 +241,23 @@ Với $r$ thường được chuẩn hóa về $[0, 1]$.
 
 > **Lưu ý:** Hiệu ứng cụ thể phụ thuộc vào cách chuẩn hóa và hệ số $c$.
 
+</div>
+<div>
+
+![](images/do_thi_gama.png)
+
+</div>
+</div>
+
+
 ---
 
 # BIẾN ĐỔI HÀM BẬC THANG (PIECEWISE-LINEAR)
 
 **Định nghĩa:** Thay vì sử dụng một hàm duy nhất trên toàn bộ dải cường độ, ta **chia dải giá trị thành nhiều đoạn**, mỗi đoạn có một hàm biến đổi riêng.
+
+<div class="columns">
+<div class="col-3">
 
 **Công thức:**
 $$s = \begin{cases} T_1(r), & r < r_1 \\ T_2(r), & r_1 \leq r \leq r_2 \\ T_3(r), & r > r_2 \end{cases}$$
@@ -238,11 +272,23 @@ $$s = \begin{cases} T_1(r), & r < r_1 \\ T_2(r), & r_1 \leq r \leq r_2 \\ T_3(r)
 
 > **Ví dụ:** Trong ảnh y tế, ta chỉ muốn làm nổi bật vùng mô có mức xám từ 80 đến 150, các vùng còn lại giữ nguyên hoặc làm tối đi.
 
+</div>
+<div class="col-2">
+
+![](images/bac_thang.png)
+
+</div>
+</div>
+
+
 ---
 
 # TĂNG CƯỜNG ĐỘ TƯƠNG PHẢN (CONTRAST STRETCHING)
 
 **Mục tiêu:** Mở rộng khoảng giá trị cường độ của ảnh để tăng sự khác biệt giữa các vùng sáng và tối.
+
+<div class="columns">
+<div>
 
 **Ví dụ:** Ảnh đầu vào có $r \in [r_1, r_2]$ được ánh xạ sang $s \in [s_1, s_2]$.
 
@@ -254,6 +300,14 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 - Ảnh có tương phản thấp.
 - Ảnh bị mờ do điều kiện chiếu sáng.
 - Tiền xử lý trước các bước phân tích ảnh.
+
+</div>
+<div>
+
+![](images/tuong_phan.png)
+
+</div>
+</div>
 
 > **Ví dụ:** Ảnh chụp trong sương mù có các mức xám tập trung trong khoảng hẹp [60, 120]. Contrast stretching kéo giãn khoảng này ra [0, 255] giúp ảnh rõ hơn.
 
@@ -268,6 +322,9 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 - Giữ nguyên các mức xám ngoài khoảng.
 - Hoặc đưa toàn bộ vùng ngoài khoảng về một giá trị cố định.
 
+<div class="columns">
+<div>
+
 **Ứng dụng:**
 
 - Làm nổi bật cấu trúc trong ảnh y tế.
@@ -275,16 +332,35 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 
 > **Ví dụ:** Trong ảnh vệ tinh, ta muốn làm nổi bật vùng nước (có mức xám 40-80) để phân tích sông hồ. Các vùng khác (đất, cây cối) được đưa về màu đen.
 
+</div>
+<div>
+
+![](images/cat_xam.png)
+
+</div>
+</div>
+
 ---
 
 # TRÍCH XUẤT MẶT PHẲNG BIT (BIT-PLANE SLICING)
 
 **Định nghĩa:** Pixel 8-bit được biểu diễn bởi $b_7b_6b_5b_4b_3b_2b_1b_0$. Ảnh có thể được phân tách thành **8 bit-plane**.
 
+<div class="columns">
+<div class="col-2">
+
 **Trong đó:**
 
 - $b_7$: Most Significant Bit (MSB) - bit có trọng số lớn nhất.
 - $b_0$: Least Significant Bit (LSB) - bit có trọng số nhỏ nhất.
+
+</div>
+<div class="col-3">
+
+![height:250](images/bit-plan.png)
+
+</div>
+</div>
 
 **Ý nghĩa:**
 
@@ -292,8 +368,6 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 - Bit thấp → thường chứa chi tiết nhỏ và có thể chứa nhiễu.
 
 **Ứng dụng:** Phân tích cấu trúc ảnh, nghiên cứu nén ảnh, phân tích thông tin bit.
-
-> **Ví dụ:** Bit-plane 7 (MSB) thường cho thấy hình dạng tổng quát của vật thể, trong khi bit-plane 0 (LSB) trông như nhiễu ngẫu nhiên.
 
 ---
 
@@ -319,7 +393,7 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 
 ---
 
-# KHÁI NIỆM LỌC KHÔNG GIAN
+# KHÁI NIỆM LỌC KHÔNG GIAN (here)
 
 **Spatial Filtering** là kỹ thuật thay đổi giá trị pixel dựa trên các pixel trong **vùng lân cận**.
 
@@ -329,7 +403,7 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 - Pixel trung tâm của kernel được tính toán lại dựa trên các pixel trong vùng kernel phủ lên.
 - Kernel được **trượt** qua toàn bộ ảnh để tạo ra ảnh đầu ra.
 
-> **Ví dụ:** Khi bạn dùng ứng dụng chỉnh ảnh để "làm mờ" một vùng, phần mềm đang áp dụng một kernel trung bình lên vùng lân cận của mỗi pixel.
+> **Ví dụ:** Khi dùng ứng dụng chỉnh ảnh để "làm mờ" một vùng, phần mềm đang áp dụng một kernel trung bình lên vùng lân cận của mỗi pixel.
 
 ---
 
