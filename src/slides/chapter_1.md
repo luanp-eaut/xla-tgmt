@@ -2,7 +2,7 @@
 marp: true
 theme: eaut
 paginate: true
-transition: zoom
+transition: fade
 ---
 
 <!-- _class: cover -->
@@ -23,11 +23,12 @@ transition: zoom
 
 # Nội dung
 
-- Giới thiệu học phần
-- Tổng quan về xử lý ảnh & TGMT
-- Khái niệm nền tảng
-- Công cụ toán học cơ bản
-- Công cụ xử lý ảnh trong Python
+1. Giới thiệu học phần
+2. Tổng quan về xử lý ảnh & TGMT
+3. Từ thế giới thực đến ảnh số
+4. Biểu diễn ảnh và các quan hệ trong ảnh
+5. Các phép toán cơ bản trên ảnh
+6. Công cụ xử lý ảnh trong Python
 
 ---
 
@@ -110,7 +111,7 @@ transition: zoom
 
 <!-- _class: section -->
 
-# TỔNG QUAN VỀ XỬ LÝ ẢNH
+# TỔNG QUAN VỀ XỬ LÝ ẢNH & TGMT
 
 ---
 
@@ -708,6 +709,9 @@ Tọa độ rời rạc   Mức cường độ rời rạc
 
 Nếu sử dụng $k$ bit cho mỗi pixel:
 
+<div class="columns">
+<div>
+
 $$L = 2^k$$
 
 | Bit | Mức |
@@ -717,6 +721,17 @@ $$L = 2^k$$
 | 4-bit | 16 |
 | 8-bit | 256 |
 | 16-bit | 65,536 |
+
+</div>
+<div class="col-3">
+
+<gap></gap>
+
+![](images/muc_xam.png)
+
+</div>
+</div>
+
 
 **Ví dụ:** Ảnh 8-bit thường dùng trong các bài toán xử lý ảnh mức xám cơ bản vì cân bằng giữa chất lượng và dung lượng.
 
@@ -760,7 +775,7 @@ Khi thay đổi kích thước hoặc biến đổi hình học, ta thường c�
 ---
 <!--_class: section-->
 
-# Biểu diễn và các quan hệ trong ảnh
+# Biểu diễn ảnh và các quan hệ trong ảnh
 
 ---
 
@@ -788,114 +803,6 @@ $$I \in R^{M \times N}$$
 
 ---
 
-# 34. LÁNG GIỀNG CỦA PIXEL (here)
-
-Với pixel $p(x,y)$:
-
-- **4-láng giềng (4-neighbors):**
-
-$$N_4(p) = \{(x-1,y), (x+1,y), (x,y-1), (x,y+1)\}$$
-
-- **Láng giềng chéo (diagonal neighbors):** Gồm bốn pixel theo đường chéo: $(x-1,y-1), (x-1,y+1), (x+1,y-1), (x+1,y+1)$
-
-- **8-láng giềng (8-neighbors):** Kết hợp 4-láng giềng và láng giềng chéo.
-- **Ví dụ:** Khi xét pixel trung tâm trong một cửa sổ 3×3, 4-láng giềng là 4 pixel ở trên/dưới/trái/phải, 8-láng giềng là tất cả 8 pixel xung quanh.
-
----
-
-# 35. TÍNH KỀ VÀ LIÊN THÔNG
-
-Các pixel có thể được xem là kề nhau dựa trên:
-
-- **4-connectivity:** kề theo 4 hướng (trên, dưới, trái, phải)
-- **8-connectivity:** kề theo 8 hướng (bao gồm cả đường chéo)
-- **m-connectivity (mixed connectivity):** kết hợp để tránh các vấn đề về đường đi kép
-
-**Tại sao cần?** Để xác định:
-
-- Pixel nào thuộc cùng một đối tượng
-- Đường đi giữa các pixel
-- Một vùng ảnh gồm những pixel nào
-
-**Ví dụ:** Trong trò chơi Caro, nếu dùng 4-connectivity thì chỉ cần 4 quân liên tiếp theo hàng ngang/dọc để thắng; nếu dùng 8-connectivity thì đường chéo cũng được tính.
-
----
-
-# 36. ĐƯỜNG ĐI VÀ VÙNG
-
-**Path – Đường đi:** Một chuỗi các pixel liên tiếp thỏa mãn điều kiện kề nhau.
-
-**Region – Vùng:** Một tập các pixel liên thông.
-
-**Boundary – Biên:** Tập các pixel thuộc vùng nhưng có ít nhất một láng giềng nằm ngoài vùng.
-
-```
-████████
-██    ██
-██    ██
-████████
-```
-
-Phần bao quanh → boundary.
-
-**Ví dụ:** Khi phân vùng ảnh để tách nền và đối tượng, ta cần xác định vùng liên thông của đối tượng và biên của nó.
-
----
-
-# 37. KHOẢNG CÁCH GIỮA CÁC PIXEL
-
-Ba khoảng cách phổ biến:
-
-**Euclidean (khoảng cách Euclid):**
-
-$$D_E(p,q) = \sqrt{(x-s)^2 + (y-t)^2}$$
-
-**City-block (khoảng cách Manhattan):**
-
-$$D_4(p,q) = |x-s| + |y-t|$$
-
-**Chessboard (khoảng cách bàn cờ):**
-
-$$D_8(p,q) = \max(|x-s|, |y-t|)$$
-
-**Ví dụ:** Từ $(0,0)$ đến $(3,4)$:
-- Euclidean: 5
-- City-block: 7
-- Chessboard: 4
-
----
-
-# 38. SO SÁNH CÁC KHOẢNG CÁCH
-
-**Euclidean:**
-
-```
-    ○
-```
-
-**City-block:**
-
-```
-    ◇
-```
-
-**Chessboard:**
-
-```
-    □
-```
-
-**Ý nghĩa:** Cách định nghĩa khoảng cách phụ thuộc vào mô hình láng giềng và bài toán cần giải.
-
-**Các khái niệm này sẽ được sử dụng trong:**
-
-- Segmentation (phân vùng)
-- Morphology (hình thái học)
-- Connected components (thành phần liên thông)
-- Feature extraction (trích xuất đặc trưng)
-
----
-
 # Láng giềng của một điểm ảnh
 
 - Điểm ảnh $p$ tại tọa độ $(x, y)$ có các tập láng giềng:
@@ -917,291 +824,460 @@ $$D_8(p,q) = \max(|x-s|, |y-t|)$$
 - **4-kề nhau:** $q \in N_4(p)$ và $p, q \in V$.
 - **8-kề nhau:** $q \in N_8(p)$ và $p, q \in V$. (Có thể gây mơ hồ về đường đi).
 - **m-kề nhau (Mixed adjacency):** $q \in N_4(p)$ hoặc $q \in N_D(p)$ và $N_4(p) \cap N_4(q)$ không chứa điểm nào có giá trị thuộc $V$. $\rightarrow$ Loại bỏ sự mơ hồ của 8-kề nhau.
-- **Đường đi (Path):** Dãy các điểm kề nhau. Độ dài đường đi là số bước.
 
-<div style="margin-top:20px">
+<gap></gap>
 
-![width:600px](images/1.14.png)
-
-</div>
+![width:900px](images/adjacency.png)
 
 ---
 
-# Vùng, biên và khoảng cách
+# ĐƯỜNG ĐI VÀ VÙNG
 
-- **Vùng (Region):** Tập hợp các điểm liên thông.
-- **Biên (Boundary):** Tập hợp các điểm trong vùng có ít nhất một láng giềng thuộc phần bù (background) của vùng đó.
-- **Các độ đo khoảng cách D:** Thỏa mãn $D \ge 0$, $D(p,q) = D(q,p)$, $D(p,q) \le D(p,z) + D(z,q)$.
-  - **Khoảng cách Euclidean ($D_e$):** $\sqrt{(x-u)^2 + (y-v)^2}$ (Hình tròn).
-  - **Khoảng cách City-block ($D_4$):** $|x-u| + |y-v|$ (Hình thoi).
-  - **Khoảng cách Chessboard ($D_8$):** $\max(|x-u|, |y-v|)$ (Hình vuông).
-  - **Khoảng cách $D_m$:** Độ dài ngắn nhất của đường đi m-kề nhau.
-- **Bài tập thực hành:** Tính 3 loại khoảng cách trên giữa điểm $p(2, 3)$ và $q(5, 7)$.
-- **Lời giải:**
-  - Euclidean: $\sqrt{(5-2)^2 + (7-3)^2} = 5$
-  - City-block: $|5-2| + |7-3| = 7$
-  - Chessboard: $\max(|5-2|, |7-3|) = 4$
+- **Path – Đường đi:** Một chuỗi các pixel liên tiếp thỏa mãn điều kiện kề nhau.
+- **Region – Vùng:** Một tập các pixel liên thông.
+- **Boundary – Biên:** Tập các pixel thuộc vùng nhưng có ít nhất một láng giềng nằm ngoài vùng.
+- **Ví dụ ứng dụng:** Khi phân vùng ảnh để tách nền và đối tượng, ta cần xác định vùng liên thông của đối tượng và biên của nó.
+<gap></gap>
+
+![width:900](images/boundary.png)
 
 ---
 
-<!-- _class: section -->
+# KHOẢNG CÁCH GIỮA CÁC PIXEL
 
-# CÔNG CỤ TOÁN HỌC CƠ BẢN
-
----
-
-# Phép toán trên ảnh
+Hai điểm $p(x,y), q(s,t)$, ba khoảng cách phổ biến giữa 2 điểm:
 
 <div class="columns">
-<div class="col-2">
+<div>
 
-- **Phép toán theo phần tử (Elementwise):** Cộng, trừ, nhân, chia từng cặp điểm ảnh tương ứng.
-  - **Cộng ảnh (Averaging):** Giảm nhiễu. Trung bình $k$ ảnh nhiễu $\rightarrow$ phương sai nhiễu giảm $k$ lần.
-  - **Trừ ảnh (Subtraction):** Phát hiện thay đổi, trừ nền.
-  - **Nhân/Chia ảnh:** Hiệu chỉnh độ sáng không đều (Shading correction), tạo mặt nạ vùng quan tâm (ROI Masking).
-- **Phép toán Logic:** AND, OR, NOT, XOR (chủ yếu dùng cho ảnh nhị phân/mask).
-- **Ví dụ ứng dụng:** Trung bình nhiều ảnh bị nhiễu Gaussian sẽ giúp khử nhiễu hiệu quả, ảnh càng rõ nét khi số lượng ảnh càng lớn.
+- **Euclidean (khoảng cách Euclid):**
+
+$$D_E(p,q) = \sqrt{(x-s)^2 + (y-t)^2}$$
+
+- **City-block (khoảng cách Manhattan):**
+
+$$D_4(p,q) = |x-s| + |y-t|$$
+
+- **Chessboard (khoảng cách bàn cờ):**
+
+$$D_8(p,q) = \max(|x-s|, |y-t|)$$
+
+- **Ví dụ:** Từ $(0,0)$ đến $(3,4)$:
+  - Euclidean: 5
+  - City-block: 7
+  - Chessboard: 4
 
 </div>
 <div>
 
-![](images/1.15.png)
-
+![](images/distance.png)
 </div>
 </div>
 
----
-
-# Ví dụ ứng dụng phép toán trên ảnh
-
-<div class="columns">
-<div class="col-2">
-
-- Hình ảnh của cặp thiên hà NGC 3314 bị nhiễu Gaussian cộng thêm.
-- Các hình (b)-(f) là kết quả trung bình của 5, 10, 20, 50 và 1.000 hình ảnh bị nhiễu, tương ứng.
-
-</div>
-<div class="col-5">
-
-![](images/1.16.png)
-
-</div>
-</div>
+- Cách định nghĩa khoảng cách phụ thuộc vào mô hình láng giềng và bài toán cần giải.
 
 
 ---
-
-# Phép toán không gian
-
-- Là các phép toán biến đổi tác động trực tiếp lên giá trị điểm ảnh trong miền không gian: $g(x, y) = T[f(x, y)]$.
-- **Đơn điểm ảnh (Single-pixel):** Biến đổi cường độ $s = T(z)$. Ví dụ: tạo ảnh âm bản.
-- **Láng giềng (Neighborhood):** Giá trị điểm ảnh đầu ra phụ thuộc vào một vùng lân cận của ảnh đầu vào. Ví dụ: làm mờ cục bộ (local averaging).
-- **Biến đổi hình học (Geometric Transformations):**
-  - Biến đổi tọa độ (Affine): Tỷ lệ, Tịnh tiến, Quay, Trượt.
-  - Nội suy cường độ cho tọa độ mới (Nearest, Bilinear, Bicubic).
-- **Đăng ký ảnh (Image Registration):** Căn chỉnh 2 ảnh bằng cách tìm các điểm mốc (tie points/control points) và ước lượng ma trận biến đổi.
-
----
-
-# Biến đổi ảnh & thống kê cường độ
-
-- **Biến đổi ảnh (Image Transforms):** Chuyển từ miền không gian sang miền biến đổi (ví dụ: miền tần số Fourier), xử lý, rồi biến đổi ngược.
-  - Công thức tổng quát: $T(u, v) = \sum\sum f(x, y) r(x, y, u, v)$.
-- **Cường độ ảnh là biến ngẫu nhiên:**
-  - Xác suất xuất hiện mức xám $z_k$: $p(z_k) = n_k / MN$ (Cơ sở của Histogram).
-  - **Trung bình (Mean):** $m = \sum z_k p(z_k)$ (Đo độ sáng trung bình).
-  - **Phương sai (Variance):** $\sigma^2 = \sum (z_k - m)^2 p(z_k)$ (Đo độ tương phản của ảnh).
-
----
-
 <!-- _class: section -->
 
-# CÔNG CỤ XỬ LÝ ẢNH TRONG PYTHON
+# Các phép toán cơ bản trên ảnh
 
 ---
 
-# Tổng quan về xử lý ảnh trong Python
+# CÁC PHÉP TOÁN TRÊN ẢNH
 
-- Python là ngôn ngữ phổ biến nhất cho xử lý ảnh và Computer Vision nhờ cú pháp đơn giản và hệ sinh thái thư viện phong phú.
-- Ảnh được biểu diễn như mảng NumPy đa chiều.
-- **Các thư viện hỗ trợ chính:**
-  - **OpenCV:** Computer Vision real-time, mạnh mẽ.
-  - **Pillow/PIL:** Hiển thị và thao tác cơ bản, thân thiện.
-  - **scikit-image:** Thuật toán học thuật, dễ sử dụng cho nghiên cứu.
-  - **mahotas:** Xử lý nhanh, tập trung vào hình thái học (morphology).
-
----
-
-# OpenCV- Open Computer Vision Library
+Vì ảnh có thể biểu diễn dưới dạng ma trận nên ta có thể thực hiện:
 
 <div class="columns">
 <div class="col-2">
 
-- **OpenCV** là thư viện xử lý ảnh và Computer Vision mã nguồn mở hàng đầu.
-- **Mục đích:** Phục vụ các ứng dụng Computer Vision thời gian thực (real-time).
-- **Lịch sử:** Được phát triển bởi Intel, hiện duy trì bởi Open Source Vision Foundation.
-- **Quy mô:** Chứa hơn 2500 thuật toán tối ưu.
-- **Hỗ trợ đa ngôn ngữ:** Python, C++, C, Java, MATLAB.
-- **Đa nền tảng:** Chạy trên Windows, Linux, macOS, Android, iOS.
+- **Arithmetic (số học):**
 
-</div>
-<div>
+  - Addition (cộng)
+  - Subtraction (trừ)
+  - Multiplication (nhân)
+  - Division (chia)
 
-![width:350px](images/1.17.png)
-
-</div>
-</div>
-
----
-
-# Đặc điểm nổi bật của OpenCV
-
-- **Hiệu suất cao:** Được viết bằng C/C++, tối ưu hóa cho tốc độ xử lý thời gian thực.
-- **Đa năng:** Bao phủ từ các tác vụ xử lý ảnh cơ bản đến các thuật toán AI, Deep Learning phức tạp.
-- **Cộng đồng lớn:** Tài liệu phong phú, cộng đồng người dùng đông đảo, dễ dàng tìm kiếm sự hỗ trợ.
-- **Tích hợp dễ dàng:** Dễ dàng kết hợp với NumPy, SciPy, Matplotlib trong Python.
-- **Mã nguồn mở:** Miễn phí cho cả mục đích học tập và thương mại.
-
----
-
-# OpenCV- chức năng cơ bản
-
-- **Đọc/ghi ảnh:**
-  - `cv2.imread()`: Đọc ảnh từ file.
-  - `cv2.imwrite()`: Ghi ảnh ra file.
-- **Hiển thị:**
-  - `cv2.imshow()`: Hiển thị ảnh trong cửa sổ.
-  - `cv2.waitKey()`: Chờ phím bấm để đóng cửa sổ.
-- **Thao tác cơ bản:**
-  - `cv2.resize()`: Thay đổi kích thước ảnh.
-  - `cv2.flip()`: Lật ảnh ngang/dọc.
-  - `cv2.rotate()`: Xoay ảnh 90/180/270 độ.
-  - `cv2.cvtColor()`: Chuyển đổi không gian màu (RGB sang Gray, HSV...).
-- **Vẽ hình học:** `cv2.line()`, `cv2.rectangle()`, `cv2.circle()`.
-
----
-
-# OpenCV- Image Filtering& Enhancement
-
-- **Làm mờ & Giảm nhiễu:**
-  - `cv2.blur()`: Làm mờ trung bình.
-  - `cv2.medianBlur()`: Giảm nhiễu muối tiêu (salt-and-pepper).
-  - `cv2.bilateralFilter()`: Làm mờ nhưng vẫn bảo toàn biên.
-- **Phát hiện biên:** `cv2.Canny()`.
-- **Phân ngưỡng (Thresholding):**
-  - `cv2.threshold()`: Nhị phân hóa ảnh.
-  - `cv2.adaptiveThreshold()`: Nhị phân hóa thích nghi với điều kiện sáng.
-- **Hình thái học (Morphology):** `cv2.erode()`, `cv2.dilate()`.
-- **Đường viền (Contours):** `cv2.findContours()`, `cv2.drawContours()`.
-
----
-
-# OpenCV- Computer Vision Advanced
-
-- **Phát hiện khuôn mặt:** `cv2.CascadeClassifier()` (Sử dụng Haar Cascade).
-- **Phát hiện đối tượng & Đặc trưng:** HOG, SIFT, SURF, ORB.
-- **Theo dõi đối tượng (Tracking):** Feature matching, Background subtraction.
-- **Hiệu chỉnh phối cảnh (Perspective correction).**
-- **Suy luận mạng nơ-ron (Neural network inference):** `dnn.readNet()` để chạy các mô hình AI.
-- **Ứng dụng:** Phân loại ảnh, theo dõi chuyển động, nhận dạng đối tượng phức tạp.
-
----
-
-# Pillow(PIL Fork)
-
-- **Pillow** là bản fork hiện đại của PIL (Python Imaging Library).
-- **Mục tiêu:** Hiển thị và thao tác ảnh cơ bản, tập trung vào tính thân thiện với người dùng.
-- **Đặc điểm:**
-  - Dễ sử dụng, cú pháp trực quan.
-  - Hỗ trợ nhiều định dạng: Animated GIFs, JPEG2000, WebP.
-  - Không gian màu mặc định: RGB.
-- **Ứng dụng:** Xử lý ảnh cho web, các tác vụ chỉnh sửa đơn giản.
-- **Lưu ý:** Hiệu suất chậm hơn OpenCV, không phù hợp cho các tác vụ thời gian thực hoặc xử lý video.
-
----
-
-# scikit-image
-
-- **Mục tiêu:** Thư viện thuật toán xử lý ảnh dành cho khoa học và nghiên cứu, ưu tiên tính dễ sử dụng và dễ hiểu.
-- **Đặc điểm:**
-  - Chức năng mở rộng, bao phủ nhiều thuật toán học thuật.
-  - Không gian màu: RGB.
-  - Kiểu dữ liệu mặc định: float (giá trị từ 0 đến 1).
-- **Ứng dụng:** Nghiên cứu, giáo dục, phân tích ảnh y tế, khoa học.
-- **Bao gồm:** Phát hiện biên, trích xuất đặc trưng, khôi phục ảnh, phân vùng.
-
----
-
-# mahotas
-
-- **Mục tiêu:** Thư viện xử lý ảnh tốc độ cao, được xây dựng bằng C++.
-- **Tập trung:** Các phép toán hình thái học (Morphology operations) và xử lý ảnh cơ bản.
-- **Đặc điểm:**
-  - Mã nguồn đơn giản, tài liệu tốt.
-  - Hiệu suất nhanh nhất trong các hàm xử lý cơ bản.
-- **Ứng dụng:** Xử lý ảnh sinh học, phân tích ảnh hiển vi, các tác vụ yêu cầu tốc độ cao.
-- **Lưu ý:** Ít chức năng mở rộng hơn so với scikit-image.
-
----
-
-# NumPy- hỗ trợ xử lý ảnh
-
-- **Nền tảng:** NumPy là cốt lõi cho mọi thư viện xử lý ảnh trong Python (OpenCV, scikit-image đều dùng NumPy array).
-- **Biểu diễn ảnh:** Ảnh được biểu diễn như mảng đa chiều (2D cho ảnh xám, 3D cho ảnh màu).
-- **Hỗ trợ toán học:** Cung cấp nhiều hàm toán học tối ưu cho các phép toán trên pixel.
-- **Yêu cầu:** Bắt buộc phải cài đặt khi làm việc với OpenCV (NumPy + SciPy).
-- **Thao tác phổ biến:**
-  - Slice arrays để crop (cắt) ảnh.
-  - Create masks cho các phép toán masked operations.
-  - Biến đổi ma trận ảnh nhanh chóng.
-
----
-
-# Cài đặt môi trường thực hành
-
-<div class="columns">
-<div class="col-2">
-
-- Phần mềm:
-  - Python 3.11+
-  - VSCode
-  - pip/pipenv
-- VSCode extensions:
-  - Python (Microsoft)
-  - Jupyter (Microsoft)
-
-</div>
-<div  class="col-2">
-
-- Python packages:
-  - numpy
-  - opencv-python
-  - matplotlib
-  - scikit-image
-  - pillow
-  - ipykernel
+- **Logical (logic):** AND, OR, NOT, XOR
 
 </div>
 <div class="col-3">
 
-- Tổ chức dự án:
+![](images/add_photos.png)
+</div>
+</div>
 
-```text
-projects/
-│
-├── images/           # Ảnh đầu vào
-├── output/           # Kết quả xử lý
-├── notebooks/        # Jupyter Notebook
-├── src/              # Mã nguồn Python
-└── requirements.txt  # Danh sách thư viện
+- **Lưu ý:** Các phép toán có thể thực hiện theo từng pixel – *element-wise*.
+- **Ứng dụng:** Trung bình nhiều ảnh để giảm nhiễu.
+
+---
+
+# TRỪ ẢNH
+
+Phép trừ ảnh có thể được sử dụng để phát hiện thay đổi:
+
 ```
+Ảnh trước ─┐
+           ├── Difference ──→ Vùng thay đổi
+Ảnh sau  ──┘
+```
+
+<div class="columns">
+<div>
+
+**Một số ứng dụng:**
+
+- Background subtraction (trừ nền)
+- Change detection (phát hiện thay đổi)
+- Phân tích chuyển động
+- So sánh ảnh
+
+</div>
+<div>
+
+![](images/subtract-photos.png)
+</div>
+</div>
+
+**Ví dụ:** Camera giám sát trừ ảnh hiện tại với ảnh nền (background) để phát hiện người hoặc vật thể mới xuất hiện.
+
+---
+
+# PHÉP TOÁN LOGIC VÀ MASK
+
+Ảnh nhị phân hoặc mask thường được sử dụng để xác định vùng quan tâm.
+
+<div class="columns">
+<div>
+
+**Ví dụ:**
+
+```
+Image
+  AND
+Mask
+  ↓
+ROI
+```
+
+**ROI – Region of Interest (Vùng quan tâm):** Chỉ xử lý vùng cần thiết thay vì toàn bộ ảnh.
+
+</div>
+<div>
+
+![](images/mask.png)
+</div>
+</div>
+
+**Ví dụ:** Khi nhận dạng khuôn mặt, ta dùng mask để chỉ xử lý vùng khuôn mặt, bỏ qua nền và các vùng không liên quan.
+
+---
+
+# PHÉP TOÁN KHÔNG GIAN
+
+Trong phép toán không gian, giá trị đầu ra có thể phụ thuộc vào một pixel hoặc một vùng lân cận của pixel.
+
+**Single-pixel operation (toán tử đơn pixel):**
+
+$$g(x,y) = T(f(x,y))$$
+
+- **Ví dụ:** Negative (đảo màu), Brightness adjustment (điều chỉnh độ sáng), Threshold (ngưỡng hóa)
+
+**Neighborhood operation (toán tử lân cận):**
+
+Giá trị đầu ra phụ thuộc vào các pixel xung quanh.
+
+- **Ví dụ:** Blur (làm mờ), Sharpening (làm sắc), Edge detection (phát hiện biên)
+
+---
+
+# TÍCH CHẬP (CONVOLUTION)
+
+Một trong những công cụ quan trọng nhất của xử lý ảnh là **kernel / filter**.
+
+<div class="columns">
+<div class="col-2">
+
+```
+      Kernel
+     ┌───┬───┬───┐
+     │   │   │   │
+     ├───┼───┼───┤
+     │   │ X │   │
+     ├───┼───┼───┤
+     │   │   │   │
+     └───┴───┴───┘
+            │
+            ▼
+       tính tổng có trọng số
+            │
+            ▼
+        pixel đầu ra
+```
+
+</div>
+<div class="col-3">
+
+**Biểu diễn toán học:**
+
+$$g(x,y) = \sum_m \sum_n h(m,n) f(x-m, y-n)$$
+
+Trong đó:
+
+- $f$: ảnh đầu vào
+- $h$: kernel
+- $g$: ảnh đầu ra
+
+<gap></gap>
+
+![](images/convolution.png)
+</div>
+</div>
+
+---
+
+# BIẾN ĐỔI HÌNH HỌC
+
+Biến đổi hình học thay đổi vị trí của pixel.
+
+<div class="columns">
+<div class="col-2">
+
+**Các phép biến đổi phổ biến:**
+
+- **Translation** – Tịnh tiến
+- **Rotation** – Xoay
+- **Scaling** – Co giãn
+- **Shearing** – Trượt
+- **Perspective transformation** – Biến đổi phối cảnh
+
+```
+Ảnh gốc
+   ↓
+Geometric Transformation
+   ↓
+Ảnh mới
+   ↓
+Interpolation
+```
+
+</div>
+<div>
+
+![height:500](images/hinh_hoc.png)
 
 </div>
 </div>
 
-- Cài đặt thư viện:
-```bash
-pipx install pipenv
-pipenv shell
-pipenv install numpy opencv-python matplotlib scikit-image pillow ipykernel
+**Ví dụ:** Khi xoay một bức ảnh 45 độ, các pixel mới sẽ được tính bằng nội suy từ các pixel gốc.
+
+---
+<!--_class: text-sm-->
+
+# THỐNG KÊ CƯỜNG ĐỘ VÀ Histogram
+
+- Cường độ pixel có thể được xem như một biến ngẫu nhiên, các giá trị thống kê thể hiện:
+
+  - **Mean (giá trị trung bình):** $\mu = \frac{1}{N} \sum_{i=1}^{N} x_i$, cho biết mức cường độ trung bình của ảnh.
+
+  - **Variance (phương sai):** $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$, cho biết mức độ phân tán của cường độ → liên quan đến độ tương phản.
+
+  - **Ví dụ:** Ảnh có phương sai cao thường có độ tương phản tốt (sáng tối rõ ràng), ảnh có phương sai thấp thường trông mờ nhạt.
+
+<div class="columns">
+<div>
+
+- **Histogram:** mô tả số lượng pixel tương ứng với từng mức cường độ.**Histogram** giúp phân tích:
+  - Độ sáng
+  - Độ tương phản
+  - Phân bố cường độ
+
+</div>
+<div>
+
+![](images/histogram.png)
+
+</div>
+</div>
+
+  - **Ví dụ:** Nếu histogram tập trung ở vùng tối (bên trái), ảnh bị thiếu sáng; nếu trải đều từ 0 đến 255, ảnh có độ tương phản tốt.
+
+
+---
+<!-- _class: section -->
+
+# Công cụ xử lý ảnh trong Python
+
+---
+
+# HỆ SINH THÁI PYTHON
+
+Python được sử dụng rộng rãi trong Image Processing và Computer Vision nhờ:
+
+- Cú pháp đơn giản
+- Hệ sinh thái thư viện phong phú
+- Tích hợp tốt với Machine Learning / Deep Learning
+- Hỗ trợ nghiên cứu và triển khai ứng dụng
+
+**Các thư viện chính:**
+
 ```
+                 Python
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+    NumPy        OpenCV      scikit-image
+       │            │            │
+       └────────────┼────────────┘
+                    ▼
+              Image Processing
+```
+
+---
+
+# NUMPY – NỀN TẢNG DỮ LIỆU
+
+NumPy cung cấp:
+
+- Mảng đa chiều
+- Phép toán vector / ma trận
+- Các hàm toán học
+- Boolean masking
+- Slicing
+
+**Biểu diễn ảnh:**
+
+- Ảnh xám: $H \times W$
+- Ảnh màu RGB: $H \times W \times 3$
+
+**Ví dụ:**
+
+```python
+image.shape  # có thể cho: (480, 640, 3)
+```
+
+**Ý nghĩa:** NumPy là nền tảng để biểu diễn và thao tác với ảnh dưới dạng ma trận trong Python.
+
+---
+
+# OPENCV
+
+**OpenCV – Open Source Computer Vision Library** là thư viện mã nguồn mở được sử dụng rộng rãi cho:
+
+<div class="columns">
+<div>
+
+- Image Processing
+- Computer Vision
+- Video processing
+- Real-time applications
+- AI model inference
+
+</div>
+<div>
+
+**Một số chức năng:**
+
+- Đọc / ghi ảnh
+- Resize / rotate / flip
+- Color conversion
+- Filtering, Edge detection
+- Thresholding, Morphology
+- Contours, Object detection
+- Video processing
+
+</div>
+</div>
+
+
+**Ví dụ:** OpenCV được sử dụng trong các hệ thống nhận dạng khuôn mặt thời gian thực trên điện thoại.
+
+---
+
+# OPENCV – CÁC HÀM CƠ BẢN
+
+**Đọc / ghi:**
+
+- `cv2.imread()`, `cv2.imwrite()`
+
+**Biến đổi:**
+
+- `cv2.resize()`, `cv2.flip()`, `cv2.rotate()`, `cv2.cvtColor()`
+
+**Vẽ:**
+
+- `cv2.line()`, `cv2.rectangle()`, `cv2.circle()`
+
+**Hiển thị:**
+
+- `cv2.imshow()`, `cv2.waitKey()`
+
+**Ví dụ:**
+
+```python
+img = cv2.imread("photo.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+cv2.imshow("Gray", gray)
+cv2.waitKey(0)
+```
+
+---
+
+# OPENCV – FILTERING & ENHANCEMENT
+
+**Làm mờ / giảm nhiễu:**
+
+- `cv2.blur()`, `cv2.medianBlur()`, `cv2.bilateralFilter()`
+
+**Phát hiện biên:**
+
+- `cv2.Canny()`
+
+**Thresholding:**
+
+- `cv2.threshold()`, `cv2.adaptiveThreshold()`
+
+**Morphology:**
+
+- `cv2.erode()`, `cv2.dilate()`
+
+**Contours:**
+
+- `cv2.findContours()`, `cv2.drawContours()`
+
+**Ví dụ:** Sử dụng `cv2.medianBlur()` để loại bỏ nhiễu muối tiêu (salt-and-pepper noise) mà vẫn giữ được biên.
+
+---
+
+# CÁC THƯ VIỆN KHÁC
+
+**Pillow:**
+
+- Phù hợp với: đọc / ghi ảnh, chuyển đổi định dạng, các thao tác ảnh cơ bản
+- Ứng dụng web và xử lý ảnh đơn giản
+
+**scikit-image:**
+
+- Phù hợp với: giáo dục, nghiên cứu, các thuật toán xử lý ảnh khoa học
+- Segmentation, restoration, feature extraction...
+
+**Mahotas:**
+
+- Tập trung vào: image processing, morphology
+- Một số thao tác xử lý ảnh hiệu năng cao
+
+**Ví dụ:** scikit-image thường được dùng trong nghiên cứu vì có nhiều thuật toán tiên tiến và tài liệu tốt.
+
+---
+
+# NÊN DÙNG THƯ VIỆN NÀO?
+
+| Thư viện | Điểm mạnh |
+| --- | --- |
+| NumPy | Ma trận và tính toán số |
+| OpenCV | Image Processing & Computer Vision |
+| Pillow | Thao tác ảnh cơ bản |
+| scikit-image | Thuật toán nghiên cứu |
+| Matplotlib | Hiển thị và trực quan hóa |
+
+**Trong học phần:** NumPy + OpenCV + Matplotlib sẽ là bộ công cụ chính. Các thư viện khác được sử dụng khi phù hợp.
