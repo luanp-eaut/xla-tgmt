@@ -28,6 +28,8 @@ transition: fade
 
   - Biến đổi cường độ
   - Lọc không gian
+  - Làm mịn ảnh
+  - Làm nét ảnh
 
 </div>
 
@@ -394,50 +396,53 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 
 ---
 
-# KHÁI NIỆM LỌC KHÔNG GIAN (here)
+# Lọc không gian (Spatial Filtering)
 
-**Spatial Filtering** là kỹ thuật thay đổi giá trị pixel dựa trên các pixel trong **vùng lân cận**.
+- **Định nghĩa**: Là kỹ thuật thay đổi giá trị của một pixel dựa trên giá trị của các pixel lân cận xung quanh nó. Là công cụ chủ chốt để làm mịn ảnh hoặc làm nét ảnh.
 
-**Cơ chế hoạt động:**
+<div class="columns">
+<div>
 
-- Một **kernel** (hay mask, window) có kích thước nhỏ (thường 3x3, 5x5, 7x7) được đặt lên ảnh.
-- Pixel trung tâm của kernel được tính toán lại dựa trên các pixel trong vùng kernel phủ lên.
-- Kernel được **trượt** qua toàn bộ ảnh để tạo ra ảnh đầu ra.
+- **Cơ chế hoạt động**:
+  - Sử dụng một mặt nạ nhỏ (Kernel) "trượt" qua từng pixel của ảnh gốc.
+  - **Công thức tổng quát:** $g(x,y) = \sum_s \sum_t w(s,t) \cdot f(x-s, y-t)$
 
-> **Ví dụ:** Khi dùng ứng dụng chỉnh ảnh để "làm mờ" một vùng, phần mềm đang áp dụng một kernel trung bình lên vùng lân cận của mỗi pixel.
+  - Trong đó:
+    - $f(x,y)$: ảnh đầu vào
+    - $w(s,t)$: kernel (bộ lọc)
+    - $g(x,y)$: ảnh đầu ra
 
----
+- **Kích thước kernel:** Thường là số lẻ ($3\times3$, $5\times5$, $7\times7$) để xác định rõ pixel trung tâm.
 
-# KERNEL VÀ PHÉP LỌC
+</div>
+<div>
 
-**Công thức tổng quát:** Với kernel $w(s,t)$:
-$$g(x,y) = \sum_s \sum_t w(s,t) \cdot f(x-s, y-t)$$
+![](images/2.4.png)
 
-Trong đó:
-- $f(x,y)$: ảnh đầu vào
-- $w(s,t)$: kernel (bộ lọc)
-- $g(x,y)$: ảnh đầu ra
-
-**Kích thước kernel:** Thường là số lẻ ($3\times3$, $5\times5$, $7\times7$) để xác định rõ pixel trung tâm.
-
-> **Ví dụ:** Kernel trung bình 3x3 có tất cả 9 phần tử bằng 1/9. Khi áp dụng lên một pixel, giá trị mới bằng trung bình cộng của 9 pixel xung quanh.
+</div>
+</div>
 
 ---
 
 # PHÂN LOẠI BỘ LỌC KHÔNG GIAN
 
-**Smoothing Filters (Bộ lọc làm mịn / Low-pass)**
+- **Smoothing Filters (Bộ lọc làm mịn / Low-pass)**
 
-- Giảm nhiễu, làm mờ ảnh.
-- Giảm chi tiết nhỏ.
-- Làm giảm các thay đổi cường độ nhanh.
+  - Giảm nhiễu, làm mờ ảnh.
+  - Giảm chi tiết nhỏ.
+  - Làm giảm các thay đổi cường độ nhanh.
 
-**Sharpening Filters (Bộ lọc làm nét / High-pass)**
+- **Sharpening Filters (Bộ lọc làm nét / High-pass)**
 
-- Tăng cường chi tiết, làm nổi bật biên.
-- Tăng các thay đổi cường độ nhanh.
+  - Tăng cường chi tiết, làm nổi bật biên.
+  - Tăng các thay đổi cường độ nhanh.
 
-> **Ví dụ:** Bộ lọc Mean làm mờ ảnh (smoothing), trong khi bộ lọc Sobel làm nổi bật các đường biên (sharpening).
+![height:300](images/bo_loc.png)
+
+---
+<!--_class: subsection-->
+
+# LÀM MỊN ẢNH
 
 ---
 
@@ -446,6 +451,9 @@ Trong đó:
 **Định nghĩa:** Tất cả pixel trong kernel có **trọng số như nhau**.
 
 Với kernel $m \times n$: $w(i,j) = \frac{1}{mn}$
+
+<div class="columns">
+<div>
 
 **Ví dụ kernel 3×3:**
 $$\frac{1}{9}\begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix}$$
@@ -456,16 +464,19 @@ $$\frac{1}{9}\begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix}$$
 - Làm mờ ảnh nhưng có thể làm mất biên và chi tiết.
 - Nhạy với nhiễu salt-and-pepper (nhiễu muối tiêu).
 
-> **Ví dụ:** Khi áp dụng Mean Filter 3x3 lên ảnh có một pixel nhiễu giá trị 255 (trắng), giá trị mới sẽ bị kéo lên khoảng 28, làm nhiễu lan sang các pixel xung quanh.
+</div>
+<div>
+
+![](images/loc_tb.png)
+
+</div>
+</div>
 
 ---
 
 # BỘ LỌC GAUSSIAN
 
-**Định nghĩa:** Trọng số kernel tuân theo **phân phối Gaussian**.
-
-$$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
-
+**Định nghĩa:** Trọng số kernel tuân theo **phân phối Gaussian**. $G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$
 **Đặc điểm:**
 
 - Pixel gần tâm có trọng số lớn hơn, càng xa tâm trọng số càng nhỏ.
@@ -476,13 +487,18 @@ $$G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
 - Làm mờ tự nhiên, giảm nhiễu tốt.
 - Thường được sử dụng trước các thuật toán phát hiện biên.
 
-> **Ví dụ:** Trong bộ lọc Gaussian 3x3, pixel trung tâm có trọng số lớn nhất (ví dụ 4/16), các pixel ở cạnh có trọng số nhỏ hơn (2/16), và pixel ở góc nhỏ nhất (1/16).
+<gap></gap>
+
+![height:250](images/gaussian.png)
 
 ---
 
 # BỘ LỌC TRUNG VỊ (MEDIAN FILTER)
 
 **Định nghĩa:** Thay giá trị pixel trung tâm bằng **trung vị** (median) của các pixel trong vùng lân cận.
+
+<div class="columns">
+<div>
 
 **Ví dụ:** Với vùng 3x3 có các giá trị:
 ```
@@ -497,6 +513,14 @@ Sắp xếp: 9, 10, 10, 11, **11**, 12, 12, 13, 255
 
 - Hiệu quả với nhiễu salt-and-pepper.
 - Bảo toàn biên tốt hơn bộ lọc trung bình.
+
+</div>
+<div>
+
+![](images/loc_trung_vi.png)
+
+</div>
+</div>
 
 > **Ví dụ:** Ảnh bị nhiễu muối tiêu (các chấm trắng/đen ngẫu nhiên) sẽ được khôi phục gần như hoàn toàn bằng Median Filter 3x3.
 
@@ -515,27 +539,7 @@ Sắp xếp: 9, 10, 10, 11, **11**, 12, 12, 13, 255
 | **Ứng dụng** | Làm mờ đơn giản | Tiền xử lý | Khử nhiễu xung |
 
 ---
-
-# BÀI TẬP THỰC HÀNH - LÀM MỊN ẢNH
-
-```python
-import cv2
-import matplotlib.pyplot as plt
-
-img = cv2.imread("input.jpg", cv2.IMREAD_GRAYSCALE)
-mean = cv2.blur(img, (5, 5))
-gaussian = cv2.GaussianBlur(img, (5, 5), 0)
-median = cv2.medianBlur(img, 5)
-```
-
-**Yêu cầu:**
-
-- Hiển thị và so sánh 4 ảnh: Original, Mean, Gaussian, Median.
-- Quan sát tác động lên chi tiết và biên.
-- Nhận xét bộ lọc nào phù hợp với loại nhiễu nào.
-
----
-<!--_class: section-->
+<!--_class: subsection-->
 
 # LÀM NÉT ẢNH
 
@@ -545,22 +549,34 @@ median = cv2.medianBlur(img, 5)
 
 **Nguyên lý:** Biên thường xuất hiện tại những vị trí mà cường độ ảnh **thay đổi mạnh**.
 
+<div class="columns">
+<div class="col-2">
+
 **Đạo hàm bậc nhất** $\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}$:
 
 - Bằng 0 trong vùng cường độ không đổi.
 - Có giá trị lớn tại vùng thay đổi mạnh.
 - Cho biết độ lớn và hướng thay đổi.
 
+</div>
+<div class="col-3">
+
+![](images/bien.png)
+
+</div>
+</div>
+
 **Đạo hàm bậc hai** $\frac{\partial^2 f}{\partial x^2}, \frac{\partial^2 f}{\partial y^2}$:
 
 - Nhạy với các thay đổi cường độ nhanh.
 - Được sử dụng trong toán tử Laplacian.
 
-> **Ví dụ:** Tại biên giữa vùng trắng và đen, đạo hàm bậc nhất có giá trị lớn (dương hoặc âm), đạo hàm bậc hai đi qua 0 (zero-crossing).
-
 ---
 
 # GRADIENT CỦA ẢNH
+
+<div class="columns">
+<div class="col-2">
 
 **Gradient:** $\nabla f = \begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix}$
 
@@ -570,12 +586,20 @@ $$|\nabla f| = \sqrt{G_x^2 + G_y^2} \approx |G_x| + |G_y|$$
 **Hướng (Direction):**
 $$\theta = \text{atan2}(G_y, G_x)$$
 
+</div>
+<div class="col-3">
+
+<gap></gap>
+
+![](images/bien_huong.png)
+
+</div>
+</div>
+
 **Ý nghĩa:**
 
 - **Magnitude** → biên mạnh hay yếu.
 - **Direction** → hướng thay đổi cường độ (vuông góc với đường biên).
-
-> **Ví dụ:** Với một đường biên thẳng đứng (trắng bên trái, đen bên phải), gradient có hướng nằm ngang và độ lớn lớn tại vị trí biên.
 
 ---
 
@@ -592,7 +616,7 @@ Sau đó tính: $G = \sqrt{G_x^2 + G_y^2}$
 - Phát hiện biên, cho magnitude và direction.
 - Có khả năng giảm ảnh hưởng của nhiễu tốt hơn đạo hàm đơn giản (do có thành phần làm mịn).
 
-> **Ví dụ:** Kernel $G_x$ vừa tính đạo hàm theo $x$ (cột [-1, 0, 1]) vừa làm mịn theo $y$ (hàng [1, 2, 1]).
+![height:200](images/sobel.png)
 
 ---
 
@@ -608,7 +632,7 @@ $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 \end{bmatrix}, \q
 - Sobel sử dụng trọng số lớn hơn ở hàng/cột trung tâm → giảm nhiễu tốt hơn.
 - Sobel thường được sử dụng phổ biến hơn trong thực tế.
 
-> **Ví dụ:** Trên ảnh có nhiễu, Sobel cho kết quả biên rõ ràng hơn Prewitt do kernel của nó có tính làm mịn tốt hơn.
+![height:250](images/prewitt.png)
 
 ---
 
@@ -641,7 +665,7 @@ $$\begin{bmatrix} 0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0 \end{bmatrix} \quad \t
 
 **Lưu ý:** Dấu của kernel có thể đảo ngược tùy quy ước.
 
-> **Ví dụ:** Khi áp dụng kernel Laplacian lên một vùng đồng nhất, kết quả bằng 0. Tại biên, kết quả có giá trị lớn (dương hoặc âm).
+![height:250](images/laplacian.png)
 
 ---
 
@@ -685,7 +709,7 @@ $$\begin{bmatrix} 0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0 \end{bmatrix} \quad \t
 
 ---
 
-# UNSHARP MASKING
+# UNSHARP MASKING (here)
 
 **Ý tưởng:** Làm mờ ảnh để lấy thành phần chi tiết, sau đó cộng thành phần chi tiết trở lại ảnh gốc.
 
