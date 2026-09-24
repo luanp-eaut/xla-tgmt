@@ -545,214 +545,195 @@ Sắp xếp: 9, 10, 10, 11, **11**, 12, 12, 13, 255
 
 ---
 
-# ĐẠO HÀM VÀ BIÊN ẢNH
+# Bộ lọc làm nét (Sharpening/Highpass Filters)
 
-**Nguyên lý:** Biên thường xuất hiện tại những vị trí mà cường độ ảnh **thay đổi mạnh**.
+- **Mục đích**: Làm nổi bật các cạnh và các chi tiết sắc nét trong ảnh.
+- **Cơ sở toán học**:
+  - **Đạo hàm bậc 1**:
+    - Bằng 0 ở vùng cường độ không đổi.
+    - Khác 0 tại điểm bắt đầu/kết thúc của bước nhảy (step) hoặc dốc (ramp).
+    - Khác 0 dọc theo vùng dốc $\rightarrow$ Tạo ra cạnh dày.
+  - **Đạo hàm bậc 2**:
+    - Bằng 0 ở vùng cường độ không đổi.
+    - Khác 0 tại điểm bắt đầu và kết thúc của bước nhảy/dốc.
+    - Bằng 0 dọc theo vùng dốc $\rightarrow$ Tạo ra cạnh mỏng (1 pixel), có tính chất "zero-crossing", rất tốt để làm nét chi tiết nhỏ.
+
+---
+
+# Bộ lọc Laplacian (1)
+
+- **Nguyên lý**:
+  - Nếu coi ảnh là một bề mặt độ sáng: Vùng đồng nhất $\rightarrow$ độ sáng thay đổi rất ít. Vùng biên $\rightarrow$ độ sáng thay đổi đột ngột.
+  - Bộ lọc Laplace đo mức độ thay đổi này bằng đạo hàm bậc hai: $\nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}$
+
+- **Trong ảnh số**:
+  - Đạo hàm được xấp xỉ bằng sai phân hữu hạn: $f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}$
+  - Từ phép xấp xỉ này để tính kernel Laplace.
 
 <div class="columns">
-<div class="col-2">
+<div>
+<ul>
+  
+- Kernel Laplacian cơ bản $3 \times 3$:
+  <span>$\begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$ hoặc $\begin{bmatrix} 1 & 1 & 1 \\ 1 & -8 & 1 \\ 1 & 1 & 1 \end{bmatrix}$</span>
 
-**Đạo hàm bậc nhất** $\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}$:
-
-- Bằng 0 trong vùng cường độ không đổi.
-- Có giá trị lớn tại vùng thay đổi mạnh.
-- Cho biết độ lớn và hướng thay đổi.
+</ul>
+</div>
+<div>
+  
+  ![](images/2.7.png)
 
 </div>
-<div class="col-3">
-
-![](images/bien.png)
-
-</div>
 </div>
 
-**Đạo hàm bậc hai** $\frac{\partial^2 f}{\partial x^2}, \frac{\partial^2 f}{\partial y^2}$:
-
-- Nhạy với các thay đổi cường độ nhanh.
-- Được sử dụng trong toán tử Laplacian.
 
 ---
 
-# GRADIENT CỦA ẢNH
+# Bộ lọc Laplacian (2)
 
-<div class="columns">
-<div class="col-2">
+- **Phát hiện biên bằng Laplace**:
+  - Nếu chỉ lấy kết quả Laplace: $g(x, y) = \nabla^2 f(x, y)$ ta thu được ảnh biên (các đường viền mảnh).
+- **Làm nét ảnh**:
+  - Ta thường cộng (hoặc trừ, tùy dấu của tâm kernel) ảnh gốc với ảnh kết quả của bộ lọc Laplacian:     $g(x, y) = f(x, y) + c * \nabla^2 f(x, y)$ , $c = \pm 1$
+  - Nếu tâm kernel là số âm ($-4$), cộng ($c = -1$). Nếu tâm là số dương ($4$), trừ ($c = 1$).
 
-**Gradient:** $\nabla f = \begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix}$
+<div style="margin-top:20px">
 
-**Độ lớn (Magnitude):**
-$$|\nabla f| = \sqrt{G_x^2 + G_y^2} \approx |G_x| + |G_y|$$
-
-**Hướng (Direction):**
-$$\theta = \text{atan2}(G_y, G_x)$$
-
-</div>
-<div class="col-3">
-
-<gap></gap>
-
-![](images/bien_huong.png)
+![width:800px](images/laplacian.png)
 
 </div>
-</div>
-
-**Ý nghĩa:**
-
-- **Magnitude** → biên mạnh hay yếu.
-- **Direction** → hướng thay đổi cường độ (vuông góc với đường biên).
 
 ---
 
-# TOÁN TỬ SOBEL
+# Các bước làm sắc nét ảnh với bộ lọc Laplace
 
-**Định nghĩa:** Sobel sử dụng hai kernel để xấp xỉ đạo hàm theo hai hướng $x$ và $y$.
-
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}, \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
-
-Sau đó tính: $G = \sqrt{G_x^2 + G_y^2}$
-
-**Đặc điểm:**
-
-- Phát hiện biên, cho magnitude và direction.
-- Có khả năng giảm ảnh hưởng của nhiễu tốt hơn đạo hàm đơn giản (do có thành phần làm mịn).
-
-![height:200](images/sobel.png)
+![width:1000px](images/2.9.png)
 
 ---
 
-# TOÁN TỬ PREWITT
+# Bộ lọc Laplacian - Bài tập thực hành
 
-**Định nghĩa:** Prewitt cũng sử dụng đạo hàm bậc nhất theo hai hướng.
-
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 \end{bmatrix}, \quad G_y = \begin{bmatrix} -1 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & 1 & 1 \end{bmatrix}$$
-
-**So sánh Sobel và Prewitt:**
-
-- Cùng dựa trên gradient.
-- Sobel sử dụng trọng số lớn hơn ở hàng/cột trung tâm → giảm nhiễu tốt hơn.
-- Sobel thường được sử dụng phổ biến hơn trong thực tế.
-
-![height:250](images/prewitt.png)
-
----
-
-# BÀI TẬP THỰC HÀNH - PHÁT HIỆN BIÊN VỚI SOBEL
+Làm nét ảnh bằng Laplacian trong OpenCV.
 
 ```python
-sobel_x = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
-sobel_y = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
-magnitude = cv2.magnitude(
-    sobel_x.astype("float32"),
-    sobel_y.astype("float32")
-)
+import cv2
+import numpy as np
+
+img = cv2.imread('input.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Tính Laplacian
+laplacian = cv2.Laplacian(img, cv2.CV_64F)
+
+# Làm nét: Ảnh gốc - Laplacian (do tâm kernel mặc định là âm)
+sharpened = img - laplacian
+sharpened = np.clip(sharpened, 0, 255).astype(np.uint8)
 ```
 
-**Hiển thị:**
+---
 
-- Original → Sobel X → Sobel Y → Gradient Magnitude
+# Bộ lọc Gradient (Đạo hàm bậc một - Sobel, Prewitt)
 
-**Yêu cầu:** Nhận xét sự khác biệt giữa biên ngang (thấy rõ ở Sobel X) và biên dọc (thấy rõ ở Sobel Y).
+- **Nguyên lý**: Sử dụng đạo hàm bậc một để tính toán độ dốc (độ lớn) của cường độ: $\nabla f(x, y) = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y} \right]^T$
+- **Toán tử Sobel**:
+  - Sử dụng hai kernel để tính đạo hàm theo 2 hướng ngang $(G_x)$ và dọc $(G_y)$.
+  - Sobel Kernel:
+    <span>$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}$, $G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$</span>
+- **Độ lớn của gradient** (độ mạnh của biên):
+  - $M(x, y) = \sqrt{G_x^2 + G_y^2}$ hoặc xấp xỉ $|G_x| + |G_y|$
 
 ---
 
-# BỘ LỌC LAPLACIAN
+# Các bước làm sắc nét ảnh với bộ lọc Gradient
 
-**Định nghĩa:** Laplacian sử dụng **đạo hàm bậc hai**:
-$$\nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}$$
+1. Tính đạo hàm theo hướng ngang $G_x$ bằng kernel Sobel/Prewitt tương ứng.
+2. Tính đạo hàm theo hướng dọc $G_y$ bằng kernel Sobel/Prewitt tương ứng.
+3. Tính độ lớn gradient $M(x, y) = \sqrt{G_x^2 + G_y^2}$.
+4. (Tùy chọn) Cộng độ lớn gradient này vào ảnh gốc để làm nét: $g(x, y) = f(x, y) + c \cdot M(x, y)$.
 
-**Một số kernel phổ biến:**
-$$\begin{bmatrix} 0 & -1 & 0 \\ -1 & 4 & -1 \\ 0 & -1 & 0 \end{bmatrix} \quad \text{hoặc} \quad \begin{bmatrix} -1 & -1 & -1 \\ -1 & 8 & -1 \\ -1 & -1 & -1 \end{bmatrix}$$
-
-**Lưu ý:** Dấu của kernel có thể đảo ngược tùy quy ước.
-
-![height:250](images/laplacian.png)
+![height:350](images/gradient.png)
 
 ---
 
-# ỨNG DỤNG LAPLACIAN
+# Bài tập thực hành
 
-**Phát hiện biên:**
+Phát hiện biên với Sobel.
 
-- Kết quả Laplacian biểu diễn các vùng thay đổi cường độ mạnh.
+```python
+import cv2
+import numpy as np
 
-**Làm nét ảnh:**
+img = cv2.imread('input.jpg', cv2.IMREAD_GRAYSCALE)
 
-- Kết hợp ảnh gốc với Laplacian: $g = f - c \cdot \nabla^2 f$
-- Dấu của $c$ phụ thuộc quy ước kernel.
+# Tính Sobel
+sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
 
-**Đặc điểm:**
-
-- Đẳng hướng (isotropic) - phát hiện biên theo mọi hướng.
-- Không trực tiếp cung cấp hướng biên.
-- Nhạy với nhiễu.
-- Có thể tạo biên kép (double edges).
-
-> **Ví dụ:** Khi làm nét ảnh, ta cộng thêm Laplacian của ảnh vào chính ảnh đó: $g = f + \nabla^2 f$, giúp biên trở nên sắc nét hơn.
-
----
-
-# CÁC BƯỚC LÀM NÉT ẢNH BẰNG LAPLACIAN
-
-**Quy trình:**
-
-1. Tính Laplacian của ảnh gốc.
-2. Kết hợp ảnh gốc với Laplacian (cộng hoặc trừ tùy dấu kernel).
-3. Clipping giá trị về $[0, 255]$.
-
-**Cần kiểm soát:**
-
-- Dấu của Laplacian.
-- Độ lớn giá trị pixel.
-- Clipping về $[0, 255]$ để hiển thị đúng.
-
-> **Ví dụ:** Ảnh mờ do out-focus có thể được cải thiện độ sắc nét đáng kể bằng cách cộng thêm Laplacian, giúp các đường biên trở nên rõ ràng hơn.
+# Độ lớn gradient
+magnitude = np.sqrt(sobelx**2 + sobely**2)
+magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
+```
 
 ---
 
-# UNSHARP MASKING (here)
+# Unsharp Masking & Highboost Filtering
 
-**Ý tưởng:** Làm mờ ảnh để lấy thành phần chi tiết, sau đó cộng thành phần chi tiết trở lại ảnh gốc.
+<div class="columns">
+<div>
 
-**Ba bước thực hiện:**
+- **Định nghĩa**: Là kỹ thuật làm nét ảnh dựa trên nguyên tắc tạo mặt nạ từ ảnh làm mờ và cộng lại với ảnh gốc.
+- **Quy trình cổ điển trong nhiếp ảnh**:
+  1. Làm mờ ảnh gốc: $f_{blur}$
+  2. Tạo mặt nạ (mask): $mask = f - f_{blur}$ (Phần chi tiết bị mất đi do làm mờ)
+  3. Cộng mặt nạ trở lại ảnh gốc: $g = f + k \cdot mask$
 
-1. **Làm mờ:** $f_{blur} = f * h$ (với $h$ là bộ lọc làm mờ).
-2. **Tạo mặt nạ chi tiết:** $m = f - f_{blur}$ (phần chi tiết bị mất khi làm mờ).
-3. **Làm nét:** $g = f + k \cdot m$ với $k > 0$.
+</div>
+<div>
+  
+  ![](images/2.10.png)
 
-> **Ví dụ:** Trong Photoshop, tính năng "Unsharp Mask" hoạt động theo đúng nguyên lý này - tạo ra một bản mờ, tính phần chênh lệch với ảnh gốc, rồi cộng ngược lại với hệ số khuếch đại.
+</div>
+</div>
 
----
-
-# HIGHBOOST FILTERING
-
-**Định nghĩa:** Highboost là mở rộng của Unsharp Masking.
-
-**Công thức:** $g = A \cdot f - f_{blur}$ với $A > 1$
-
-Tương đương: $g = (A-1) \cdot f + (f - f_{blur})$
-
-**Điều chỉnh mức độ:**
-
-- $A$ gần 1 → tăng cường nhẹ.
-- $A > 1$ → tăng cường mạnh hơn.
-
-**Lưu ý:**
-
-- Nếu tăng quá mạnh: nhiễu cũng được khuếch đại.
-- Có thể xuất hiện halo (vầng sáng) quanh biên.
-
-> **Ví dụ:** Với $A = 1$, Highboost trở thành Unsharp Masking thông thường. Với $A = 2$, ảnh được làm nét mạnh hơn nhưng cũng dễ xuất hiện nhiễu.
+- **Phân loại**:
+  - Nếu $k = 1$: **Unsharp masking** (Làm nét tiêu chuẩn).
+  - Nếu $k > 1$: **Highboost filtering** (Tăng cường độ làm nét mạnh hơn).
 
 ---
 
-# SO SÁNH CÁC PHƯƠNG PHÁP LÀM NÉT
+# Làm nét ảnh với Unsharp Masking & Highboost Filtering
 
-| Phương pháp | Cơ sở | Ưu điểm | Hạn chế |
-| --- | --- | --- | --- |
-| **Laplacian** | Đạo hàm bậc hai | Nhanh, đẳng hướng | Nhạy nhiễu |
-| **Sobel** | Gradient | Có magnitude + direction | Không tối ưu cho sharpening mạnh |
-| **Unsharp** | Gốc − Blur | Tự nhiên, kiểm soát được | Có thể tạo halo |
-| **Highboost** | Tăng cường high-frequency | Làm nét mạnh | Dễ khuếch đại nhiễu |
+- **Công thức tổng quát**: $g(x, y) = f(x, y) + k \cdot (f(x, y) - f_{blur}(x, y))$
+  $g(x, y) = (1 + k) f(x, y) - k \cdot f_{blur}(x, y)$
+
+<div class="columns">
+<div class="col-2">
+
+- **Đặc điểm**:
+  - Unsharp Masking
+   ($k=1$): $g = 2f - f_{blur}$
+  - Highboost Filtering
+   ($k>1$): $g = A \cdot f - f_{blur}$ (với $A = 1 + k > 2$)
+  - Giúp kiểm soát mức độ làm nét, kết quả tự nhiên hơn so với Laplacian.
+
+</div>
+<div class="col-3">
+
+![](images/2.11.png)
+
+</div>
+</div>
+
+---
+<!--_class: text-2xs-->
+
+# Tổng hợp các bộ lọc làm nét
+
+| Bộ lọc               | Nguyên lý                                                    | Ưu điểm                                                   | Nhược điểm                                                   | Ứng dụng                                     |
+| -------------------- | ------------------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------- |
+| **Laplace**          | Đạo hàm bậc hai, tính tổng biến thiên theo x và y.           | Đẳng hướng; dùng một mặt nạ duy nhất; tính toán nhanh.    | Rất nhạy với nhiễu; tạo biên kép; không cho biết hướng biên. | Làm nét nhanh; phát hiện biên zero-crossing. |
+| **Gradient (Sobel)** | Đạo hàm bậc nhất theo hai hướng.                             | Cho cả độ lớn và hướng biên; chống nhiễu tốt hơn Laplace. | Làm nét trực tiếp kém hiệu quả; chậm hơn Laplace.            | Phát hiện biên trong thị giác máy tính.      |
+| **Unsharp Masking**  | Ảnh gốc trừ ảnh đã làm mờ, cộng lại với hệ số k.             | Kiểm soát mức độ làm nét; ít nhiễu hơn Laplace; tự nhiên. | Cần chọn bán kính làm mờ phù hợp; dễ tạo quầng sáng (halo).  | Photoshop, in ấn, xuất bản.                  |
+| **Highboost**        | Mở rộng của USM, nhân thành phần tần số cao với hệ số A > 1. | Làm nét mạnh; điều chỉnh từ tự nhiên đến siêu nét.        | Dễ tạo quầng sáng/nhiễu nếu A quá lớn.                       | Ảnh viễn thám, thiên văn, y tế.              |
 
 ---
 
@@ -784,51 +765,45 @@ Tương đương: $g = (A-1) \cdot f + (f - f_{blur})$
 
 **Định nghĩa:** Histogram biểu diễn **tần suất xuất hiện** của các mức cường độ trong ảnh.
 
+<div class="columns">
+<div class="col-2">
+
 **Với ảnh grayscale:** $h(r_k) = n_k$
 
 Trong đó:
 - $r_k$: mức cường độ thứ $k$
 - $n_k$: số pixel có mức cường độ $r_k$
 
-**Histogram chuẩn hóa:**
-$$p(r_k) = \frac{n_k}{M \cdot N}$$
+**Histogram chuẩn hóa:** $p(r_k) = \frac{n_k}{M \cdot N}$
 
 với ảnh kích thước $M \times N$.
 
-> **Ví dụ:** Một ảnh 8-bit có histogram là một đồ thị gồm 256 cột, mỗi cột thể hiện số lượng pixel có mức xám tương ứng (từ 0 đến 255).
+</div>
+<div class="col-3">
 
----
+<gap></gap>
 
-# HISTOGRAM CHO BIẾT ĐIỀU GÌ?
+![](images/hist.png)
+
+</div>
+</div>
+
+**Ý nghĩa:**
 
 - **Ảnh tối:** Histogram tập trung về bên trái (gần 0).
 - **Ảnh sáng:** Histogram tập trung về bên phải (gần 255).
 - **Tương phản thấp:** Histogram tập trung trong một khoảng hẹp.
 - **Tương phản cao:** Histogram trải rộng trên một khoảng lớn.
 
-**Lưu ý quan trọng:** Histogram **không chứa thông tin vị trí không gian** của pixel.
-
-> **Ví dụ:** Hai ảnh hoàn toàn khác nhau (một ảnh bầu trời, một ảnh khuôn mặt) có thể có cùng histogram nếu phân bố mức xám giống nhau. Đây là hạn chế lớn nhất của histogram.
-
 ---
 
-# ỨNG DỤNG CỦA HISTOGRAM
+# ỨNG DỤNG CỦA HISTOGRAM (here)
 
-**Phân tích ảnh:**
-
-- Độ sáng, độ tương phản, phân bố mức xám.
-
-**Tăng cường ảnh:**
-
-- Histogram Equalization, Histogram Matching, Local Enhancement.
-
-**Phân đoạn ảnh:**
-
-- Hỗ trợ lựa chọn ngưỡng: Thresholding, Otsu.
-
-**Chuẩn hóa:**
-
-- So sánh hoặc điều chỉnh ảnh có điều kiện chiếu sáng khác nhau.
+- **Tăng cường ảnh**: Giúp ảnh dễ nhìn hơn, làm nổi bật chi tiết ẩn trong các vùng bị tối hoặc quá sáng.
+- **Chuẩn hóa**: Đưa các ảnh chụp trong điều kiện ánh sáng khác nhau về cùng một trạng thái để phục vụ cho các thuật toán thị giác máy tính phía sau (như nhận diện vật thể).
+- **Phân đoạn ảnh (Thresholding)**: Histogram giúp xác định ngưỡng (threshold) tốt nhất để tách biệt đối tượng và nền (ví dụ: dùng phương pháp Otsu dựa trên Histogram).
+- **Phân tích ảnh:** Độ sáng, độ tương phản, phân bố mức xám.
+- **Phân đoạn ảnh:** Hỗ trợ lựa chọn ngưỡng: Thresholding, Otsu.
 
 > **Ví dụ:** Trong nhận dạng khuôn mặt, histogram của vùng da mặt thường có phân bố đặc trưng, giúp phân biệt da người với nền.
 
