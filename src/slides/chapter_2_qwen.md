@@ -3,6 +3,7 @@
 marp: true
 theme: eaut
 paginate: true
+transition: fade
 
 ---
 <!--_class: cover-->
@@ -387,7 +388,7 @@ $$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 **Câu hỏi thảo luận:** Giải thích tại sao các giá trị gamma khác nhau tạo ra kết quả khác nhau?
 
 ---
-<!--_class: section-->
+<!--_class: subsection-->
 
 # LỌC KHÔNG GIAN
 
