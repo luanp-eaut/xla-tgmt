@@ -3,6 +3,7 @@
 marp: true
 theme: eaut
 paginate: true
+transition: fade
 --------------
 
 <!--_class: cover-->
@@ -24,11 +25,13 @@ paginate: true
 
 1. Giới thiệu về nén ảnh
 2. Đo lường thông tin và chất lượng ảnh
+3. Phương pháp nén dữ liệu
 3. Nén không tổn thất (Lossless)
 4. Nén có tổn thất (Lossy)
 5. Một số chuẩn và kỹ thuật nén ảnh tiêu biểu
 
 ---
+<!--_class: text-sm-->
 
 # MỤC TIÊU HỌC TẬP
 
@@ -68,15 +71,9 @@ Sau khi hoàn thành chương này, sinh viên có thể:
   - G (Green): 8 bit
   - B (Blue): 8 bit
 
-**Tính toán dung lượng dữ liệu thô:**
+**Tính toán dung lượng dữ liệu thô:** $4000 \times 3000 \times 3 \times 8 = 288,000,000 \text{ bit}$
 
-$$4000 \times 3000 \times 3 \times 8 = 288,000,000 \text{ bit}$$
-
-hay khoảng:
-
-$$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
-
-**Lưu ý quan trọng:** Đây mới chỉ là dữ liệu pixel, chưa tính các thông tin bổ sung của file (metadata, header, v.v.)
+hay khoảng: $36,000,000 \text{ byte} \approx 34.3 \text{ MB}$. Đây mới chỉ là dữ liệu pixel, chưa tính các thông tin bổ sung của file (metadata, header, v.v.)
 
 **Hệ quả:** Nếu lưu trữ hoặc truyền hàng triệu ảnh, lượng dữ liệu sẽ rất lớn, gây tốn kém về dung lượng lưu trữ và băng thông truyền tải.
 
@@ -86,20 +83,27 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 
 **Định nghĩa:** Nén ảnh (Image Compression) là quá trình giảm số bit cần thiết để biểu diễn một ảnh.
 
-**Mục tiêu:**
-- Giảm dung lượng dữ liệu
-- Vẫn đáp ứng yêu cầu về khả năng khôi phục và chất lượng ảnh
+**Mục tiêu:** Giảm dung lượng dữ liệu nhưng vẫn đáp ứng yêu cầu về khả năng khôi phục và chất lượng ảnh
 
 **Phân loại theo khả năng khôi phục:**
+
+<div class="columns">
+<div>
 
 **1. Nén không tổn thất (Lossless):**
 - Ảnh sau giải nén giống hệt ảnh gốc
 - Không mất bất kỳ thông tin nào
 
+</div>
+<div>
+
 **2. Nén có tổn thất (Lossy):**
 - Ảnh sau giải nén khác ảnh gốc
 - Vẫn đạt chất lượng chấp nhận được
 - Một phần thông tin bị loại bỏ
+
+</div>
+</div>
 
 **Quy trình tổng quát:**
 
@@ -115,6 +119,9 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 
 **Các đặc điểm tạo ra khả năng nén:**
 
+<div class="columns">
+<div>
+
 **1. Sự lặp lại:**
 - Các giá trị pixel lặp lại trong ảnh
 - Ví dụ: Vùng trời xanh có nhiều pixel cùng giá trị
@@ -123,6 +130,9 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 - Các pixel lân cận thường có giá trị tương tự nhau
 - Ví dụ: Pixel ở giữa vùng da người có giá trị gần giống pixel xung quanh
 
+</div>
+<div>
+
 **3. Phân bố không đều:**
 - Một số giá trị xuất hiện thường xuyên hơn các giá trị khác
 - Ví dụ: Trong ảnh văn bản, màu trắng xuất hiện nhiều hơn màu đen
@@ -130,6 +140,9 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 **4. Giới hạn của thị giác:**
 - Một số chi tiết ít quan trọng đối với thị giác con người
 - Mắt người không nhận biết được mọi thay đổi nhỏ
+
+</div>
+</div>
 
 **Kết luận:** Những đặc điểm này tạo ra **dư thừa dữ liệu (redundancy)**. Nén ảnh chủ yếu là quá trình khai thác và loại bỏ hoặc biểu diễn hiệu quả các dạng dư thừa này.
 
@@ -141,6 +154,10 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 ---
 
 # DỮ LIỆU VÀ THÔNG TIN
+
+
+<div class="columns">
+<div>
 
 **Dữ liệu (Data):**
 - Là phương tiện dùng để biểu diễn và lưu trữ thông tin
@@ -156,6 +173,9 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 - Là nội dung có ý nghĩa được truyền tải bởi dữ liệu
 - Mang tính ngữ nghĩa, phụ thuộc vào ngữ cảnh
 
+</div>
+<div>
+
 **Ví dụ về thông tin:**
 - Một vùng ảnh có màu xanh
 - Một đường biên giữa hai đối tượng
@@ -167,6 +187,10 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 - Vẫn bảo toàn thông tin cần thiết theo mục đích sử dụng
 - Có thể loại bỏ dữ liệu dư thừa mà không mất thông tin quan trọng
 
+</div>
+</div>
+
+
 ---
 
 # TỶ LỆ NÉN
@@ -175,25 +199,33 @@ $$36,000,000 \text{ byte} \approx 34.3 \text{ MiB}$$
 - $B_o$: số bit của dữ liệu gốc
 - $B_c$: số bit của dữ liệu sau nén
 
-**Tỷ lệ nén (Compression Ratio - CR):**
+**Tỷ lệ nén (Compression Ratio - CR):** $CR = \frac{B_o}{B_c}$
 
-$$CR = \frac{B_o}{B_c}$$
+<div class="columns">
+<div>
 
 **Ví dụ minh họa:**
 - Ảnh gốc: 10 MB
 - Ảnh sau nén: 2 MB
 
+</div>
+<div>
+
+<gap></gap>
+<gap></gap>
+
 $$CR = \frac{10}{2} = 5:1$$
+
+</div>
+<div class="col-2">
+</div>
+</div>
 
 **Ý nghĩa:** Dữ liệu được nén với tỷ lệ 5:1, tức là dung lượng giảm đi 5 lần.
 
-**Tỷ lệ giảm dung lượng (Space Savings - R):**
+**Tỷ lệ giảm dung lượng (Space Savings - R):** $R = 1 - \frac{B_c}{B_o}$
 
-$$R = 1 - \frac{B_c}{B_o}$$
-
-**Với ví dụ trên:**
-
-$$R = 1 - \frac{2}{10} = 0.8 = 80\%$$
+**Với ví dụ trên:** $R = 1 - \frac{2}{10} = 0.8 = 80\%$
 
 **Ý nghĩa:** Dung lượng đã giảm 80% so với ban đầu.
 
@@ -225,6 +257,9 @@ Dữ liệu ảnh
 
 # CÁC LOẠI DƯ THỪA TRONG ẢNH
 
+<div class="columns">
+<div>
+
 **1. Dư thừa mã hóa (Coding Redundancy)**
 
 **Định nghĩa:** Xảy ra khi dùng nhiều bit hơn mức cần thiết để biểu diễn các giá trị có xác suất xuất hiện khác nhau.
@@ -235,6 +270,9 @@ Dữ liệu ảnh
 - Huffman Coding
 - Arithmetic Coding
 - Golomb Coding
+
+</div>
+<div>
 
 **2. Dư thừa không gian (Spatial Redundancy)**
 
@@ -247,6 +285,9 @@ Dữ liệu ảnh
 - DPCM (Differential Pulse Code Modulation)
 - Transform Coding
 
+</div>
+<div>
+
 **3. Thông tin không liên quan (Irrelevant Information)**
 
 **Định nghĩa:** Một số thông tin ít ảnh hưởng đến cảm nhận của con người hoặc không cần thiết cho ứng dụng.
@@ -258,49 +299,44 @@ Dữ liệu ảnh
 - JPEG
 - Wavelet compression
 
+</div>
+</div>
+
 ---
 
 # BA HƯỚNG TIẾP CẬN CHÍNH
 
 Có thể nhìn toàn bộ chương thông qua ba câu hỏi cốt lõi:
 
+<div style="color:red">
+
 **Câu hỏi 1: Có thể dùng ít bit hơn để biểu diễn cùng thông tin không?**
 
-**Hướng tiếp cận:** Coding (Mã hóa thống kê)
+</div>
 
-**Ví dụ:** Huffman, Arithmetic Coding, Golomb
+- **Hướng tiếp cận:** Coding (Mã hóa thống kê)
+- **Ví dụ:** Huffman, Arithmetic Coding, Golomb
+- **Nguyên lý:** Gán mã ngắn cho ký hiệu xuất hiện thường xuyên, mã dài cho ký hiệu hiếm.
 
-**Nguyên lý:** Gán mã ngắn cho ký hiệu xuất hiện thường xuyên, mã dài cho ký hiệu hiếm.
+<div style="color:red">
 
 **Câu hỏi 2: Có thể biểu diễn phần thay đổi thay vì toàn bộ dữ liệu không?**
 
-**Hướng tiếp cận:** Prediction / Transform (Dự đoán / Biến đổi)
+</div>
 
-**Ví dụ:** DPCM, DCT (Discrete Cosine Transform)
+- **Hướng tiếp cận:** Prediction / Transform (Dự đoán / Biến đổi)
+- **Ví dụ:** DPCM, DCT (Discrete Cosine Transform)
+- **Nguyên lý:** Chỉ mã hóa sự khác biệt hoặc biến đổi, không mã hóa toàn bộ giá trị.
 
-**Nguyên lý:** Chỉ mã hóa sự khác biệt hoặc biến đổi, không mã hóa toàn bộ giá trị.
+<div style="color:red">
 
 **Câu hỏi 3: Có thông tin nào ít quan trọng có thể bỏ qua không?**
 
-**Hướng tiếp cận:** Quantization (Lượng tử hóa)
+</div>
 
-**Ví dụ:** JPEG, JPEG 2000
-
-**Nguyên lý:** Loại bỏ hoặc làm mịn các chi tiết không quan trọng.
-
-**Sơ đồ tổng quát:**
-
-```
-              NÉN ẢNH
-                 │
-       ┌─────────┼─────────┐
-       ▼         ▼         ▼
-    Coding   Prediction  Quantization
-       │         │         │
-   Huffman      DPCM      JPEG
-   Arithmetic            JPEG 2000
-   Golomb
-```
+- **Hướng tiếp cận:** Quantization (Lượng tử hóa)
+- **Ví dụ:** JPEG, JPEG 2000
+- **Nguyên lý:** Loại bỏ hoặc làm mịn các chi tiết không quan trọng.
 
 ---
 
@@ -323,10 +359,6 @@ Có thể nhìn toàn bộ chương thông qua ba câu hỏi cốt lõi:
 - Là nền tảng để thiết kế các mã nén hiệu quả
 - Giúp xác định mức độ dư thừa trong ảnh
 
-**Ví dụ thực tế:**
-- Trong ảnh văn bản: Mức xám 255 (trắng) có xác suất cao, mức xám 0 (đen) có xác suất thấp
-- Trong ảnh bầu trời: Các mức xám xanh dương có xác suất cao
-
 ---
 
 # LƯỢNG TIN CỦA MỘT SỰ KIỆN
@@ -345,15 +377,10 @@ $$I(x) = -\log_2 P(x)$$
 
 **Ví dụ minh họa:**
 
-**Ví dụ 1:** $P(x) = 0.5$
+- $P(x) = 0.5$, $I(x) = -\log_2 0.5 = 1 \text{ bit}$
+- $P(x) = 0.125$, $I(x) = -\log_2 0.125 = 3 \text{ bit}$
 
-$$I(x) = -\log_2 0.5 = 1 \text{ bit}$$
-
-**Ví dụ 2:** $P(x) = 0.125$
-
-$$I(x) = -\log_2 0.125 = 3 \text{ bit}$$
-
-**Giải thích:** Một sự kiện càng khó dự đoán (xác suất thấp) thì khi xảy ra, nó mang càng nhiều thông tin. Ngược lại, sự kiện dễ dự đoán mang ít thông tin hơn.
+Một sự kiện càng khó dự đoán (xác suất thấp) thì khi xảy ra, nó mang càng nhiều thông tin. Ngược lại, sự kiện dễ dự đoán mang ít thông tin hơn.
 
 ---
 
@@ -367,10 +394,7 @@ $$H(X) = -\sum_{i=1}^{L} P(x_i) \log_2 P(x_i)$$
 
 **Đơn vị:** bit/symbol (bit trên mỗi ký hiệu)
 
-**Đối với ảnh:**
-- Symbol có thể là một pixel
-- Hoặc một mức xám
-- Hoặc một ký hiệu sau biến đổi
+**Đối với ảnh:** Symbol có thể là một pixel hoặc một mức xám hoặc một ký hiệu sau biến đổi
 
 **Ý nghĩa:**
 - Entropy đo mức độ không chắc chắn của nguồn
@@ -405,19 +429,11 @@ Entropy phản ánh mức độ không chắc chắn / khó dự đoán của ng
 
 **Kết luận:** Entropy thấp thường tạo nhiều cơ hội cho nén thống kê.
 
-**Lưu ý quan trọng:** Entropy của phân bố mức xám không phải là thước đo trực tiếp cho "chất lượng" hay "độ đẹp" của ảnh. Một ảnh có entropy cao không có nghĩa là ảnh đó xấu hoặc ngược lại.
-
 ---
 
 # VÍ DỤ TÍNH ENTROPY
 
-**Bài toán:** Giả sử ảnh chỉ có ba mức xám với xác suất như sau:
-
-| Mức xám | Xác suất |
-|---------|----------|
-| $x_1$   | 0.5      |
-| $x_2$   | 0.3      |
-| $x_3$   | 0.2      |
+**Bài toán:** Giả sử ảnh chỉ có ba mức xám $x_1$, $x_2$, $x_3$ với xác suất: $P(x_1)=0.5, P(x_2)=0.3, P(x_3)=0.2$
 
 **Tính entropy:**
 
@@ -439,46 +455,7 @@ $$H = \log_2 3 \approx 1.585 \text{ bit/pixel}$$
 
 ---
 
-# THỰC HÀNH: TÍNH ENTROPY
-
-**Đoạn mã Python:**
-
-```python
-import math
-
-def calculate_entropy(probabilities):
-    entropy = 0
-    for p in probabilities:
-        if p > 0:
-            entropy -= p * math.log2(p)
-    return entropy
-
-# Ví dụ 1
-probs = [0.5, 0.3, 0.2]
-print(f"Entropy: {calculate_entropy(probs):.4f} bits/symbol")
-```
-
-**Bài tập thực hành:**
-
-Thử thay đổi phân bố và quan sát sự thay đổi của entropy:
-
-**Phân bố 1:** `[0.5, 0.3, 0.2]`
-- Một giá trị chiếm ưu thế
-- Entropy thấp
-
-**Phân bố 2:** `[0.8, 0.1, 0.1]`
-- Một giá trị chiếm đa số
-- Entropy càng thấp hơn
-
-**Phân bố 3:** `[0.25, 0.25, 0.25, 0.25]`
-- Các giá trị đồng đều
-- Entropy cao nhất
-
-**Mục tiêu:** Hiểu mối quan hệ giữa phân bố xác suất và entropy.
-
----
-
-# ĐÁNH GIÁ CHẤT LƯỢNG ẢNH SAU NÉN
+# ĐÁNH GIÁ CHẤT LƯỢNG ẢNH SAU NÉN (here)
 
 **Vấn đề:** Khi nén Lossy, ảnh giải nén có thể khác ảnh gốc. Do đó cần đánh giá mức độ sai khác.
 
@@ -639,7 +616,7 @@ $$MAX_I = 2^8 - 1 = 255$$
 ---
 <!--_class: section-->
 
-# NÉN KHÔNG TỔN THẤT VÀ NÉN CÓ TỔN THẤT
+#   PHÂN NHÓM PHƯƠNG PHÁP NÉN DỮ LIỆU
 
 ---
 
@@ -926,7 +903,7 @@ Encoder ── Quantization ──► Decoder
 **Điểm quan trọng:** Quantization là một điểm quan trọng gây tổn thất. Đây là bước duy nhất trong quy trình nén JPEG gây mất thông tin.
 
 ---
-<!--_class: subsection-->
+<!--_class: section-->
 
 # NÉN KHÔNG TỔN THẤT
 
