@@ -1,169 +1,389 @@
 ---
+
 marp: true
 theme: eaut
 paginate: true
-transition: zoom
----
+transition: fade
 
-<!-- _class: cover -->
+---
+<!--_class: cover-->
 
 <div class="middle">
 
 # XỬ LÝ ẢNH & THỊ GIÁC MÁY TÍNH
 
-## Chương 2: Biến đổi ảnh
+## CHƯƠNG 2 - BIẾN ĐỔI ẢNH
 
 </div>
 
 ### Giảng viên: Nguyễn Phồn Lữa
 
 ---
+<!--_class: toc-->
 
-<!-- _class: toc -->
+# NỘI DUNG
 
-# Nội dung
-
-- Biến đổi trong miền không gian
-  - Biến đổi cường độ
-  - Lọc không gian
-- Xử lý Histogram
-- Biến đổi trong miền tần số
+1. Biến đổi trong miền không gian
+2. Histogram
+3. Biến đổi trong miền tần số
 
 ---
 
-<!-- _class: section -->
+# MỤC TIÊU HỌC TẬP
+
+Sau chương này, sinh viên có thể:
+
+1. **Phân biệt** được miền không gian và miền tần số trong xử lý ảnh.
+2. **Thực hiện** các phép biến đổi cường độ để tăng cường ảnh.
+3. **Hiểu và áp dụng** các bộ lọc không gian để làm mịn và làm nét ảnh.
+4. **Phân tích và xử lý** ảnh dựa trên Histogram.
+5. **Hiểu nguyên lý** của biến đổi Fourier 2D.
+6. **Thực hiện** lọc ảnh trong miền tần số.
+7. **Sử dụng** Python, NumPy, OpenCV và Matplotlib để cài đặt các kỹ thuật cơ bản.
+
+---
+<!--_class: section-->
 
 # BIẾN ĐỔI TRONG MIỀN KHÔNG GIAN
 
 ---
 
-# TỔNG QUAN
-
-- **Miền không gian**: Là chính mặt phẳng ảnh, nơi các phương pháp xử lý dựa trên thao tác trực tiếp lên các pixel.
-- **Công thức tổng quát**: $g(x, y) = T[f(x, y)]$
-  - $f(x, y)$: Ảnh đầu vào.
-  - $g(x, y)$: Ảnh đầu ra.
-  - $T$: Toán tử tác động lên $f$ tại lân cận điểm $(x, y)$.
-- **Phân loại**:
-  - **Point Processing (Xử lý điểm)**: Lân cận kích thước $1 \times 1$ (chỉ phụ thuộc vào giá trị pixel hiện tại). Ví dụ: Biến đổi cường độ.
-  - **Neighborhood Processing (Xử lý lân cận)**: Dựa trên các pixel xung quanh. Ví dụ: Lọc không gian.
-
----
-
-# Biến đổi cường độ (1)
-
-- **Định nghĩa**: Là kỹ thuật xử lý ảnh theo điểm (point processing), giá trị của một pixel tại vị trí $(x, y)$ trong ảnh đầu ra chỉ phụ thuộc vào giá trị của chính pixel đó tại vị trí $(x, y)$ trong ảnh đầu vào.
+# HAI CÁCH NHÌN VỀ ẢNH
 
 <div class="columns">
-<div class="col-4">
+<div class="col-3">
 
-- **Công thức tổng quát**: $s = T(r)$
-  - $r$: Cường độ đầu vào.
-  - $s$: Cường độ đầu ra.
-  - $T$: Hàm biến đổi.
-- **Các phương pháp phổ biến**:
-  - **Ảnh âm bản (Image Negatives)**: $s = L - 1 - r$
-    - Ứng dụng: Tăng cường chi tiết màu trắng/xám trong vùng tối (ví dụ: ảnh chụp X-quang, y tế).
+**Miền không gian (Spatial Domain)**
+
+- Làm việc **trực tiếp trên pixel** của ảnh.
+- Quan tâm: *Pixel nằm ở đâu và có giá trị bao nhiêu?*
+- **Ví dụ:** Biến đổi cường độ, Mean Filter, Gaussian Filter, Median Filter, Sobel, Laplacian.
+
+**Miền tần số (Frequency Domain)**
+
+- Biểu diễn ảnh bằng các **thành phần tần số**.
+- Quan tâm: *Ảnh thay đổi nhanh hay chậm?*
+- **Ví dụ:** Fourier Transform, Low-pass Filter, High-pass Filter, Band-reject Filter.
 
 </div>
 <div class="col-2">
 
-![](images/2.1.png)
+![](images/mien_kg_ts.png)
 
 </div>
 </div>
-<ul>
 
-  - **Biến đổi Log (Log Transformations)**: $s = c \log(1 + r)$
-    - Ứng dụng: Mở rộng dải giá trị pixel tối, nén dải giá trị pixel sáng. Thường dùng để hiển thị phổ Fourier.
-
-</ul>
+- **Ví dụ:** Bức ảnh phi công trong miền không gian là ma trận các pixel; trong miền tần số, nó được mô tả bằng tập hợp các sóng sin/cosin với tần số và biên độ khác nhau.
 
 ---
-<!--_class: text-2xs-->
 
-# Biến đổi cường độ (2)
+# KHÁI NIỆM MIỀN KHÔNG GIAN
+
+- **Miền không gian (Spatial Domain)** là chính mặt phẳng ảnh, trong đó các phương pháp xử lý tác động **trực tiếp lên các pixel**.
+- Hai nhóm biến đổi chính:
+    - **Point Processing** (Xử lý điểm): biến đổi từng pixel độc lập.
+    - **Neighborhood Processing** (Xử lý lân cận): biến đổi dựa trên vùng lân cận của pixel.
+- **Ví dụ:** Khi chỉnh độ sáng của một bức ảnh trên điện thoại → thực hiện Point Processing. Khi dùng chế độ "làm mờ" (blur) → dùng Neighborhood Processing vì giá trị mỗi pixel mới được tính từ các pixel xung quanh.
+
+---
+
+# POINT PROCESSING VÀ NEIGHBORHOOD PROCESSING
+
+**Point Processing**
+
+- Giá trị pixel đầu ra **chỉ phụ thuộc** vào pixel tương ứng ở ảnh đầu vào.
+- Công thức: $g(x,y) = T[f(x,y)]$
+- **Ví dụ:** Negative, Log, Gamma, Contrast stretching.
+
+**Neighborhood Processing**
+
+- Giá trị pixel đầu ra **phụ thuộc vào một vùng lân cận** quanh pixel đó.
+- Công thức: $g(x,y) = T\{f(s,t) \mid (s,t) \in N(x,y)\}$
+- **Ví dụ:** Mean Filter, Gaussian Filter, Median Filter, Sobel, Laplacian.
+
+> **Ví dụ minh họa:** Với Point Processing, pixel (x,y) mới chỉ phụ thuộc vào pixel (x,y) cũ. Với Neighborhood Processing, pixel (x,y) mới được tính từ 9 pixel xung quanh (kernel 3x3).
+
+---
+<!--_class: subsection-->
+
+# Biến đổi cường độ
+
+---
+
+# BIẾN ĐỔI CƯỜNG ĐỘ (INTENSITY TRANSFORMATION)
+
+- **Định nghĩa:** Là kỹ thuật Point Processing, mỗi pixel được biến đổi độc lập dựa trên giá trị cường độ của chính nó.
+
+<div class="columns">
+<div class="col-3">
+
+- **Công thức tổng quát:** $s = T(r)$, trong đó:
+  - $r$: cường độ pixel đầu vào
+  - $s$: cường độ pixel đầu ra
+  - $T$: hàm biến đổi
+
+</div>
+<div class="col-2">
+
+![](images/gama.png)
+
+</div>
+</div>
+
+- **Mục đích:**
+  - Thay đổi độ sáng, tăng hoặc giảm tương phản.
+  - Làm nổi bật vùng ảnh quan tâm.
+  - Điều chỉnh ảnh phù hợp với thiết bị hiển thị.
+- **Ví dụ:** Khi chụp ảnh trong điều kiện thiếu sáng, ta dùng biến đổi Gamma để làm sáng các vùng tối mà không làm cháy sáng các vùng đã sáng.
+
+---
+
+# ẢNH ÂM BẢN (IMAGE NEGATIVE)
+<div class="columns">
+<div class="col-3">
+
+**Công thức:** $s = L - 1 - r$
+
+Với ảnh 8-bit ($L = 256$): $s = 255 - r$
+
+**Đặc điểm:**
+
+- Pixel sáng → pixel tối, pixel tối → pixel sáng.
+- Đảo ngược thứ tự các mức cường độ.
+
+**Ứng dụng:**
+
+- Làm nổi bật chi tiết sáng trong vùng tối.
+- Ảnh X-quang và ảnh y tế.
+- Ảnh phim âm bản.
+
+</div>
+<div class="col-2">
+
+![height:400](images/x-ray.png)
+
+</div>
+</div>
+
+> **Ví dụ:** Trên phim X-quang, vùng xương (cản tia) sẽ có màu trắng, vùng mô mềm (cho tia đi qua) có màu đen. Ảnh âm bản giúp bác sĩ quan sát chi tiết dễ hơn.
+
+---
+
+# BIẾN ĐỔI LOGARITHM
+
+<div class="columns">
+<div class="col-3">
+
+**Công thức:** $s = c \cdot \log(1 + r)$
+
+**Đặc điểm:**
+
+- **Mở rộng** vùng giá trị cường độ thấp.
+- **Nén** vùng giá trị cường độ cao.
+- Các chi tiết trong vùng tối được làm nổi bật.
+
+**Ứng dụng:**
+
+- Hiển thị các giá trị có dynamic range lớn.
+- Hiển thị Fourier magnitude spectrum.
+- Làm nổi bật thông tin trong vùng cường độ thấp.
+
+</div>
+<div class="col-2">
+
+![height:500](images/loga.png)
+
+</div>
+</div>
+
+
+---
+
+# BIẾN ĐỔI LŨY THỪA / GAMMA
+
+**Công thức:** $s = c \cdot r^\gamma$
+
+Với $r$ thường được chuẩn hóa về $[0, 1]$.
+
+**Ảnh hưởng của $\gamma$:**
+
+- $\gamma < 1$: mở rộng vùng tối, nén vùng sáng → **ảnh sáng hơn**.
+- $\gamma = 1$: biến đổi tuyến tính.
+- $\gamma > 1$: nén vùng tối, mở rộng vùng sáng → **ảnh tối hơn**.
+
+**Ứng dụng:** Hiệu chỉnh gamma, điều chỉnh ảnh theo đặc tính thiết bị hiển thị (màn hình CRT, LCD), tiền xử lý ảnh.
+
+![width:700](images/luythua.png)
+
+---
+
+# TRỰC QUAN VỀ GAMMA
 
 <div class="columns">
 <div>
 
-- **Biến đổi Lũy thừa/Gamma**: $s = c r^\gamma$
-  - $\gamma < 1$: Mở rộng vùng tối, nén vùng sáng.
-  - $\gamma > 1$: Nén vùng tối, mở rộng vùng sáng.
-  - $\gamma = 1$: Biến đổi tuyến tính.
+Đồ thị hàm biến đổi $s = r^\gamma$:
 
-</div>
-<div class="col-2">
+- Đường cong $\gamma < 1$ nằm **phía trên** đường chéo → pixel đầu ra lớn hơn đầu vào → ảnh sáng hơn.
+- Đường chéo $\gamma = 1$ là biến đổi tuyến tính.
+- Đường cong $\gamma > 1$ nằm **phía dưới** đường chéo → pixel đầu ra nhỏ hơn đầu vào → ảnh tối hơn.
 
-![](images/2.2.png)
+**Ghi nhớ:**
 
-</div>
-</div>
-<div class="columns">
-<div class="col-2">
-<ul>
+- $\gamma < 1 \Rightarrow$ ảnh sáng hơn
+- $\gamma > 1 \Rightarrow$ ảnh tối hơn
 
-- Ứng dụng: Hiệu chỉnh Gamma cho màn hình CRT, LCD, máy in.
-
-</ul>
-
-- **Biến đổi hàm bậc thang (Piecewise-Linear Transformation)**:
-  - Chia dải giá trị pixel thành các đoạn tuyến tính khác nhau, cho phép điều chỉnh độ tương phản theo từng khoảng mức xám cụ thể.
-  - 3 phương pháp chính:
-    - **Tăng độ tương phản**: Làm nổi bật sự khác biệt giữa các mức xám.
-    - **Cắt mức xám (Gray-level slicing)**: Làm nổi bật một dải mức xám cụ thể (ví dụ: khối u trong ảnh y tế).
+> **Lưu ý:** Hiệu ứng cụ thể phụ thuộc vào cách chuẩn hóa và hệ số $c$.
 
 </div>
 <div>
 
-![width:300px](images/2.3.png)
+![](images/do_thi_gama.png)
 
 </div>
 </div>
-<ul>
-<ul>
 
-- **Trích xuất bit (Bit-plane slicing)**: Phân tích sự đóng góp của từng bit trong byte biểu diễn pixel.
-
-</ul>
-</ul>
 
 ---
 
-# Bài tập thực hành
+# BIẾN ĐỔI HÀM BẬC THANG (PIECEWISE-LINEAR)
+
+**Định nghĩa:** Thay vì sử dụng một hàm duy nhất trên toàn bộ dải cường độ, ta **chia dải giá trị thành nhiều đoạn**, mỗi đoạn có một hàm biến đổi riêng.
+
+<div class="columns">
+<div class="col-3">
+
+**Công thức:**
+$$s = \begin{cases} T_1(r), & r < r_1 \\ T_2(r), & r_1 \leq r \leq r_2 \\ T_3(r), & r > r_2 \end{cases}$$
+
+**Ưu điểm:** Cho phép kiểm soát cường độ theo từng khoảng giá trị.
+
+**Các kỹ thuật tiêu biểu:**
+
+- Contrast Stretching
+- Gray-Level Slicing
+- Bit-Plane Slicing
+
+> **Ví dụ:** Trong ảnh y tế, ta chỉ muốn làm nổi bật vùng mô có mức xám từ 80 đến 150, các vùng còn lại giữ nguyên hoặc làm tối đi.
+
+</div>
+<div class="col-2">
+
+![](images/bac_thang.png)
+
+</div>
+</div>
+
 
 ---
 
-# Biến đổi cường độ - Bài tập thực hành
+# TĂNG CƯỜNG ĐỘ TƯƠNG PHẢN (CONTRAST STRETCHING)
 
-- Viết code Python sử dụng OpenCV để tạo ảnh âm bản và biến đổi Gamma.
+**Mục tiêu:** Mở rộng khoảng giá trị cường độ của ảnh để tăng sự khác biệt giữa các vùng sáng và tối.
 
-```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
+<div class="columns">
+<div>
 
-# Đọc ảnh grayscale
-img = cv2.imread('input.jpg', cv2.IMREAD_GRAYSCALE)
+**Ví dụ:** Ảnh đầu vào có $r \in [r_1, r_2]$ được ánh xạ sang $s \in [s_1, s_2]$.
 
-# 1. Ảnh âm bản
-negative = 255 - img
+**Trường hợp tuyến tính:**
+$$s = \frac{s_2 - s_1}{r_2 - r_1}(r - r_1) + s_1$$
 
-# 2. Biến đổi Gamma (gamma = 0.5)
-gamma = 0.5
-lookUpTable = np.empty((1,256), np.uint8)
-for i in range(256):
-    lookUpTable[0,i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
-gamma_img = cv2.LUT(img, lookUpTable)
+**Ứng dụng:**
 
-# Hiển thị
-titles = ['Gốc', 'Âm bản', f'Gamma={gamma}']
-images = [img, negative, gamma_img]
-for i in range(3):
-    plt.subplot(1, 3, i+1), plt.imshow(images[i], cmap='gray')
-    plt.title(titles[i]), plt.axis('off')
-plt.show()
-```
+- Ảnh có tương phản thấp.
+- Ảnh bị mờ do điều kiện chiếu sáng.
+- Tiền xử lý trước các bước phân tích ảnh.
+
+</div>
+<div>
+
+![](images/tuong_phan.png)
+
+</div>
+</div>
+
+> **Ví dụ:** Ảnh chụp trong sương mù có các mức xám tập trung trong khoảng hẹp [60, 120]. Contrast stretching kéo giãn khoảng này ra [0, 255] giúp ảnh rõ hơn.
+
+---
+
+# CẮT MỨC XÁM (GRAY-LEVEL SLICING)
+
+**Mục tiêu:** Làm nổi bật một khoảng mức xám quan tâm (ROI - Region Of Interest).
+
+**Cách thực hiện:**
+
+- Giữ nguyên các mức xám ngoài khoảng.
+- Hoặc đưa toàn bộ vùng ngoài khoảng về một giá trị cố định.
+
+<div class="columns">
+<div>
+
+**Ứng dụng:**
+
+- Làm nổi bật cấu trúc trong ảnh y tế.
+- Phân tích vật thể có khoảng cường độ đặc trưng.
+
+> **Ví dụ:** Trong ảnh vệ tinh, ta muốn làm nổi bật vùng nước (có mức xám 40-80) để phân tích sông hồ. Các vùng khác (đất, cây cối) được đưa về màu đen.
+
+</div>
+<div>
+
+![](images/cat_xam.png)
+
+</div>
+</div>
+
+---
+
+# TRÍCH XUẤT MẶT PHẲNG BIT (BIT-PLANE SLICING)
+
+**Định nghĩa:** Pixel 8-bit được biểu diễn bởi $b_7b_6b_5b_4b_3b_2b_1b_0$. Ảnh có thể được phân tách thành **8 bit-plane**.
+
+<div class="columns">
+<div class="col-2">
+
+**Trong đó:**
+
+- $b_7$: Most Significant Bit (MSB) - bit có trọng số lớn nhất.
+- $b_0$: Least Significant Bit (LSB) - bit có trọng số nhỏ nhất.
+
+</div>
+<div class="col-3">
+
+![height:250](images/bit-plan.png)
+
+</div>
+</div>
+
+**Ý nghĩa:**
+
+- Bit cao → đóng góp lớn vào cấu trúc và độ sáng.
+- Bit thấp → thường chứa chi tiết nhỏ và có thể chứa nhiễu.
+
+**Ứng dụng:** Phân tích cấu trúc ảnh, nghiên cứu nén ảnh, phân tích thông tin bit.
+
+---
+
+# BÀI TẬP THỰC HÀNH - BIẾN ĐỔI CƯỜNG ĐỘ
+
+**Yêu cầu:** Sử dụng Python + OpenCV
+
+1. Đọc ảnh grayscale.
+2. Tạo ảnh âm bản (Negative).
+3. Thực hiện Gamma Transformation với:
+    - $\gamma = 0.5$
+    - $\gamma = 1.0$
+    - $\gamma = 2.0$
+4. So sánh kết quả.
+5. Vẽ đồ thị hàm biến đổi $T(r)$.
+
+**Câu hỏi thảo luận:** Giải thích tại sao các giá trị gamma khác nhau tạo ra kết quả khác nhau?
+
+---
+<!--_class: subsection-->
+
+# LỌC KHÔNG GIAN
 
 ---
 
@@ -176,11 +396,14 @@ plt.show()
 
 - **Cơ chế hoạt động**:
   - Sử dụng một mặt nạ nhỏ (Kernel) "trượt" qua từng pixel của ảnh gốc.
-  - Giá trị pixel mới $g(x, y)$ tại vị trí $(x, y)$:
-    $g(x, y) = \sum_{s=-a}^{a} \sum_{t=-b}^{b} w(s, t) f(x+s, y+t)$
-  - $f$: Ảnh đầu vào.
-  - $w$: Các trọng số trong Kernel.
-  - $a, b$: Các tham số xác định kích thước Kernel (ví dụ với Kernel $3 \times 3$, $a = b = 1$).
+  - **Công thức tổng quát:** $g(x,y) = \sum_s \sum_t w(s,t) \cdot f(x-s, y-t)$
+
+  - Trong đó:
+    - $f(x,y)$: ảnh đầu vào
+    - $w(s,t)$: kernel (bộ lọc)
+    - $g(x,y)$: ảnh đầu ra
+
+- **Kích thước kernel:** Thường là số lẻ ($3\times3$, $5\times5$, $7\times7$) để xác định rõ pixel trung tâm.
 
 </div>
 <div>
@@ -190,153 +413,137 @@ plt.show()
 </div>
 </div>
 
-- **Lưu ý**: Kích thước mặt nạ thường là lẻ ($3 \times 3, 5 \times 5, 7 \times 7, ...$) để có một pixel trung tâm xác định.
+---
+
+# PHÂN LOẠI BỘ LỌC KHÔNG GIAN
+
+- **Smoothing Filters (Bộ lọc làm mịn / Low-pass)**
+
+  - Giảm nhiễu, làm mờ ảnh.
+  - Giảm chi tiết nhỏ.
+  - Làm giảm các thay đổi cường độ nhanh.
+
+- **Sharpening Filters (Bộ lọc làm nét / High-pass)**
+
+  - Tăng cường chi tiết, làm nổi bật biên.
+  - Tăng các thay đổi cường độ nhanh.
+
+![height:300](images/bo_loc.png)
+
+---
+<!--_class: subsection-->
+
+# LÀM MỊN ẢNH
 
 ---
 
-# Phân loại bộ lọc không gian
+# BỘ LỌC TRUNG BÌNH (MEAN / BOX FILTER)
 
-- Bộ lọc làm mịn (Smoothing Filters)
-  - **Tên gọi khác**: Bộ lọc thông thấp (Low-pass filters).
-  - **Mục đích**: Làm mờ ảnh (blurring) và **giảm nhiễu** (noise reduction).
-  - **Đặc điểm**: Làm giảm các chuyển tiếp đột ngột về mức xám, giúp ảnh mượt hơn nhưng cũng làm mất đi các chi tiết sắc nét.
-- Bộ lọc làm nét (Sharpening Filters)
-  - **Tên gọi khác**: Bộ lọc thông cao (High-pass filters).
-  - **Mục đích**: Làm nổi bật các chi tiết nhỏ, **tăng cường biên** (edges) và làm rõ các chi tiết đã bị mờ.
-  - **Đặc điểm**: Làm tăng độ tương phản ở các vùng có sự thay đổi đột ngột về cường độ sáng (biên của đối tượng).
+**Định nghĩa:** Tất cả pixel trong kernel có **trọng số như nhau**.
 
----
+Với kernel $m \times n$: $w(i,j) = \frac{1}{mn}$
 
-# Bộ lọc làm mịn (Smoothing/Lowpass Filters)
+<div class="columns">
+<div>
 
-- **Mục đích**: Làm mờ ảnh để giảm nhiễu hoặc làm mất đi các chi tiết nhỏ không mong muốn.
-- **Bộ lọc trung bình (Mean/Box Filter)**:
-  - Các trọng số trong Kernel bằng nhau ($1/N$) $\rightarrow$ giá trị pixel mới là trung bình cộng các pixel xung quanh.
-- **Bộ lọc Gaussian**:
-  - Các trọng số tuân theo phân phối hình chuông (pixel gần tâm có trọng số cao hơn).
-  - Công thức trọng số: $G(x, y) = K e^{-(x^2 + y^2) / 2\sigma^2}$
-  - $\sigma$: Độ lệch chuẩn, quyết định độ rộng của kernel, kiểm soát mức độ làm mờ.
-- **Bộ lọc trung vị (Median Filter)**:
-  - Thay thế giá trị pixel bằng trung vị của các giá trị trong vùng lân cận thay vì tính trung bình.
-  - Ưu điểm: Khử nhiễu muối tiêu (salt-and-pepper noise) cực tốt mà không làm mờ biên.
+**Ví dụ kernel 3×3:**
+$$\frac{1}{9}\begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix}$$
 
----
+**Đặc điểm:**
 
-# Ví dụ Mean Kernel
+- Đơn giản, tính toán nhanh.
+- Làm mờ ảnh nhưng có thể làm mất biên và chi tiết.
+- Nhạy với nhiễu salt-and-pepper (nhiễu muối tiêu).
 
-- **Mean Kernel $3 \times 3$**:
-  - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{9}$
-  - Kernel:
-  <span>
-  
-  $$
-  \begin{bmatrix} 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \\ 1/9 & 1/9 & 1/9 \end{bmatrix}
-  $$
-  
-  </span>
-- **Mean Kernel $5 \times 5$**:
-  - Giá trị mỗi phần tử trong kernel: $h(x, y) = \frac{1}{M \times N} = \frac{1}{25} = 0.04$
-  - Kernel: Ma trận $5 \times 5$ với mỗi phần tử là $0.04$.
+</div>
+<div>
 
-<span>
+![](images/loc_tb.png)
 
-$$
-\begin{bmatrix}
-0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
-0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
-0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
-0.04 & 0.04 & 0.04 & 0.04 & 0.04 \\
-0.04 & 0.04 & 0.04 & 0.04 & 0.04
-\end{bmatrix}
-$$
-
-</span>
+</div>
+</div>
 
 ---
 
-# Ví dụ Gaussian Kernel
+# BỘ LỌC GAUSSIAN
 
-- **Kernel Gaussian $3 \times 3$ với $\sigma = 1$**:
-  - $G(x, y) = e^{-(x^2 + y^2) / 2}$
-  - Tính giá trị tại các điểm:
+**Định nghĩa:** Trọng số kernel tuân theo **phân phối Gaussian**. $G(x,y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$
+**Đặc điểm:**
 
-  <div class="columns">
-  <div>
+- Pixel gần tâm có trọng số lớn hơn, càng xa tâm trọng số càng nhỏ.
+- $\sigma$ kiểm soát mức độ làm mờ.
 
-  <ul>
+**Ưu điểm:**
 
-  - Tâm $(0,0)$: $e^0 = 1$
-    
-  </ul>
+- Làm mờ tự nhiên, giảm nhiễu tốt.
+- Thường được sử dụng trước các thuật toán phát hiện biên.
 
-  </div>
-  <div class="col-2">
+<gap></gap>
 
-  <ul>
-
-    - Cạnh $(1,0), (0,1), ...$: $e^{-1/2} \approx 0.6065$
-    - Góc $(1,1), ...$: $e^{-1} \approx 0.3679$
-
-  </ul>
-  </div>
-  </div>
-  <div class="columns">
-  <div>
-
-  - Ma trận chưa chuẩn hoá:
-  <span>$\begin{bmatrix} 0.3679 & 0.6065 & 0.3679 \\ 0.6065 & 1 & 0.6065 \\ 0.3679 & 0.6065 & 0.3679 \end{bmatrix}$</span>
-  - Tổng trọng số: $S = 4 \times 0.3679 + 4 \times 0.6065 + 1 = 4.8976$
-
-  </div>
-  <div>
-  
-  - Chuẩn hoá (chia cho S):
-    <span>$\begin{bmatrix} 0.075 & 0.124 & 0.075 \\ 0.124 & 0.204 & 0.124 \\ 0.075 & 0.124 & 0.075 \end{bmatrix}$</span>
-
-  - Thường được làm tròn để dễ tính toán.
-
-  </div>
-  </div>
-  
+![height:250](images/gaussian.png)
 
 ---
-<!--_class: text-2xs-->
 
-# Tổng hợp các bộ lọc làm mịn
+# BỘ LỌC TRUNG VỊ (MEDIAN FILTER)
 
-| Tiêu chí           | Lọc trung bình (Mean)                             | Lọc Gaussian                                            | Lọc trung vị (Median)                               |
-| ------------------ | ------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------- |
-| **Nguyên lý**      | Trung bình cộng các pixel trong cửa sổ.           | Tổng có trọng số theo hàm Gaussian.                     | Giá trị trung vị sau khi sắp xếp.                   |
-| **Loại lọc**       | Tuyến tính, thông thấp                            | Tuyến tính, thông thấp                                  | Phi tuyến (dựa trên thứ tự)                         |
-| **Ưu điểm**        | Đơn giản, tính toán nhanh.                        | Làm mờ tự nhiên, kiểm soát được mức độ mờ qua $\sigma$. | Khử nhiễu muối tiêu tốt, giữ biên rất tốt.          |
-| **Nhược điểm**     | Làm mờ tất cả chi tiết, nhạy với nhiễu muối tiêu. | Vẫn làm mờ biên, tốn thời gian hơn.                     | Không hiệu quả với nhiễu Gaussian, độ phức tạp cao. |
-| **Nhiễu tốt nhất** | Nhiễu Gaussian (mịn, nhẹ)                         | Nhiễu Gaussian (tự nhiên nhất)                          | Nhiễu muối tiêu (chấm trắng/đen)                    |
-| **Tác động biên**  | Làm mờ biên mạnh                                  | Làm mờ biên vừa phải                                    | Hầu như giữ nguyên biên                             |
-| **Ứng dụng**  | Tiền xử lý nhanh; làm mờ chủ ý.                                  | Làm mờ trong nhiếp ảnh; tạo không gian tỉ lệ.                                    | Khử nhiễu ảnh y tế, văn bản, ảnh scan.                            |
+**Định nghĩa:** Thay giá trị pixel trung tâm bằng **trung vị** (median) của các pixel trong vùng lân cận.
+
+<div class="columns">
+<div>
+
+**Ví dụ:** Với vùng 3x3 có các giá trị:
+```
+10   12   11
+ 9  255   10
+11   13   12
+```
+Sắp xếp: 9, 10, 10, 11, **11**, 12, 12, 13, 255
+→ Median = **11** (pixel nhiễu 255 đã bị loại bỏ)
+
+**Ưu điểm:**
+
+- Hiệu quả với nhiễu salt-and-pepper.
+- Bảo toàn biên tốt hơn bộ lọc trung bình.
+
+</div>
+<div>
+
+![](images/loc_trung_vi.png)
+
+</div>
+</div>
+
+> **Ví dụ:** Ảnh bị nhiễu muối tiêu (các chấm trắng/đen ngẫu nhiên) sẽ được khôi phục gần như hoàn toàn bằng Median Filter 3x3.
+
+---
+
+# SO SÁNH CÁC BỘ LỌC LÀM MỊN
+
+| Tiêu chí | Mean | Gaussian | Median |
+| --- | --- | --- | --- |
+| **Nguyên lý** | Trung bình | Trung bình có trọng số | Trung vị |
+| **Loại** | Tuyến tính | Tuyến tính | Phi tuyến |
+| **Làm mờ** | Mạnh | Tự nhiên | Tùy dữ liệu |
+| **Salt-and-pepper** | Kém | Kém | Tốt |
+| **Bảo toàn biên** | Kém | Tốt hơn Mean | Tốt |
+| **Tốc độ** | Nhanh | Nhanh | Chậm hơn |
+| **Ứng dụng** | Làm mờ đơn giản | Tiền xử lý | Khử nhiễu xung |
+
+---
+<!--_class: subsection-->
+
+# LÀM NÉT ẢNH
 
 ---
 
 # Bộ lọc làm nét (Sharpening/Highpass Filters)
 
-<div class="columns">
-  <div class="col-3">
-    
 - **Mục đích**: Làm nổi bật các cạnh và các chi tiết sắc nét trong ảnh.
 - **Cơ sở toán học**:
   - **Đạo hàm bậc 1**:
     - Bằng 0 ở vùng cường độ không đổi.
     - Khác 0 tại điểm bắt đầu/kết thúc của bước nhảy (step) hoặc dốc (ramp).
     - Khác 0 dọc theo vùng dốc $\rightarrow$ Tạo ra cạnh dày.
-
-  </div>
-  <div class="col-2">
-  <br/>
-    
-    ![](images/2.6.png)
-
-  </div>
-</div>
-
   - **Đạo hàm bậc 2**:
     - Bằng 0 ở vùng cường độ không đổi.
     - Khác 0 tại điểm bắt đầu và kết thúc của bước nhảy/dốc.
@@ -383,7 +590,7 @@ $$
 
 <div style="margin-top:20px">
 
-![width:600px](images/2.8.png)
+![width:800px](images/laplacian.png)
 
 </div>
 
@@ -433,6 +640,9 @@ sharpened = np.clip(sharpened, 0, 255).astype(np.uint8)
 2. Tính đạo hàm theo hướng dọc $G_y$ bằng kernel Sobel/Prewitt tương ứng.
 3. Tính độ lớn gradient $M(x, y) = \sqrt{G_x^2 + G_y^2}$.
 4. (Tùy chọn) Cộng độ lớn gradient này vào ảnh gốc để làm nét: $g(x, y) = f(x, y) + c \cdot M(x, y)$.
+
+![height:350](images/gradient.png)
+
 ---
 
 # Bài tập thực hành
@@ -517,141 +727,245 @@ magnitude = np.clip(magnitude, 0, 255).astype(np.uint8)
 | **Highboost**        | Mở rộng của USM, nhân thành phần tần số cao với hệ số A > 1. | Làm nét mạnh; điều chỉnh từ tự nhiên đến siêu nét.        | Dễ tạo quầng sáng/nhiễu nếu A quá lớn.                       | Ảnh viễn thám, thiên văn, y tế.              |
 
 ---
+
+# BÀI TẬP THỰC HÀNH - SHARPENING
+
+**Yêu cầu:** Với cùng một ảnh, thực hiện:
+
+1. Làm nét bằng Laplacian.
+2. Làm nét bằng Unsharp Masking.
+3. Làm nét bằng Highboost.
+4. So sánh với Sobel.
+
+**Đánh giá theo các tiêu chí:**
+
+- Độ sắc nét.
+- Biên.
+- Nhiễu.
+- Halo.
+- Khả năng giữ chi tiết.
+
+---
 <!--_class: section-->
 
-# Xử lý Histogram
+# XỬ LÝ HISTOGRAM
 
 ---
 
-# Histogram là gì?
+# HISTOGRAM LÀ GÌ?
+
+**Định nghĩa:** Histogram biểu diễn **tần suất xuất hiện** của các mức cường độ trong ảnh.
 
 <div class="columns">
 <div class="col-2">
 
-- **Định nghĩa**: Biểu đồ thể hiện tần suất xuất hiện của các mức cường độ trong ảnh.
-  - $h(r_k) = n_k$: Số lượng pixel có mức cường độ $r_k$.
-  - $p(r_k) = n_k / (M \times N)$: Histogram chuẩn hóa - xác suất xuất hiện cường độ $r_k$.
-- **Mối liên hệ với ảnh**:
-  - **Ảnh tối**: Histogram tập trung ở phía trái (giá trị thấp).
-  - **Ảnh sáng**: Histogram tập trung ở phía phải (giá trị cao).
-  - **Ảnh tương phản thấp**: Histogram hẹp, tập trung ở giữa.
-  - **Ảnh tương phản cao**: Histogram trải rộng và phân bố đều.
+**Với ảnh grayscale:** $h(r_k) = n_k$
+
+Trong đó:
+- $r_k$: mức cường độ thứ $k$
+- $n_k$: số pixel có mức cường độ $r_k$
+
+**Histogram chuẩn hóa:** $p(r_k) = \frac{n_k}{M \cdot N}$
+
+với ảnh kích thước $M \times N$.
 
 </div>
-<div>
+<div class="col-3">
 
-![](images/2.12.png)
+<gap></gap>
+
+![](images/hist.png)
 
 </div>
 </div>
 
+**Ý nghĩa:**
+
+- **Ảnh tối:** Histogram tập trung về bên trái (gần 0).
+- **Ảnh sáng:** Histogram tập trung về bên phải (gần 255).
+- **Tương phản thấp:** Histogram tập trung trong một khoảng hẹp.
+- **Tương phản cao:** Histogram trải rộng trên một khoảng lớn.
 
 ---
 
-# Tại sao cần xử lý Histogram
+# ỨNG DỤNG CỦA HISTOGRAM
 
 - **Tăng cường ảnh**: Giúp ảnh dễ nhìn hơn, làm nổi bật chi tiết ẩn trong các vùng bị tối hoặc quá sáng.
 - **Chuẩn hóa**: Đưa các ảnh chụp trong điều kiện ánh sáng khác nhau về cùng một trạng thái để phục vụ cho các thuật toán thị giác máy tính phía sau (như nhận diện vật thể).
 - **Phân đoạn ảnh (Thresholding)**: Histogram giúp xác định ngưỡng (threshold) tốt nhất để tách biệt đối tượng và nền (ví dụ: dùng phương pháp Otsu dựa trên Histogram).
+- **Phân tích ảnh:** Độ sáng, độ tương phản, phân bố mức xám.
+- **Phân đoạn ảnh:** Hỗ trợ lựa chọn ngưỡng: Thresholding, Otsu.
+
+> **Ví dụ:** Trong nhận dạng khuôn mặt, histogram của vùng da mặt thường có phân bố đặc trưng, giúp phân biệt da người với nền.
 
 ---
 
-# Cân bằng Histogram (Histogram Equalization)
-- **Mục tiêu**: Tự động tạo ra ảnh có histogram phân bố đều (uniform), từ đó tăng cường tương phản toàn cục.
+# CÂN BẰNG HISTOGRAM (HISTOGRAM EQUALIZATION)
+
+**Mục tiêu:** Phân bố lại các mức cường độ để tăng cường độ tương phản **toàn cục**.
+
+**Công thức:**
+
+- Xác suất: $p(r_k) = \frac{n_k}{M \cdot N}$
+- Hàm phân phối tích lũy: $CDF(r_k) = \sum_{j=0}^{k} p(r_j)$
+- Phép biến đổi: $s_k = (L-1) \cdot CDF(r_k)$
+
+Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
+
+**Ví dụ:** Ảnh chụp trong phòng tối có histogram tập trung ở vùng 0-80. Sau khi cân bằng, histogram được trải đều trên toàn dải 0-255, ảnh sáng và rõ chi tiết hơn.
+
+---
+
+# CƠ CHẾ CÂN BẰNG HISTOGRAM
 
 <div class="columns">
-<div class="col-2">
+<div class="col-4">
 
-- **Công thức rời rạc**:
-  $s_k = T(r_k) = (L - 1) \sum_{j=0}^{k} p(r_j)$
-  - $s_k$: Mức cường độ đầu ra.
-  - $L$: Số mức cường độ (ví dụ: 256).
-  - $\sum p(r_j)$: Hàm phân phối tích lũy (CDF).
-- **Hạn chế**:
-  - Có thể làm nổi bật nhiễu nền.
-  - Không phải lúc nào cũng tạo ra histogram phẳng hoàn hảo do làm tròn số nguyên.
-  - Đôi khi làm mất chi tiết ở các vùng có tần suất xuất hiện cao.
+**Quy trình:**
 
-</div>
-<div>
-
-![](images/2.13.png)
+1. Tính histogram gốc.
+2. Tính xác suất $p(r_k)$.
+3. Tính CDF (hàm phân phối tích lũy).
+4. Dùng CDF làm hàm ánh xạ.
+5. Áp dụng lên từng pixel để có histogram mới.
+6. Ảnh có tương phản được cải thiện.
 
 </div>
+<div class="col-3">
+
+![](images/canbang_hist.png)
+
 </div>
+</div>
+
+**Lưu ý:** Histogram sau cân bằng **không nhất thiết phẳng hoàn toàn** vì:
+
+- Pixel là dữ liệu rời rạc.
+- Số mức cường độ hữu hạn.
+- Phép ánh xạ có làm tròn.
+---
+
+# HẠN CHẾ CỦA HISTOGRAM EQUALIZATION
+
+**Histogram Equalization toàn cục có thể:**
+
+- Khuếch đại nhiễu.
+- Làm thay đổi quá mạnh độ sáng.
+- Không xử lý tốt ảnh có nhiều vùng sáng/tối khác nhau.
+- Làm mất một số chi tiết cục bộ.
+
+**Giải pháp:** Cần các phương pháp **local/adaptive enhancement** như CLAHE.
+
+**Ví dụ:** Ảnh có cả vùng bầu trời sáng và vùng đất tối. Histogram Equalization toàn cục có thể làm bầu trời bị cháy sáng trong khi cố gắng làm sáng vùng đất.
 
 ---
 
-# Bài tập thực hành
+# KHỚP HISTOGRAM (HISTOGRAM MATCHING)
 
-Cân bằng histogram với OpenCV.
+**Mục tiêu:** Biến đổi ảnh đầu vào để histogram của nó **gần với một histogram mục tiêu**.
 
-```python
-import cv2
-import matplotlib.pyplot as plt
+**Quy trình:**
 
-img = cv2.imread('input.jpg', cv2.IMREAD_GRAYSCALE)
+1. Tính CDF của ảnh đầu vào sau equalization.
+2. Tính CDF của ảnh mục tiêu sau equalization.
+3. Tìm hàm ánh xạ từ CDF đầu vào sang CDF mục tiêu.
+4. Áp dụng hàm ánh xạ lên ảnh đầu vào.
 
-# Cân bằng histogram
-eq_img = cv2.equalizeHist(img)
+**Ứng dụng:**
 
-# Vẽ histogram
-plt.figure(figsize=(10, 5))
-plt.subplot(121), plt.hist(img.ravel(), 256, [0, 256]), plt.title('Histogram Gốc')
-plt.subplot(122), plt.hist(eq_img.ravel(), 256, [0, 256]), plt.title('Histogram Sau cân bằng')
-plt.show()
-```
+- Chuẩn hóa ảnh.
+- Xử lý ảnh y tế, ảnh vệ tinh.
+- Các hệ thống cần đưa ảnh về một phân bố tham chiếu.
 
----
-
-# Khớp Histogram (Histogram Matching/Specification)
-
-- **Mục tiêu**: Biến đổi ảnh đầu vào để có histogram gần giống với một histogram mục tiêu được chỉ định trước.
-
-<div class="columns">
-<div>
-
-- **Quy trình**:
-  1. Cân bằng histogram ảnh đầu vào $f$ để được $s$.
-  2. Cân bằng histogram mục tiêu $z$ để được $v$.
-  3. Ánh xạ ngược từ $s$ sang $z$ sao cho $v \approx s$ (tìm giá trị $z$ gần nhất với $s$).
-- **Ứng dụng**: Rất hữu ích khi cần chuẩn hóa ảnh theo một mẫu chuẩn, ví dụ trong xử lý ảnh y tế hoặc vệ tinh.
-
-</div>
-<div>
-
-![](images/2.14.png)
-
-</div>
-</div>
+**Ví dụ:** Trong y tế, các ảnh X-quang chụp ở các máy khác nhau có histogram khác nhau. Histogram Matching giúp đưa tất cả về cùng một phân bố để bác sĩ dễ so sánh.
 
 ---
 
-# Xử lý Histogram cục bộ (Local Histogram Processing)
+# Ví dụ Histogram Matching
 
-- **Vấn đề**: Cân bằng toàn cục (global) có thể làm hỏng chi tiết ở các vùng nhỏ hoặc làm sáng quá mức các vùng vốn đã sáng.
+![height:600](images/hist_matching.png)
+
+---
+
+# XỬ LÝ HISTOGRAM CỤC BỘ (LOCAL HISTOGRAM)
+
+**Ý tưởng:** Thay vì tính histogram trên toàn ảnh, ta di chuyển một **cửa sổ nhỏ** qua ảnh và xử lý từng vùng lân cận.
 
 <div class="columns">
 <div class="col-3">
 
-- **Giải pháp**:
-  - Di chuyển một cửa sổ lân cận (ví dụ $3 \times 3$, $5 \times 5$) khắp ảnh.
-  - Tính histogram cục bộ và áp dụng biến đổi cho pixel trung tâm.
+**Kích thước cửa sổ:** $3\times3$, $5\times5$, $7\times7$, ...
+
+**Tại mỗi vị trí:**
+
+1. Xác định vùng lân cận.
+2. Tính histogram cục bộ.
+3. Thực hiện biến đổi (ví dụ: equalization).
+4. Cập nhật pixel trung tâm.
+
+**Ưu điểm:** Tăng cường chi tiết cục bộ.
 
 </div>
-<div class="col-4">
-<br/>
+<div class="col-2">
 
-![width:600px](images/2.15.png)
+![](images/local_hist_normal.png)
 
 </div>
 </div>
 
-- **Thống kê Histogram**:
-  - Sử dụng **Mean (trung bình)** và **Variance (phương sai)** cục bộ để phát hiện vùng tối/thấp tương phản.
-  - Chỉ tăng cường những vùng đó (tránh khuếch đại nhiễu ở vùng sáng).
-- **Lưu ý**: Cách này tốn nhiều tài nguyên tính toán hơn so với cân bằng toàn cục.
+**Nhược điểm:** Tốn chi phí tính toán, có thể khuếch đại nhiễu.
 
+**Ví dụ:** Trong ảnh có cả vùng sáng và tối, local histogram processing có thể tăng cường chi tiết ở cả hai vùng mà không làm ảnh hưởng lẫn nhau.
+
+---
+
+# CLAHE (CONTRAST LIMITED ADAPTIVE HISTOGRAM EQUALIZATION)
+
+**Định nghĩa:** CLAHE là phương pháp tăng cường tương phản cục bộ có giới hạn.
+
+<div class="columns">
+<div class="col-5">
+
+**Quy trình:**
+
+1. Chia ảnh thành các tile (ví dụ 8x8).
+2. Tính histogram từng tile.
+3. Giới hạn clipping (clip limit) để tránh khuếch đại nhiễu.
+4. Equalization trên từng tile.
+5. Nội suy giữa các tile để tránh biên cứng.
+
+**So sánh với AHE (Adaptive HE):**
+
+- AHE: Có thể khuếch đại nhiễu mạnh.
+- CLAHE: Giới hạn mức khuếch đại histogram thông qua clip limit.
+
+</div>
+<div class="col-3">
+
+![height:400](images/local_hist.png)
+
+</div>
+</div>
+
+**Ví dụ:** Trong ảnh nội tạng y tế, CLAHE giúp làm rõ chi tiết ở cả vùng sáng và tối mà không tạo ra nhiễu quá mức ở vùng đồng nhất.
+
+---
+
+# BÀI TẬP THỰC HÀNH - HISTOGRAM
+
+```python
+import cv2
+
+eq = cv2.equalizeHist(img)
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+clahe_img = clahe.apply(img)
+```
+
+**Yêu cầu:**
+
+- So sánh 3 ảnh: Original, Histogram Equalization, CLAHE.
+- Vẽ histogram của cả ba ảnh.
+- Nhận xét sự khác biệt về tương phản và nhiễu.
 
 ---
 <!--_class: section-->
@@ -659,142 +973,418 @@ plt.show()
 # BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
 ---
-
-# Giới thiệu
-
-- Ngoài việc xử lý trực tiếp trên các pixel (miền không gian), chúng ta có thể chuyển ảnh sang miền tần số để thực hiện các phép lọc phức tạp hơn.
-- Miền tần số cung cấp một cái nhìn khác về ảnh, dựa trên các thành phần tần số thay vì vị trí pixel.
-
----
+<!--_class: text-sm-->
 
 # Biến đổi Fourier
 
-- **Khái niệm**: Mọi tín hiệu phức tạp, dù hỗn độn đến đâu, đều có thể được tạo ra bằng cách cộng các sóng hình sin (sine) và cosin (cosine) đơn giản, có tần số khác nhau, lại với nhau.
-- **Miền không gian**: Nhìn ảnh dưới dạng các điểm ảnh (pixel) với giá trị màu sắc/độ sáng tại tọa độ $(x, y)$.
-- **Miền tần số**: Ảnh là tổng hợp của các sóng sin và cosin với các tần số, biên độ và pha khác nhau.
-- **Biến đổi Fourier (FT)**: Công cụ toán học chuyển tín hiệu từ miền không gian/thời gian sang miền tần số.
-- **Công thức toán học biến đổi Fourier rời rạc 2D (2D DFT)**:
-$F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-j 2\pi (\frac{ux}{M} + \frac{vy}{N})}$
-  - $f(x, y)$: Giá trị pixel tại vị trí $(x, y)$ (miền không gian).
-  - $F(u, v)$: Giá trị phức tại tần số $(u, v)$ (miền tần số).
-  - $M, N$: Kích thước ảnh
-
----
-
-# Ý nghĩa của phổ Fourier (Kết quả sau biến đổi)
-- Khi thực hiện biến đổi Fourier trên một ảnh sẽ nhận được phổ Fourier, thường được biểu diễn dưới dạng một ảnh khác.
+- **Ý tưởng:** Một tín hiệu phức tạp có thể được biểu diễn bằng **tổng các thành phần hình sin/cosin** với các tần số khác nhau.
 
 <div class="columns">
-<div class="col-5">
+<div class="col-3">
 
+- **Miền không gian**: Ảnh được biểu diễn bằng $f(x,y)$.
+- **Miền tần số**: Ảnh là tổng hợp của các sóng sin và cosin với các tần số, biên độ và pha khác nhau → $F(u,v)$.
+- **Biến đổi Fourier (FT)**: Công cụ toán học chuyển tín hiệu từ miền không gian/thời gian sang miền tần số: $f(x,y) \rightarrow F(u,v)$.
+- **Biến đổi Fourier ngược:** $F(u,v) \rightarrow f(x,y)$
+
+</div>
+<div class="col-2">
+
+![](images/spectrum.png)
+
+</div>
+</div>
+
+- Khi thực hiện biến đổi Fourier trên một ảnh sẽ nhận được phổ Fourier, thường được biểu diễn dưới dạng một ảnh khác.
 - **Tâm của ảnh phổ**: Đại diện cho tần số thấp nhất (0) – tức là độ sáng trung bình của toàn bộ ảnh (thành phần DC). Điểm này thường rất sáng.
 - **Càng xa tâm**: Đại diện cho tần số càng cao. Các điểm sáng ở xa tâm thể hiện các chi tiết sắc nét, các cạnh, đường biên hoặc nhiễu.
-- **Hai thành phần quan trọng**:
-  - **Phổ biên độ (Magnitude Spectrum)**: Cho biết các tần số nào có mặt và "mạnh" đến mức nào.
-  - **Phổ pha (Phase Spectrum)**: Cho biết vị trí của các tần số đó trong ảnh. (Pha cực kỳ quan trọng, nếu mất pha sẽ không khôi phục được ảnh gốc).
-
-</div>
-<div>
-
-![](images/2.16.png)
-
-</div>
-</div>
 
 ---
 
-# Các tính chất của 2D DFT
+# BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
-- **Tính tuần hoàn (Periodicity)**: Phổ Fourier có tính tuần hoàn, dữ liệu lặp lại $\rightarrow$ khi hiển thị phổ thường phải dịch tâm (Shift) để thấy rõ các tần số thấp ở giữa.
-- **Tính đối xứng liên hợp (Conjugate Symmetry)**: Đối với ảnh thực, phổ $F(u, v)$ có tính đối xứng qua tâm: $F(u, v) = F^*(-u, -v)$.
-- **Tính phân tách (Separability)**: 2D DFT có thể tách thành hai lần 1D DFT liên tiếp (theo hàng rồi theo cột). Giúp thuật toán FFT hoạt động cực nhanh.
-- **Tính dịch chuyển (Translation)**: Dịch chuyển trong miền không gian chỉ làm thay đổi pha của $F(u, v)$ chứ không làm thay đổi độ lớn (magnitude).
+**Ý tưởng:** Ngoài việc xử lý trực tiếp trên pixel, ta có thể chuyển ảnh sang **miền tần số**.
 
----
+**Mục tiêu:** Phân tích và xử lý ảnh dựa trên các thành phần tần số.
 
-# Nguyên lý biến đổi ảnh trong miền TS
+**Quy trình tổng quát:**
 
-- **Nguyên lý chung**:
-  1. Lấy ảnh đầu vào $\rightarrow$ Biến đổi Fourier (FFT) $\rightarrow$ Thu được phổ Fourier.
-  2. Nhân phổ Fourier với một mặt nạ $H$ (filter/kernel/transfer function) trên miền tần số. Mặt nạ này sẽ "cho qua" hoặc "chặn" một dải tần số nhất định.
-  3. Lấy kết quả vừa nhân $\rightarrow$ Biến đổi Fourier ngược (IFFT) $\rightarrow$ Thu được ảnh đầu ra.
-- **Định lý tích chập (Convolution Theorem)**:
-  - Tích chập trong miền không gian $\Leftrightarrow$ Phép nhân trong miền tần số: $f(t) * h(t) \Leftrightarrow F(\mu)H(\mu)$.
-- **Lợi ích**:
-  - Sử dụng phép nhân trong miền tần số nhanh hơn phép tích chập trong miền không gian (với các kernel lớn).
-  - Cô lập và xử lý các dạng nhiễu "đặc biệt" (nhiễu tuần hoàn) mà miền không gian bất lực.
+1. Ảnh trong miền không gian $f(x,y)$.
+2. Biến đổi Fourier → Miền tần số $F(u,v)$.
+3. Lọc trong miền tần số → $G(u,v)$.
+4. Biến đổi Fourier ngược → Ảnh đã xử lý $g(x,y)$.
 
 ---
 
-# Lọc thông thấp (Lowpass Filters - LPF)
+# TẦN SỐ THẤP VÀ TẦN SỐ CAO
 
-- **Mục đích**: Giữ lại thành phần tần số thấp, thường dùng để làm mịn, làm mờ và giảm nhiễu trong ảnh.
+**Low Frequency (Tần số thấp):**
+
+- Ảnh thay đổi chậm.
+- Vùng nền, vùng tương đối đồng nhất.
+- Biến thiên ánh sáng, các cấu trúc lớn.
+
+**High Frequency (Tần số cao):**
+
+- Ảnh thay đổi nhanh.
+- Biên, chi tiết nhỏ, texture, nhiễu.
+
+**Ghi nhớ:**
+
+- Smooth region → Low frequency
+- Sharp edge → High frequency
+
+> **Ví dụ:** Vùng bầu trời xanh đồng nhất là tần số thấp. Đường biên giữa tóc và nền là tần số cao. Nhiễu muối tiêu cũng là tần số cao.
+
+---
+
+# 2D DISCRETE FOURIER TRANSFORM (2D DFT)
+
+**Công thức:** Với ảnh kích thước $M \times N$:
+$$F(u,v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x,y) \cdot e^{-j2\pi\left(\frac{ux}{M} + \frac{vy}{N}\right)}$$
+
+Trong đó:
+- $f(x,y)$: pixel trong miền không gian
+- $F(u,v)$: thành phần tần số
+- $(u,v)$: tọa độ tần số
+- $j = \sqrt{-1}$
+
+**Lưu ý:** Kết quả DFT là **giá trị phức**.
+
+> **Ví dụ:** Với ảnh 256x256, DFT cho ta một ma trận 256x256 các số phức, mỗi phần tử biểu diễn một thành phần tần số.
+
+---
+
+# PHỔ FOURIER: Biên độ (MAGNITUDE) VÀ Pha (PHASE)
+
+**Magnitude** $|F(u,v)|$:
+- **Ý nghĩa vật lý:** Cho biết mức độ năng lượng của các thành phần tần số xuất hiện trong bức ảnh.
+- **Vai trò:** Quyết định độ tương phản, độ sáng tối tổng thể và mức độ đậm nhạt của các cấu trúc.
+
+**Phase** $\angle F(u,v)$:
+- **Ý nghĩa vật lý:** Ghi nhận vị trí không gian chính xác (shift/alignment) của các sóng hình sin thành phần.
+- **Vai trò:** Chứa phần lớn thông tin nhận dạng cấu trúc của bức ảnh. Nếu thay đổi biên độ, bức ảnh chỉ bị mờ hoặc tối đi; nhưng nếu xáo trộn hoặc làm mất pha, bức ảnh sẽ mất đi hình dáng.
+
+**Công thức:** $F(u,v) = |F(u,v)| \cdot e^{j\phi(u,v)}$
+
+---
+
+# TÍNH CHẤT CỦA 2D DFT
+
+- **Tính tuần hoàn:** DFT có tính tuần hoàn theo miền tần số.
+- **Đối xứng liên hợp:** Với ảnh thực: $F(-u,-v) = F^*(u,v)$
+- **Tính phân tách (Separability):** 2D DFT có thể thực hiện bằng:
+  1. DFT theo hàng.
+  2. DFT theo cột.
+- **Tính dịch chuyển:** Dịch ảnh trong miền không gian làm thay đổi phase, nhưng **không làm thay đổi magnitude**.
+
+>**Ví dụ:** Nhờ tính phân tách, 2D FFT của ảnh 1024x1024 chỉ cần thực hiện 2048 phép FFT 1D kích thước 1024, nhanh hơn nhiều so với tính trực tiếp.
+
+---
+
+# TỪ SPATIAL FILTER ĐẾN FREQUENCY FILTER
+
+| Miền không gian | Miền tần số |
+| --- | --- |
+| Mean Filter | Low-pass |
+| Gaussian Filter | Gaussian LPF |
+| Sharpening | High-pass |
+| Laplacian | Laplacian frequency filter |
+| Unsharp Masking | High-frequency emphasis |
+
+**Ý tưởng cốt lõi:** Lọc trong hai miền là **hai cách biểu diễn khác nhau** của cùng một bài toán xử lý tín hiệu.
+
+> **Ví dụ:** Bộ lọc Mean trong miền không gian (tính trung bình các pixel lân cận) tương đương với bộ lọc Low-pass trong miền tần số (giữ tần số thấp, loại tần số cao).
+
+---
+
+# ĐỊNH LÝ TÍCH CHẬP (CONVOLUTION THEOREM)
+
+**Phát biểu:** Trong điều kiện phù hợp:
+$$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
+
+⇒ Tích chập trong miền không gian tương ứng với **phép nhân** trong miền tần số.
+
+**Quy trình:**
+
+1. Ảnh $f$ → Fourier → $F$
+2. Kernel $h$ → Fourier → $H$
+3. Nhân: $G = F \times H$
+4. IFFT → $g$
+
+**Ý nghĩa:** Cho phép thực hiện một số phép lọc lớn hiệu quả hơn bằng FFT.
+
+> **Ví dụ:** Với kernel lớn 100x100, tích chập trong miền không gian cần 10.000 phép nhân cho mỗi pixel. Trong miền tần số, chỉ cần một phép nhân sau khi FFT.
+
+---
+
+
+# CÁC BƯỚC XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
+
+1. **Tiền xử lý:** Đọc ảnh, chuyển grayscale nếu cần, padding khi cần để giảm ảnh hưởng biên.
+2. **Fourier Transform:** $f(x,y) \rightarrow F(u,v)$
+3. **Dịch tâm:** Đưa DC component về trung tâm.
+4. **Filtering:** $G(u,v) = H(u,v) \cdot F(u,v)$
+5. **Dịch ngược:** Đưa phổ về vị trí ban đầu.
+6. **IFFT:** $G(u,v) \rightarrow g(x,y)$
+7. **Hậu xử lý:** Lấy phần thực, chuẩn hóa/clipping, cắt padding nếu đã thêm.
+
+---
+<!--_class: subsection-->
+
+# LỌC THÔNG THẤP (LOW-PASS FILTER)
+
+---
+
+# KHÁI NIỆM LOW-PASS FILTER
+
+**Mục tiêu:** Giữ các thành phần **tần số thấp** và loại bỏ/giảm các thành phần **tần số cao**.
 
 <div class="columns">
 <div class="col-2">
 
-- **Các loại bộ lọc**:
-  - **Ideal LPF (ILPF)**: Cắt đột ngột tại $D_0$. Nhược điểm: Gây hiện tượng rung (ringing) nghiêm trọng do biến đổi ngược là hàm sinc.
-  - **Gaussian LPF (GLPF)**: $H(u, v) = e^{-D^2(u,v) / 2D_0^2}$. Mượt mà, không gây rung.
-  - **Butterworth LPF (BLPF)**: $H(u, v) = \frac{1}{1 + [D(u,v)/D_0]^{2n}}$. Có thể điều chỉnh độ dốc bằng bậc $n$.
-- **Lưu ý**:
-  - $D(u, v)$: Khoảng cách từ điểm $(u, v)$ đến tâm phổ.
-  - $D_0$: Bán kính ngưỡng, bao nhiêu tần số được giữ lại.
+**Hiệu ứng:**
+
+- Làm mịn, làm mờ ảnh.
+- Giảm nhiễu.
+- Giảm chi tiết nhỏ.
+
+**Trong phổ đã dịch tâm:**
+
+- Vùng trung tâm (tần số thấp) được giữ lại.
+- Vùng biên (tần số cao) bị loại bỏ.
+
 
 </div>
-<div>
+<div class="col-3">
 
-![width:230](images/2.18.png)
-
-![width:350](images/2.17.png)
+![](images/lowpass.png)
 
 </div>
 </div>
 
 ---
 
-# Lọc thông cao (Highpass Filters - HPF)
+# IDEAL LOW-PASS FILTER
+
+**Mục tiêu:** Cho tất cả các tần số nằm vòng tròn bán kính $D_0$ (tính từ tâm phổ) đi qua hoàn toàn mà không bị suy giảm, chặn mọi tần số nằm ngoài bán kính đó
 
 <div class="columns">
 <div>
 
-- **Mục đích**: Làm sắc nét (sharpening), nổi bật biên (edge enhancement).
-- **Công thức chung**: $H_{HP}(u, v) = 1 - H_{LP}(u, v)$.
-- **Các loại kernel**: Ideal HPF, Gaussian HPF, Butterworth HPF.
-- **Lưu ý quan trọng**:
-  - HPF loại bỏ thành phần DC (giá trị trung bình), làm ảnh đầu ra tối đen.
-  - $\rightarrow$ Cần cộng thêm hằng số (Offset) hoặc sử dụng kỹ thuật High-frequency-emphasis để giữ lại độ sáng tổng thể.
+**Công thức:**
+$$H(u,v) = \begin{cases} 1, & D(u,v) \leq D_0 \\ 0, & D(u,v) > D_0 \end{cases}$$
+
+Trong đó: $D(u,v) = \sqrt{(u-u_0)^2 + (v-v_0)^2}$
+
+$D_0$: bán kính cắt.
+
+**Đặc điểm:**
+
+- Cắt tần số đột ngột.
+- Dễ hiểu và dễ cài đặt.
 
 </div>
 <div>
 
-![](images/2.19.png)
+![](images/ideal-lowpass.png)
 
 </div>
 </div>
 
+- Có thể gây **ringing** (hiệu ứng gợn sóng) do biên chuyển tiếp quá đột ngột.
+> **Ví dụ:** Ideal LPF với $D_0 = 30$ sẽ giữ nguyên tất cả các thành phần tần số trong bán kính 30 từ tâm, và loại bỏ hoàn toàn các thành phần ngoài bán kính này.
 
 ---
+
+# GAUSSIAN LOW-PASS FILTER
+**Hoạt động:** dựa trên hàm phân phối chuẩn (hàm Gaussian / hình chuông).
+**Mục tiêu:** Cho phép các tần số thấp đi qua tâm phổ, triệt tiêu mượt mà các tần số cao ở phần biên ngoài (làm mờ ảnh, khử nhiễu hạt).
+
+<div class="columns">
+<div>
+
+**Công thức:**
+$$H(u,v) = e^{-\frac{D^2(u,v)}{2\sigma^2}}$$
+
+**Đặc điểm:**
+
+- Suy giảm **mượt** theo khoảng cách.
+- Không có biên cắt đột ngột.
+- Giảm ringing so với Ideal LPF.
+
+**Tham số:** $\sigma \uparrow \Rightarrow$ lọc mạnh hơn (bán kính hiệu dụng lớn hơn).
+
+</div>
+<div>
+
+![](images/gaussianfilter.png)
+
+</div>
+</div>
+
+---
+
+# BUTTERWORTH LOW-PASS FILTER
+
+**Điểm đặc biệt:** BLPF cung cấp một tham số bậc lọc ($n$) cho phép người thiết kế linh hoạt điều chỉnh độ dốc của vùng chuyển tiếp, khắc phục được nhược điểm cắt đột ngột của ILPF nhưng vẫn cho phép kiểm soát độ sắc nét tốt hơn GLPF.
+
+<div class="columns">
+<div>
+
+**Công thức:**
+$$H(u,v) = \frac{1}{1 + \left(\frac{D(u,v)}{D_0}\right)^{2n}}$$
+
+Trong đó:
+- $D_0$: tần số cắt.
+- $n$: bậc của bộ lọc.
+
+**Đặc điểm:**
+
+
+</div>
+<div>
+
+![](images/butterworth.png)
+
+</div>
+</div>
+
+- Chuyển tiếp giữa vùng cho qua và vùng chặn **có thể điều chỉnh**.
+- $n$ càng lớn → chuyển tiếp càng dốc.
+- Nằm giữa Gaussian và Ideal về độ sắc của vùng chuyển tiếp.
+
+---
+
+# SO SÁNH CÁC LOW-PASS FILTER
+
+| Filter | Chuyển tiếp | Ringing | Điều chỉnh |
+| --- | --- | --- | --- |
+| **Ideal** | Đột ngột | Cao | $D_0$ |
+| **Gaussian** | Mượt | Rất thấp | $\sigma$ |
+| **Butterworth** | Điều chỉnh được | Trung gian | $D_0, n$ |
+
+**Ghi nhớ:** Càng cắt tần số đột ngột → càng có nguy cơ ringing.
+
+> **Ví dụ minh họa:** Khi làm mờ ảnh văn bản, Ideal LPF có thể tạo ra các gợn sóng quanh chữ, trong khi Gaussian LPF cho kết quả mượt mà hơn.
+
+---
+<!--_class: subsection-->
+
+# LỌC THÔNG CAO (HIGH-PASS FILTER)
+
+---
+
+# KHÁI NIỆM HIGH-PASS FILTER
+
+**Mục tiêu:** Giữ các thành phần **tần số cao** và loại bỏ/giảm các thành phần **tần số thấp**.
+
+<div class="columns">
+<div>
+
+**Ứng dụng:**
+
+- Làm nét ảnh.
+- Tăng cường biên.
+- Tăng cường chi tiết.
+
+**Trong phổ đã dịch tâm:**
+
+- Vùng trung tâm (tần số thấp, DC) bị loại bỏ.
+- Vùng biên (tần số cao) được giữ lại.
+
+</div>
+<div class="col-2">
+
+![](images/highpass.png)
+
+</div>
+</div>
+
+---
+
+# HPF VÀ THÀNH PHẦN DC
+
+**Thành phần DC** nằm tại trung tâm phổ, đại diện cho mức sáng trung bình.
+
+**Với high-pass filter:** $H(0,0) \approx 0$
+
+→ Thành phần liên quan đến mức sáng trung bình bị loại bỏ.
+
+<div class="columns">
+<div class="col-3">
+
+**Kết quả sau IFFT có thể:**
+
+- Tối.
+- Mang giá trị âm.
+- Cần chuẩn hóa để hiển thị.
+
+**Khi cần giữ độ sáng:**
+
+- Sử dụng Offset.
+- High-frequency emphasis.
+
+</div>
+<div class="col-4">
+
+![](images/emphasis.png)
+
+</div>
+</div>
+
+- Các phương pháp sharpening thích hợp.
+> **Ví dụ:** Ảnh sau khi áp dụng HPF thuần túy thường có nền đen với các đường biên trắng. Để giữ độ sáng gốc, ta cần thêm thành phần DC trở lại.
+
+---
+<!--_class: text-sm-->
 
 # Toán tử Laplacian trong miền tần số
 
-- **Hàm truyền**: $H(u, v) = -4\pi^2 D^2(u, v)$.
+**Bản chất:** Dựa trên đạo hàm bậc hai, chuyên dùng để phát hiện và làm nổi bật các biến đổi đột ngột về cường độ sáng (đường biên, cạnh, góc nhọn và chi tiết tinh vi) trong ảnh. Đạo hàm bậc hai trong miền không gian tương đương với việc nhân phổ của ảnh với hàm truyền $H(u,v)$ trong miền tần số: $H(u, v) = -4\pi^2 D^2(u, v)$.
+
+<div class="columns">
+<div class="col-3">
+
   - Tại tâm: $D = 0 \implies H = 0$.
   - Xa tâm: $D$ lớn $\implies H$ rất lớn: Laplacian tăng cường mạnh các thành phần tần số cao.
-- **Quy trình**:
+
+**Ứng dụng:** Làm sắc nét ảnh, quy trình:
   - $L(u, v) = H(u, v) F(u, v)$: Phổ Fourier của ảnh Laplace.
+
+</div>
+<div class="col-4">
+
+![](images/highpasslaplace.png)
+
+</div>
+</div>
+
   - $l(x, y) = \text{IFFT}\{L(u, v)\}$: Ảnh biên.
   - Tạo ảnh sắc nét (trong miền không gian): $g(x, y) = f(x, y) + c \cdot l(x, y)$.
-- **Ưu điểm**: Bao quát toàn bộ ảnh, cho kết quả sắc nét hơn so với kernel Laplacian $3 \times 3$ trong miền không gian.
+
+**Ưu điểm**: Bao quát toàn bộ ảnh, cho kết quả sắc nét hơn so với kernel Laplacian $3 \times 3$ trong miền không gian.
 
 ---
 
-# High-frequency-emphasis
+# Lọc tăng cường tần số (High-frequency-emphasis)
+
+<div class="columns">
+<div>
 
 - **Vấn đề**:
   - Tần số thấp $\rightarrow$ vùng trơn, nền ảnh, ánh sáng tổng thể.
   - Tần số cao $\rightarrow$ biên, chi tiết, cạnh, texture.
   - Nếu chỉ dùng high-pass filter ($H_{HP}$), ta sẽ giữ chi tiết tốt nhưng làm mất độ sáng tổng thể (ảnh bị "tối/thiếu tự nhiên").
+
+</div>
+<div>
+
+![](images/HFE.png)
+
+</div>
+</div>
+
 - **Giải pháp High-frequency-emphasis filter**:
   - Giúp vừa giữ thông tin nền (low frequency), vừa tăng cường chi tiết (high frequency).
   - Công thức: $H(u, v) = a + b \cdot H_{HP}(u, v)$, ($a \ge 0, b > 1$).
@@ -802,76 +1392,121 @@ $F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-j 2\pi (\frac{ux}
   - $b$: Hệ số khuếch đại chi tiết.
 
 ---
+<!--_class: subsection-->
 
-# Lọc chọn lọc (Selective Filtering)
-
-- **Mục đích**: "Nhắm mục tiêu" vào các dải tần số cụ thể để xử lý các nhiễu phức tạp mà LPF/HPF thông thường không xử lý được.
-- **Bộ lọc chặn dải (Band-reject filter)**: Loại bỏ một dải tần số nhất định.
-  - Ứng dụng: Loại bỏ nhiễu định kỳ (như các đường sọc gây ra bởi nhiễu điện từ).
-- **Bộ lọc thông dải (Band-pass filter)**: Chỉ giữ lại một dải tần số nhất định.
-  - Ứng dụng: Tách biệt các đối tượng có kích thước hoặc kết cấu cụ thể.
-- **Bộ lọc Notch (Notch filter)**: Chặn hoặc thông qua các tần số xung quanh một điểm cụ thể trong phổ Fourier.
-  - Ứng dụng: Loại bỏ các nhiễu có tần số rất hẹp (như tần số 50Hz/60Hz từ ánh sáng đèn huỳnh quang).
+# LỌC CHỌN LỌC
 
 ---
 
-# Biến đổi Fourier Nhanh (Fast Fourier Transform - FFT)
+# Lọc giải tần (BAND-PASS) VÀ Lọc chắn giải (BAND-REJECT)
 
-- **Vấn đề**: Nếu thực hiện biến đổi DFT trực tiếp theo công thức toán học, độ phức tạp tính toán là $O(N^2)$. Với một bức ảnh $1024 \times 1024$, con số này là khổng lồ.
-- **Giải pháp FFT**:
-  - Là một thuật toán đột phá làm giảm độ phức tạp xuống còn $O(N \log_2 N)$.
-  - Cơ chế: Dựa trên phương pháp "Chia để trị" (Divide and Conquer). Chia nhỏ bài toán DFT lớn thành các DFT nhỏ hơn, tính toán chúng, rồi kết hợp lại.
-- **Tầm quan trọng**: FFT là "xương sống" của hầu hết các công nghệ xử lý ảnh hiện đại, từ nén ảnh (JPEG) cho đến lọc nhiễu trong video thời gian thực.
+**Band-pass Filter:** Tác động lên một vùng trung gian trong miền tần số, nằm giữa vùng tâm (tần số thấp) và vùng biên (tần số cao).
+
+- Chỉ giữ một khoảng tần số: $D_1 \leq D \leq D_2$.
+- **Ứng dụng:** Tách các cấu trúc theo scale, phân tích texture.
+
+<div class="columns">
+<div>
+
+**Band-reject Filter:** Loại bỏ hoặc suy giảm một dải tần số cụ thể quanh một bán kính nhất định, giữ nguyên các tần số còn lại.
+
+- Loại bỏ một khoảng tần số: $D_1 < D < D_2$.
+- **Ứng dụng:** Loại bỏ một dải nhiễu cụ thể, xử lý nhiễu tuần hoàn.
+
+</div>
+<div>
+
+
+![height:250](images/bandpass.png)
+
+</div>
+</div>
+
 ---
 
-# Thực hành - Biến đổi ảnh sang miền TS và lọc thông thấp.
+# NHIỄU TUẦN HOÀN TRONG MIỀN TẦN SỐ
 
+**Đặc điểm:** Nhiễu tuần hoàn trong miền không gian thường tạo ra các **đỉnh sáng đối xứng** trong Fourier spectrum.
+
+**Vị trí các đỉnh:** Đối xứng qua tâm phổ.
+
+**Cách xử lý:**
+
+- Tìm nhiễu trong miền tần số.
+- Loại bỏ đúng vùng tần số tương ứng.
+- Khôi phục ảnh.
+
+![height:300](images/nhieu_tuan_hoan.png)
+
+---
+
+# Lọc khấc (NOTCH FILTER)
+
+**Định nghĩa:** Notch filter tác động vào một hoặc một số **vùng tần số rất cụ thể**.
+
+**Đặc biệt hữu ích với:** Periodic noise (nhiễu tuần hoàn).
+
+<div class="columns">
+<div>
+
+**Quy trình:**
+
+1. Ảnh có nhiễu tuần hoàn.
+2. Biến đổi Fourier.
+3. Phát hiện các đỉnh bất thường trong phổ.
+4. Thiết kế Notch Filter tại các vị trí đỉnh.
+5. Biến đổi Fourier ngược.
+6. Ảnh giảm nhiễu.
+
+</div>
+<div>
+
+![](images/notch.png)
+
+</div>
+</div>
+
+> **Ví dụ:** Ảnh chụp từ camera an ninh bị nhiễu vân (moiré pattern) do interference với màn hình. Các đỉnh nhiễu xuất hiện đối xứng trong phổ Fourier và có thể loại bỏ bằng Notch Filter.
+
+---
+<!--_class: subsection-->
+
+# FAST FOURIER TRANSFORM (FFT)
+
+---
+
+# KHÁI NIỆM FFT
+
+**Fast Fourier Transform (FFT)** là thuật toán hiệu quả để tính DFT.
+
+**Độ phức tạp:**
+
+- DFT trực tiếp: $O(N^2)$
+- FFT: $O(N \log N)$
+
+**Ý tưởng:** Sử dụng chiến lược **Divide and Conquer**:
+
+1. Chia DFT lớn thành nhiều DFT nhỏ.
+2. Tính toán các DFT nhỏ.
+3. Kết hợp kết quả.
+
+> **Ví dụ:** Với ảnh 1024x1024, DFT trực tiếp cần khoảng 1 tỷ phép tính, trong khi FFT chỉ cần khoảng 10 triệu phép tính - nhanh hơn 100 lần.
+
+---
+
+# FFT 2D CHO ẢNH
+
+**2D FFT có thể thực hiện bằng:**
+
+1. FFT từng hàng.
+2. FFT từng cột.
+
+Đây là hệ quả của **tính separability** của DFT.
+
+**Trong Python:**
 ```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-
-img = cv2.imread('input.jpg', cv2.IMREAD_GRAYSCALE)
-
-# 1. Biến đổi Fourier
-f = np.fft.fft2(img)
-fshift = np.fft.fftshift(f) # Dịch tâm tần số 0 về giữa
-
-# 2. Tạo mặt nạ lọc thông thấp Ideal (hoặc Gaussian)
-rows, cols = img.shape
-crow, ccol = rows // 2 , cols // 2
-D0 = 50 # Bán kính ngưỡng
-mask = np.zeros((rows, cols), np.uint8)
-for i in range(rows):
-    for j in range(cols):
-        D = np.sqrt((i - crow)**2 + (j - ccol)**2)
-        if D <= D0:
-            mask[i, j] = 1
-
-# Áp dụng mặt nạ
-fshift_filtered = fshift * mask
-
-# 3. Biến đổi ngược
-f_ishift = np.fft.ifftshift(fshift_filtered)
-img_back = np.fft.ifft2(f_ishift)
-img_back = np.abs(img_back)
-
-# Hiển thị
-plt.subplot(131), plt.imshow(img, cmap='gray'), plt.title('Input', axis='off')
-plt.subplot(132), plt.imshow(np.log(1 + np.abs(fshift)), cmap='gray'), plt.title('Magnitude Spectrum', axis='off')
-plt.subplot(133), plt.imshow(img_back, cmap='gray'), plt.title('After LPF', axis='off')
-plt.show()
+F = np.fft.fft2(img)
+F_shift = np.fft.fftshift(F)
 ```
 
----
-
-# Các bước biến đổi ảnh trong miền tần số
-
-- **Tóm tắt quy trình**:
-  1. **Tiền xử lý**: Đọc ảnh, chuyển đổi sang ảnh xám (grayscale) nếu cần, và thêm viền (padding) để tránh hiện tượng wrap-around (gập viền).
-  2. **Biến đổi thuận**: Sử dụng FFT (Fast Fourier Transform) để chuyển ảnh từ miền không gian sang miền tần số.
-  3. **Dịch tâm (Centering)**: Sử dụng hàm dịch để đưa thành phần tần số 0 (DC component) về trung tâm của phổ.
-  4. **Lọc (Filtering)**: Tạo mặt nạ lọc (Filter Mask) và nhân phổ tần số với mặt nạ này (theo định lý tích chập).
-  5. **Dịch ngược**: Đưa tâm phổ về lại vị trí ban đầu (góc trên bên trái).
-  6. **Biến đổi ngược**: Sử dụng IFFT (Inverse Fast Fourier Transform) để chuyển ảnh từ miền tần số về lại miền không gian.
-  7. **Hậu xử lý**: Cắt bỏ phần viền đã thêm, chuẩn hóa giá trị pixel về đoạn $[0, 255]$ để hiển thị.
+> **Ví dụ:** Thay vì tính 2D DFT trực tiếp với độ phức tạp $O(N^4)$, ta thực hiện $2N$ phép FFT 1D kích thước $N$, giảm xuống còn $O(N^2 \log N)$.
