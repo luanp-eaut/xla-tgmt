@@ -616,7 +616,7 @@ $$MAX_I = 2^8 - 1 = 255$$
 ---
 <!--_class: section-->
 
-#   PHÂN NHÓM PHƯƠNG PHÁP NÉN DỮ LIỆU
+#   PHƯƠNG PHÁP NÉN DỮ LIỆU
 
 ---
 
