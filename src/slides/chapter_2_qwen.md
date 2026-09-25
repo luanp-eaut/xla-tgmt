@@ -36,6 +36,15 @@ transition: fade
 2. Histogram
 3. Biến đổi trong miền tần số
 
+<div style="padding-left: 20px">
+
+  - Lọc thông thấp
+  - Lọc thông cao
+  - Lọc chọn lọc
+  - Fast Fourier Transform (FFT)
+
+</div>
+
 ---
 
 # MỤC TIÊU HỌC TẬP
@@ -797,7 +806,7 @@ với ảnh kích thước $M \times N$.
 
 ---
 
-# ỨNG DỤNG CỦA HISTOGRAM (here)
+# ỨNG DỤNG CỦA HISTOGRAM
 
 - **Tăng cường ảnh**: Giúp ảnh dễ nhìn hơn, làm nổi bật chi tiết ẩn trong các vùng bị tối hoặc quá sáng.
 - **Chuẩn hóa**: Đưa các ảnh chụp trong điều kiện ánh sáng khác nhau về cùng một trạng thái để phục vụ cho các thuật toán thị giác máy tính phía sau (như nhận diện vật thể).
@@ -821,11 +830,14 @@ với ảnh kích thước $M \times N$.
 
 Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 
-> **Ví dụ:** Ảnh chụp trong phòng tối có histogram tập trung ở vùng 0-80. Sau khi cân bằng, histogram được trải đều trên toàn dải 0-255, ảnh sáng và rõ chi tiết hơn.
+**Ví dụ:** Ảnh chụp trong phòng tối có histogram tập trung ở vùng 0-80. Sau khi cân bằng, histogram được trải đều trên toàn dải 0-255, ảnh sáng và rõ chi tiết hơn.
 
 ---
 
 # CƠ CHẾ CÂN BẰNG HISTOGRAM
+
+<div class="columns">
+<div class="col-4">
 
 **Quy trình:**
 
@@ -836,12 +848,19 @@ Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 5. Áp dụng lên từng pixel để có histogram mới.
 6. Ảnh có tương phản được cải thiện.
 
+</div>
+<div class="col-3">
+
+![](images/canbang_hist.png)
+
+</div>
+</div>
+
 **Lưu ý:** Histogram sau cân bằng **không nhất thiết phẳng hoàn toàn** vì:
 
 - Pixel là dữ liệu rời rạc.
 - Số mức cường độ hữu hạn.
 - Phép ánh xạ có làm tròn.
-
 ---
 
 # HẠN CHẾ CỦA HISTOGRAM EQUALIZATION
@@ -855,7 +874,7 @@ Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 
 **Giải pháp:** Cần các phương pháp **local/adaptive enhancement** như CLAHE.
 
-> **Ví dụ:** Ảnh có cả vùng bầu trời sáng và vùng đất tối. Histogram Equalization toàn cục có thể làm bầu trời bị cháy sáng trong khi cố gắng làm sáng vùng đất.
+**Ví dụ:** Ảnh có cả vùng bầu trời sáng và vùng đất tối. Histogram Equalization toàn cục có thể làm bầu trời bị cháy sáng trong khi cố gắng làm sáng vùng đất.
 
 ---
 
@@ -876,13 +895,22 @@ Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 - Xử lý ảnh y tế, ảnh vệ tinh.
 - Các hệ thống cần đưa ảnh về một phân bố tham chiếu.
 
-> **Ví dụ:** Trong y tế, các ảnh X-quang chụp ở các máy khác nhau có histogram khác nhau. Histogram Matching giúp đưa tất cả về cùng một phân bố để bác sĩ dễ so sánh.
+**Ví dụ:** Trong y tế, các ảnh X-quang chụp ở các máy khác nhau có histogram khác nhau. Histogram Matching giúp đưa tất cả về cùng một phân bố để bác sĩ dễ so sánh.
+
+---
+
+# Ví dụ Histogram Matching
+
+![height:600](images/hist_matching.png)
 
 ---
 
 # XỬ LÝ HISTOGRAM CỤC BỘ (LOCAL HISTOGRAM)
 
 **Ý tưởng:** Thay vì tính histogram trên toàn ảnh, ta di chuyển một **cửa sổ nhỏ** qua ảnh và xử lý từng vùng lân cận.
+
+<div class="columns">
+<div class="col-3">
 
 **Kích thước cửa sổ:** $3\times3$, $5\times5$, $7\times7$, ...
 
@@ -895,15 +923,26 @@ Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 
 **Ưu điểm:** Tăng cường chi tiết cục bộ.
 
+</div>
+<div class="col-2">
+
+![](images/local_hist_normal.png)
+
+</div>
+</div>
+
 **Nhược điểm:** Tốn chi phí tính toán, có thể khuếch đại nhiễu.
 
-> **Ví dụ:** Trong ảnh có cả vùng sáng và tối, local histogram processing có thể tăng cường chi tiết ở cả hai vùng mà không làm ảnh hưởng lẫn nhau.
+**Ví dụ:** Trong ảnh có cả vùng sáng và tối, local histogram processing có thể tăng cường chi tiết ở cả hai vùng mà không làm ảnh hưởng lẫn nhau.
 
 ---
 
 # CLAHE (CONTRAST LIMITED ADAPTIVE HISTOGRAM EQUALIZATION)
 
 **Định nghĩa:** CLAHE là phương pháp tăng cường tương phản cục bộ có giới hạn.
+
+<div class="columns">
+<div class="col-5">
 
 **Quy trình:**
 
@@ -918,7 +957,15 @@ Trong đó $L$ là số mức cường độ (với ảnh 8-bit: $L = 256$).
 - AHE: Có thể khuếch đại nhiễu mạnh.
 - CLAHE: Giới hạn mức khuếch đại histogram thông qua clip limit.
 
-> **Ví dụ:** Trong ảnh nội tạng y tế, CLAHE giúp làm rõ chi tiết ở cả vùng sáng và tối mà không tạo ra nhiễu quá mức ở vùng đồng nhất.
+</div>
+<div class="col-3">
+
+![height:400](images/local_hist.png)
+
+</div>
+</div>
+
+**Ví dụ:** Trong ảnh nội tạng y tế, CLAHE giúp làm rõ chi tiết ở cả vùng sáng và tối mà không tạo ra nhiễu quá mức ở vùng đồng nhất.
 
 ---
 
@@ -944,8 +991,35 @@ clahe_img = clahe.apply(img)
 # BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
 ---
+<!--_class: text-sm-->
 
-# TỔNG QUAN VỀ MIỀN TẦN SỐ
+# Biến đổi Fourier
+
+- **Ý tưởng:** Một tín hiệu phức tạp có thể được biểu diễn bằng **tổng các thành phần hình sin/cosin** với các tần số khác nhau.
+
+<div class="columns">
+<div class="col-3">
+
+- **Miền không gian**: Ảnh được biểu diễn bằng $f(x,y)$.
+- **Miền tần số**: Ảnh là tổng hợp của các sóng sin và cosin với các tần số, biên độ và pha khác nhau → $F(u,v)$.
+- **Biến đổi Fourier (FT)**: Công cụ toán học chuyển tín hiệu từ miền không gian/thời gian sang miền tần số: $f(x,y) \rightarrow F(u,v)$.
+- **Biến đổi Fourier ngược:** $F(u,v) \rightarrow f(x,y)$
+
+</div>
+<div class="col-2">
+
+![](images/spectrum.png)
+
+</div>
+</div>
+
+- Khi thực hiện biến đổi Fourier trên một ảnh sẽ nhận được phổ Fourier, thường được biểu diễn dưới dạng một ảnh khác.
+- **Tâm của ảnh phổ**: Đại diện cho tần số thấp nhất (0) – tức là độ sáng trung bình của toàn bộ ảnh (thành phần DC). Điểm này thường rất sáng.
+- **Càng xa tâm**: Đại diện cho tần số càng cao. Các điểm sáng ở xa tâm thể hiện các chi tiết sắc nét, các cạnh, đường biên hoặc nhiễu.
+
+---
+
+# BIẾN ĐỔI TRONG MIỀN TẦN SỐ
 
 **Ý tưởng:** Ngoài việc xử lý trực tiếp trên pixel, ta có thể chuyển ảnh sang **miền tần số**.
 
@@ -957,8 +1031,6 @@ clahe_img = clahe.apply(img)
 2. Biến đổi Fourier → Miền tần số $F(u,v)$.
 3. Lọc trong miền tần số → $G(u,v)$.
 4. Biến đổi Fourier ngược → Ảnh đã xử lý $g(x,y)$.
-
-> **Ví dụ:** Giống như âm thanh có thể được phân tích thành các nốt nhạc với tần số khác nhau, ảnh cũng có thể được phân tích thành các thành phần tần số khác nhau.
 
 ---
 
@@ -984,22 +1056,6 @@ clahe_img = clahe.apply(img)
 
 ---
 
-# BIẾN ĐỔI FOURIER
-
-**Ý tưởng:** Một tín hiệu phức tạp có thể được biểu diễn bằng **tổng các thành phần hình sin/cosin** với các tần số khác nhau.
-
-**Miền không gian:** Ảnh được biểu diễn bằng $f(x,y)$
-
-**Miền tần số:** Ảnh được biểu diễn bằng $F(u,v)$
-
-**Biến đổi Fourier:** $f(x,y) \rightarrow F(u,v)$
-
-**Biến đổi Fourier ngược:** $F(u,v) \rightarrow f(x,y)$
-
-> **Ví dụ:** Một bức ảnh có thể được xem như tổng của nhiều sóng sin 2D với tần số, biên độ và pha khác nhau. Biến đổi Fourier tách ảnh thành các thành phần sóng này.
-
----
-
 # 2D DISCRETE FOURIER TRANSFORM (2D DFT)
 
 **Công thức:** Với ảnh kích thước $M \times N$:
@@ -1017,53 +1073,30 @@ Trong đó:
 
 ---
 
-# PHỔ FOURIER: MAGNITUDE VÀ PHASE
-
-**Từ $F(u,v)$, ta có:**
+# PHỔ FOURIER: Biên độ (MAGNITUDE) VÀ Pha (PHASE)
 
 **Magnitude** $|F(u,v)|$:
-- Cho biết **độ mạnh** của thành phần tần số.
+- **Ý nghĩa vật lý:** Cho biết mức độ năng lượng của các thành phần tần số xuất hiện trong bức ảnh.
+- **Vai trò:** Quyết định độ tương phản, độ sáng tối tổng thể và mức độ đậm nhạt của các cấu trúc.
 
 **Phase** $\angle F(u,v)$:
-- Mô tả **quan hệ pha**, có vai trò quan trọng trong việc xác định cấu trúc và vị trí thông tin trong ảnh.
+- **Ý nghĩa vật lý:** Ghi nhận vị trí không gian chính xác (shift/alignment) của các sóng hình sin thành phần.
+- **Vai trò:** Chứa phần lớn thông tin nhận dạng cấu trúc của bức ảnh. Nếu thay đổi biên độ, bức ảnh chỉ bị mờ hoặc tối đi; nhưng nếu xáo trộn hoặc làm mất pha, bức ảnh sẽ mất đi hình dáng.
 
-**Ghi nhớ:** $F(u,v) = |F(u,v)| \cdot e^{j\phi(u,v)}$
-
-> **Ví dụ:** Nếu ta hoán đổi magnitude của ảnh này với phase của ảnh khác, kết quả sẽ trông giống ảnh có phase (vì phase chứa thông tin về vị trí các đặc trưng).
-
----
-
-# FOURIER MAGNITUDE SPECTRUM
-
-**Khi dịch phổ để thành phần DC nằm ở giữa:**
-
-**Tại tâm (DC component):**
-
-- Tần số thấp nhất.
-- Liên quan đến mức sáng trung bình của ảnh.
-
-**Càng xa tâm:**
-
-- Tần số càng cao.
-- Chi tiết nhanh, biên, texture, nhiễu.
-
-> **Ví dụ:** Trong phổ Fourier của ảnh khuôn mặt, tâm phổ sáng (DC) thể hiện độ sáng trung bình, các điểm sáng xa tâm thể hiện các chi tiết như mắt, mũi, miệng.
+**Công thức:** $F(u,v) = |F(u,v)| \cdot e^{j\phi(u,v)}$
 
 ---
 
-# CÁC TÍNH CHẤT CỦA 2D DFT
+# TÍNH CHẤT CỦA 2D DFT
 
-**Tính tuần hoàn:** DFT có tính tuần hoàn theo miền tần số.
+- **Tính tuần hoàn:** DFT có tính tuần hoàn theo miền tần số.
+- **Đối xứng liên hợp:** Với ảnh thực: $F(-u,-v) = F^*(u,v)$
+- **Tính phân tách (Separability):** 2D DFT có thể thực hiện bằng:
+  1. DFT theo hàng.
+  2. DFT theo cột.
+- **Tính dịch chuyển:** Dịch ảnh trong miền không gian làm thay đổi phase, nhưng **không làm thay đổi magnitude**.
 
-**Đối xứng liên hợp:** Với ảnh thực: $F(-u,-v) = F^*(u,v)$
-
-**Tính phân tách (Separability):** 2D DFT có thể thực hiện bằng:
-1. DFT theo hàng.
-2. DFT theo cột.
-
-**Tính dịch chuyển:** Dịch ảnh trong miền không gian làm thay đổi phase, nhưng **không làm thay đổi magnitude**.
-
-> **Ví dụ:** Nhờ tính phân tách, 2D FFT của ảnh 1024x1024 chỉ cần thực hiện 2048 phép FFT 1D kích thước 1024, nhanh hơn nhiều so với tính trực tiếp.
+>**Ví dụ:** Nhờ tính phân tách, 2D FFT của ảnh 1024x1024 chỉ cần thực hiện 2048 phép FFT 1D kích thước 1024, nhanh hơn nhiều so với tính trực tiếp.
 
 ---
 
@@ -1088,7 +1121,7 @@ Trong đó:
 **Phát biểu:** Trong điều kiện phù hợp:
 $$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
 
-**Nghĩa là:** Tích chập trong miền không gian tương ứng với **phép nhân** trong miền tần số.
+⇒ Tích chập trong miền không gian tương ứng với **phép nhân** trong miền tần số.
 
 **Quy trình:**
 
@@ -1103,23 +1136,19 @@ $$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
 
 ---
 
-# QUY TRÌNH LỌC TRONG MIỀN TẦN SỐ
 
-**Các bước:**
+# CÁC BƯỚC XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
 
-1. Ảnh đầu vào $f(x,y)$.
-2. FFT → $F(u,v)$.
-3. Dịch tâm phổ (fftshift).
-4. Tạo filter $H(u,v)$.
-5. Nhân: $G(u,v) = H(u,v) \cdot F(u,v)$.
-6. Dịch ngược phổ (ifftshift).
-7. IFFT → $g(x,y)$.
-8. Hậu xử lý kết quả (lấy phần thực, chuẩn hóa).
-
-> **Ví dụ:** Để làm mờ ảnh bằng Gaussian LPF trong miền tần số, ta tạo một mask Gaussian ở tâm phổ, nhân với phổ, rồi IFFT để có ảnh mờ.
+1. **Tiền xử lý:** Đọc ảnh, chuyển grayscale nếu cần, padding khi cần để giảm ảnh hưởng biên.
+2. **Fourier Transform:** $f(x,y) \rightarrow F(u,v)$
+3. **Dịch tâm:** Đưa DC component về trung tâm.
+4. **Filtering:** $G(u,v) = H(u,v) \cdot F(u,v)$
+5. **Dịch ngược:** Đưa phổ về vị trí ban đầu.
+6. **IFFT:** $G(u,v) \rightarrow g(x,y)$
+7. **Hậu xử lý:** Lấy phần thực, chuẩn hóa/clipping, cắt padding nếu đã thêm.
 
 ---
-<!--_class: section-->
+<!--_class: subsection-->
 
 # LỌC THÔNG THẤP (LOW-PASS FILTER)
 
@@ -1128,6 +1157,9 @@ $$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
 # KHÁI NIỆM LOW-PASS FILTER
 
 **Mục tiêu:** Giữ các thành phần **tần số thấp** và loại bỏ/giảm các thành phần **tần số cao**.
+
+<div class="columns">
+<div class="col-2">
 
 **Hiệu ứng:**
 
@@ -1140,11 +1172,21 @@ $$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
 - Vùng trung tâm (tần số thấp) được giữ lại.
 - Vùng biên (tần số cao) bị loại bỏ.
 
-> **Ví dụ:** Khi áp dụng LPF lên ảnh có nhiễu, các chấm nhiễu (tần số cao) bị loại bỏ, ảnh trở nên mượt mà hơn nhưng cũng mờ hơn.
+
+</div>
+<div class="col-3">
+
+![](images/lowpass.png)
+
+</div>
+</div>
 
 ---
 
 # IDEAL LOW-PASS FILTER
+
+<div class="columns">
+<div>
 
 **Công thức:**
 $$H(u,v) = \begin{cases} 1, & D(u,v) \leq D_0 \\ 0, & D(u,v) > D_0 \end{cases}$$
@@ -1159,11 +1201,22 @@ $D_0$: bán kính cắt.
 - Dễ hiểu và dễ cài đặt.
 - Có thể gây **ringing** (hiệu ứng gợn sóng) do biên chuyển tiếp quá đột ngột.
 
+</div>
+<div>
+
+![](images/ideal-lowpass.png)
+
+</div>
+</div>
+
 > **Ví dụ:** Ideal LPF với $D_0 = 30$ sẽ giữ nguyên tất cả các thành phần tần số trong bán kính 30 từ tâm, và loại bỏ hoàn toàn các thành phần ngoài bán kính này.
 
 ---
 
 # GAUSSIAN LOW-PASS FILTER
+
+<div class="columns">
+<div>
 
 **Công thức:**
 $$H(u,v) = e^{-\frac{D^2(u,v)}{2\sigma^2}}$$
@@ -1176,11 +1229,22 @@ $$H(u,v) = e^{-\frac{D^2(u,v)}{2\sigma^2}}$$
 
 **Tham số:** $\sigma \uparrow \Rightarrow$ lọc mạnh hơn (bán kính hiệu dụng lớn hơn).
 
+</div>
+<div>
+
+![](images/gaussianfilter.png)
+
+</div>
+</div>
+
 > **Ví dụ:** Gaussian LPF với $\sigma = 20$ cho chuyển tiếp mượt từ tâm ra biên, không gây hiệu ứng ringing như Ideal LPF.
 
 ---
 
 # BUTTERWORTH LOW-PASS FILTER
+
+<div class="columns">
+<div>
 
 **Công thức:**
 $$H(u,v) = \frac{1}{1 + \left(\frac{D(u,v)}{D_0}\right)^{2n}}$$
@@ -1191,11 +1255,18 @@ Trong đó:
 
 **Đặc điểm:**
 
+
+</div>
+<div>
+
+![](images/butterworth.png)
+
+</div>
+</div>
+
 - Chuyển tiếp giữa vùng cho qua và vùng chặn **có thể điều chỉnh**.
 - $n$ càng lớn → chuyển tiếp càng dốc.
 - Nằm giữa Gaussian và Ideal về độ sắc của vùng chuyển tiếp.
-
-> **Ví dụ:** Butterworth LPF bậc 2 cho chuyển tiếp mềm, bậc 10 cho chuyển tiếp gần như Ideal LPF.
 
 ---
 
@@ -1212,7 +1283,7 @@ Trong đó:
 > **Ví dụ minh họa:** Khi làm mờ ảnh văn bản, Ideal LPF có thể tạo ra các gợn sóng quanh chữ, trong khi Gaussian LPF cho kết quả mượt mà hơn.
 
 ---
-<!--_class: section-->
+<!--_class: subsection-->
 
 # LỌC THÔNG CAO (HIGH-PASS FILTER)
 
@@ -1221,6 +1292,9 @@ Trong đó:
 # KHÁI NIỆM HIGH-PASS FILTER
 
 **Mục tiêu:** Giữ các thành phần **tần số cao** và loại bỏ/giảm các thành phần **tần số thấp**.
+
+<div class="columns">
+<div>
 
 **Ứng dụng:**
 
@@ -1233,7 +1307,13 @@ Trong đó:
 - Vùng trung tâm (tần số thấp, DC) bị loại bỏ.
 - Vùng biên (tần số cao) được giữ lại.
 
-> **Ví dụ:** Khi áp dụng HPF lên ảnh, các vùng đồng nhất (bầu trời, tường) trở nên tối, trong khi các đường biên (chữ, đường kẻ) được làm nổi bật.
+</div>
+<div class="col-2">
+
+![](images/highpass.png)
+
+</div>
+</div>
 
 ---
 
@@ -1245,6 +1325,9 @@ Trong đó:
 
 → Thành phần liên quan đến mức sáng trung bình bị loại bỏ.
 
+<div class="columns">
+<div class="col-3">
+
 **Kết quả sau IFFT có thể:**
 
 - Tối.
@@ -1255,48 +1338,73 @@ Trong đó:
 
 - Sử dụng Offset.
 - High-frequency emphasis.
-- Các phương pháp sharpening thích hợp.
 
+</div>
+<div class="col-4">
+
+![](images/emphasis.png)
+
+</div>
+</div>
+
+- Các phương pháp sharpening thích hợp.
 > **Ví dụ:** Ảnh sau khi áp dụng HPF thuần túy thường có nền đen với các đường biên trắng. Để giữ độ sáng gốc, ta cần thêm thành phần DC trở lại.
 
 ---
 
-# TOÁN TỬ LAPLACIAN TRONG MIỀN TẦN SỐ
+# Toán tử Laplacian trong miền tần số
 
-**Tính chất Fourier của Laplacian:**
-$$\mathcal{F}\{\nabla^2 f\} = -4\pi^2(u^2 + v^2)F(u,v)$$
+<div class="columns">
+<div class="col-3">
 
-Nếu đặt $D^2 = u^2 + v^2$ thì thành phần Laplacian tỷ lệ với: $-D^2 F(u,v)$
+- **Hàm truyền**: $H(u, v) = -4\pi^2 D^2(u, v)$.
+  - Tại tâm: $D = 0 \implies H = 0$.
+  - Xa tâm: $D$ lớn $\implies H$ rất lớn: Laplacian tăng cường mạnh các thành phần tần số cao.
 
-**Ý nghĩa:**
+</div>
+<div class="col-4">
 
-- Khi $D$ tăng → $D^2 \uparrow$ → thành phần tần số cao được khuếch đại mạnh hơn.
-- Laplacian trong miền tần số chính là một bộ lọc high-pass.
+![](images/highpasslaplace.png)
 
-> **Ví dụ:** Bộ lọc Laplacian trong miền tần số có dạng cái bát úp, với giá trị 0 tại tâm (DC) và tăng dần khi ra xa tâm.
+</div>
+</div>
 
----
-
-# HIGH-FREQUENCY EMPHASIS
-
-**Vấn đề:** Nếu chỉ dùng HPF, chi tiết được giữ nhưng thành phần tần số thấp bị loại bỏ → độ sáng tổng thể có thể bị mất.
-
-**Giải pháp:**
-$$H_{hfe}(u,v) = a + b \cdot H_{hp}(u,v)$$
-
-với $a > 0, b > 0$
-
-**Ý nghĩa:**
-
-- $a$: giữ lại thành phần nền (tần số thấp).
-- $b$: điều chỉnh mức tăng cường high-frequency.
-
-> **Ví dụ:** Với $a = 0.5, b = 1.5$, ta giữ lại 50% thành phần tần số thấp và khuếch đại 150% thành phần tần số cao, cho ảnh vừa sáng vừa sắc nét.
+- **Quy trình**:
+  - $L(u, v) = H(u, v) F(u, v)$: Phổ Fourier của ảnh Laplace.
+  - $l(x, y) = \text{IFFT}\{L(u, v)\}$: Ảnh biên.
+  - Tạo ảnh sắc nét (trong miền không gian): $g(x, y) = f(x, y) + c \cdot l(x, y)$.
+- **Ưu điểm**: Bao quát toàn bộ ảnh, cho kết quả sắc nét hơn so với kernel Laplacian $3 \times 3$ trong miền không gian.
 
 ---
-<!--_class: section-->
 
-# LỌC CHỌN LỌC
+# High-frequency-emphasis
+
+<div class="columns">
+<div>
+
+- **Vấn đề**:
+  - Tần số thấp $\rightarrow$ vùng trơn, nền ảnh, ánh sáng tổng thể.
+  - Tần số cao $\rightarrow$ biên, chi tiết, cạnh, texture.
+  - Nếu chỉ dùng high-pass filter ($H_{HP}$), ta sẽ giữ chi tiết tốt nhưng làm mất độ sáng tổng thể (ảnh bị "tối/thiếu tự nhiên").
+
+</div>
+<div>
+
+![](images/HFE.png)
+
+</div>
+</div>
+
+- **Giải pháp High-frequency-emphasis filter**:
+  - Giúp vừa giữ thông tin nền (low frequency), vừa tăng cường chi tiết (high frequency).
+  - Công thức: $H(u, v) = a + b \cdot H_{HP}(u, v)$, ($a \ge 0, b > 1$).
+  - $a$: Thành phần giữ nền.
+  - $b$: Hệ số khuếch đại chi tiết.
+
+---
+<!--_class: subsection-->
+
+# LỌC CHỌN LỌC (here)
 
 ---
 
@@ -1350,7 +1458,7 @@ với $a > 0, b > 0$
 > **Ví dụ:** Ảnh scan từ báo giấy có các đường sọc ngang do cảm biến máy scan. Trong phổ Fourier, các đường sọc này tạo ra các đỉnh sáng ở vị trí cụ thể, và Notch Filter có thể loại bỏ chúng.
 
 ---
-<!--_class: section-->
+<!--_class: subsection-->
 
 # FAST FOURIER TRANSFORM (FFT)
 
@@ -1456,25 +1564,6 @@ $$D_0 \downarrow \Rightarrow \text{lọc mạnh hơn} \Rightarrow \text{ảnh m�
 > **Ví dụ:** Với $D_0 = 20$, ảnh trở nên rất mờ, chỉ còn thấy các khối màu lớn. Với $D_0 = 100$, ảnh chỉ hơi mờ và vẫn giữ được nhiều chi tiết.
 
 ---
-<!--_class: section-->
-
-# QUY TRÌNH TỔNG QUÁT
-
----
-
-# CÁC BƯỚC XỬ LÝ ẢNH TRONG MIỀN TẦN SỐ
-
-1. **Tiền xử lý:** Đọc ảnh, chuyển grayscale nếu cần, padding khi cần để giảm ảnh hưởng biên.
-2. **Fourier Transform:** $f(x,y) \rightarrow F(u,v)$
-3. **Dịch tâm:** Đưa DC component về trung tâm.
-4. **Filtering:** $G(u,v) = H(u,v) \cdot F(u,v)$
-5. **Dịch ngược:** Đưa phổ về vị trí ban đầu.
-6. **IFFT:** $G(u,v) \rightarrow g(x,y)$
-7. **Hậu xử lý:** Lấy phần thực, chuẩn hóa/clipping, cắt padding nếu đã thêm.
-
-> **Ví dụ:** Khi áp dụng LPF, bước padding giúp tránh hiện tượng biên ảnh bị wrap-around (hiệu ứng cuộn) do tính tuần hoàn của DFT.
-
----
 
 # SO SÁNH SPATIAL DOMAIN VÀ FREQUENCY DOMAIN
 
@@ -1491,41 +1580,3 @@ $$D_0 \downarrow \Rightarrow \text{lọc mạnh hơn} \Rightarrow \text{ảnh m�
 **Ghi nhớ:** Không có miền nào luôn tốt hơn. Lựa chọn miền xử lý phụ thuộc vào bài toán.
 
 > **Ví dụ:** Với kernel 3x3, spatial filtering nhanh hơn. Với kernel 100x100, frequency filtering qua FFT nhanh hơn. Với nhiễu tuần hoàn, frequency domain là lựa chọn duy nhất hiệu quả.
-
----
-<!--_class: section-->
-
-# TỔNG KẾT CHƯƠNG 2
-
----
-
-# TÓM TẮT CHƯƠNG 2
-
-**Spatial Domain:**
-
-- **Point Processing:** $g = T(f)$ - Negative, Log, Gamma, Piecewise-linear
-- **Neighborhood Processing:** Mean, Gaussian, Median, Sobel, Laplacian, Unsharp, Highboost
-- **Histogram:** Histogram, Equalization, Matching, Local processing, CLAHE
-
-**Frequency Domain:**
-
-- $f \xrightarrow{FFT} F \xrightarrow{H} G \xrightarrow{IFFT} g$
-- Fourier Transform, Magnitude / Phase
-- LPF, HPF, Band-pass / Band-reject, Notch
-- FFT
-
-> **Sơ đồ tư duy:** Biến đổi ảnh chia thành hai nhánh lớn - Spatial Domain (xử lý trực tiếp trên pixel) và Frequency Domain (xử lý qua biến đổi Fourier), với Histogram là công cụ phân tích hỗ trợ cả hai miền.
-
----
-
-# KIẾN THỨC CẦN GHI NHỚ
-
-1. **Point processing:** Mỗi pixel được xử lý độc lập.
-2. **Spatial filtering:** Giá trị pixel mới phụ thuộc vào vùng lân cận.
-3. **Smoothing:** Giảm high-frequency → giảm chi tiết và nhiễu.
-4. **Sharpening:** Tăng high-frequency → tăng biên và chi tiết.
-5. **Histogram:** Mô tả phân bố cường độ, nhưng không chứa thông tin vị trí.
-6. **Fourier Transform:** Chuyển cách nhìn từ pixel sang frequency components.
-7. **Frequency filtering:** Thay đổi các thành phần tần số để thay đổi đặc tính ảnh.
-
-> **Thông điệp cuối chương:** Hiểu rõ hai miền biểu diễn ảnh và mối liên hệ giữa chúng là nền tảng để lựa chọn phương pháp xử lý phù hợp cho từng bài toán cụ thể trong thực tế.
