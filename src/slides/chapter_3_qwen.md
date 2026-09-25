@@ -22,20 +22,11 @@ paginate: true
 
 # NỘI DUNG CHƯƠNG
 
-1. **Giới thiệu về nén ảnh**
-   - Khái niệm, mục tiêu và lý do cần nén ảnh
-
-2. **Đo lường thông tin và chất lượng ảnh**
-   - Entropy, MSE, PSNR và các chỉ số đánh giá
-
-3. **Nén không tổn thất (Lossless)**
-   - Huffman, Arithmetic, LZW, RLE, Golomb-Rice
-
-4. **Nén có tổn thất (Lossy)**
-   - DCT, JPEG, Wavelet, DPCM
-
-5. **Một số chuẩn và kỹ thuật nén ảnh tiêu biểu**
-   - JPEG, JPEG 2000, JBIG2 và ứng dụng thực tế
+1. Giới thiệu về nén ảnh
+2. Đo lường thông tin và chất lượng ảnh
+3. Nén không tổn thất (Lossless)
+4. Nén có tổn thất (Lossy)
+5. Một số chuẩn và kỹ thuật nén ảnh tiêu biểu
 
 ---
 
