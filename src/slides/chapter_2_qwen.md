@@ -1185,6 +1185,8 @@ $$f(x,y) * h(x,y) \Longleftrightarrow F(u,v) \cdot H(u,v)$$
 
 # IDEAL LOW-PASS FILTER
 
+**Mục tiêu:** Cho tất cả các tần số nằm vòng tròn bán kính $D_0$ (tính từ tâm phổ) đi qua hoàn toàn mà không bị suy giảm, chặn mọi tần số nằm ngoài bán kính đó
+
 <div class="columns">
 <div>
 
@@ -1199,7 +1201,6 @@ $D_0$: bán kính cắt.
 
 - Cắt tần số đột ngột.
 - Dễ hiểu và dễ cài đặt.
-- Có thể gây **ringing** (hiệu ứng gợn sóng) do biên chuyển tiếp quá đột ngột.
 
 </div>
 <div>
@@ -1209,11 +1210,14 @@ $D_0$: bán kính cắt.
 </div>
 </div>
 
+- Có thể gây **ringing** (hiệu ứng gợn sóng) do biên chuyển tiếp quá đột ngột.
 > **Ví dụ:** Ideal LPF với $D_0 = 30$ sẽ giữ nguyên tất cả các thành phần tần số trong bán kính 30 từ tâm, và loại bỏ hoàn toàn các thành phần ngoài bán kính này.
 
 ---
 
 # GAUSSIAN LOW-PASS FILTER
+**Hoạt động:** dựa trên hàm phân phối chuẩn (hàm Gaussian / hình chuông).
+**Mục tiêu:** Cho phép các tần số thấp đi qua tâm phổ, triệt tiêu mượt mà các tần số cao ở phần biên ngoài (làm mờ ảnh, khử nhiễu hạt).
 
 <div class="columns">
 <div>
@@ -1237,11 +1241,11 @@ $$H(u,v) = e^{-\frac{D^2(u,v)}{2\sigma^2}}$$
 </div>
 </div>
 
-> **Ví dụ:** Gaussian LPF với $\sigma = 20$ cho chuyển tiếp mượt từ tâm ra biên, không gây hiệu ứng ringing như Ideal LPF.
-
 ---
 
 # BUTTERWORTH LOW-PASS FILTER
+
+**Điểm đặc biệt:** BLPF cung cấp một tham số bậc lọc ($n$) cho phép người thiết kế linh hoạt điều chỉnh độ dốc của vùng chuyển tiếp, khắc phục được nhược điểm cắt đột ngột của ILPF nhưng vẫn cho phép kiểm soát độ sắc nét tốt hơn GLPF.
 
 <div class="columns">
 <div>
@@ -1351,15 +1355,20 @@ Trong đó:
 > **Ví dụ:** Ảnh sau khi áp dụng HPF thuần túy thường có nền đen với các đường biên trắng. Để giữ độ sáng gốc, ta cần thêm thành phần DC trở lại.
 
 ---
+<!--_class: text-sm-->
 
 # Toán tử Laplacian trong miền tần số
+
+**Bản chất:** Dựa trên đạo hàm bậc hai, chuyên dùng để phát hiện và làm nổi bật các biến đổi đột ngột về cường độ sáng (đường biên, cạnh, góc nhọn và chi tiết tinh vi) trong ảnh. Đạo hàm bậc hai trong miền không gian tương đương với việc nhân phổ của ảnh với hàm truyền $H(u,v)$ trong miền tần số: $H(u, v) = -4\pi^2 D^2(u, v)$.
 
 <div class="columns">
 <div class="col-3">
 
-- **Hàm truyền**: $H(u, v) = -4\pi^2 D^2(u, v)$.
   - Tại tâm: $D = 0 \implies H = 0$.
   - Xa tâm: $D$ lớn $\implies H$ rất lớn: Laplacian tăng cường mạnh các thành phần tần số cao.
+
+**Ứng dụng:** Làm sắc nét ảnh, quy trình:
+  - $L(u, v) = H(u, v) F(u, v)$: Phổ Fourier của ảnh Laplace.
 
 </div>
 <div class="col-4">
@@ -1369,15 +1378,14 @@ Trong đó:
 </div>
 </div>
 
-- **Quy trình**:
-  - $L(u, v) = H(u, v) F(u, v)$: Phổ Fourier của ảnh Laplace.
   - $l(x, y) = \text{IFFT}\{L(u, v)\}$: Ảnh biên.
   - Tạo ảnh sắc nét (trong miền không gian): $g(x, y) = f(x, y) + c \cdot l(x, y)$.
-- **Ưu điểm**: Bao quát toàn bộ ảnh, cho kết quả sắc nét hơn so với kernel Laplacian $3 \times 3$ trong miền không gian.
+
+**Ưu điểm**: Bao quát toàn bộ ảnh, cho kết quả sắc nét hơn so với kernel Laplacian $3 \times 3$ trong miền không gian.
 
 ---
 
-# High-frequency-emphasis
+# Lọc tăng cường tần số (High-frequency-emphasis)
 
 <div class="columns">
 <div>
@@ -1404,42 +1412,33 @@ Trong đó:
 ---
 <!--_class: subsection-->
 
-# LỌC CHỌN LỌC (here)
+# LỌC CHỌN LỌC
 
 ---
 
-# BAND-PASS VÀ BAND-REJECT FILTER
+# Lọc giải tần (BAND-PASS) VÀ Lọc chắn giải (BAND-REJECT)
 
-**Band-pass Filter:**
+**Band-pass Filter:** Tác động lên một vùng trung gian trong miền tần số, nằm giữa vùng tâm (tần số thấp) và vùng biên (tần số cao).
 
 - Chỉ giữ một khoảng tần số: $D_1 \leq D \leq D_2$.
 - **Ứng dụng:** Tách các cấu trúc theo scale, phân tích texture.
 
-**Band-reject Filter:**
+<div class="columns">
+<div>
+
+**Band-reject Filter:** Loại bỏ hoặc suy giảm một dải tần số cụ thể quanh một bán kính nhất định, giữ nguyên các tần số còn lại.
 
 - Loại bỏ một khoảng tần số: $D_1 < D < D_2$.
 - **Ứng dụng:** Loại bỏ một dải nhiễu cụ thể, xử lý nhiễu tuần hoàn.
 
-> **Ví dụ:** Ảnh chụp qua lưới sắt có nhiễu tuần hoàn ở một tần số cụ thể. Band-reject filter chỉ loại bỏ đúng dải tần số đó, giữ lại phần còn lại của ảnh.
+</div>
+<div>
 
----
 
-# NOTCH FILTER
+![height:250](images/bandpass.png)
 
-**Định nghĩa:** Notch filter tác động vào một hoặc một số **vùng tần số rất cụ thể**.
-
-**Đặc biệt hữu ích với:** Periodic noise (nhiễu tuần hoàn).
-
-**Quy trình:**
-
-1. Ảnh có nhiễu tuần hoàn.
-2. Biến đổi Fourier.
-3. Phát hiện các đỉnh bất thường trong phổ.
-4. Thiết kế Notch Filter tại các vị trí đỉnh.
-5. Biến đổi Fourier ngược.
-6. Ảnh giảm nhiễu.
-
-> **Ví dụ:** Ảnh chụp từ camera an ninh bị nhiễu vân (moiré pattern) do interference với màn hình. Các đỉnh nhiễu xuất hiện đối xứng trong phổ Fourier và có thể loại bỏ bằng Notch Filter.
+</div>
+</div>
 
 ---
 
@@ -1455,7 +1454,37 @@ Trong đó:
 - Loại bỏ đúng vùng tần số tương ứng.
 - Khôi phục ảnh.
 
-> **Ví dụ:** Ảnh scan từ báo giấy có các đường sọc ngang do cảm biến máy scan. Trong phổ Fourier, các đường sọc này tạo ra các đỉnh sáng ở vị trí cụ thể, và Notch Filter có thể loại bỏ chúng.
+![height:300](images/nhieu_tuan_hoan.png)
+
+---
+
+# Lọc khấc (NOTCH FILTER)
+
+**Định nghĩa:** Notch filter tác động vào một hoặc một số **vùng tần số rất cụ thể**.
+
+**Đặc biệt hữu ích với:** Periodic noise (nhiễu tuần hoàn).
+
+<div class="columns">
+<div>
+
+**Quy trình:**
+
+1. Ảnh có nhiễu tuần hoàn.
+2. Biến đổi Fourier.
+3. Phát hiện các đỉnh bất thường trong phổ.
+4. Thiết kế Notch Filter tại các vị trí đỉnh.
+5. Biến đổi Fourier ngược.
+6. Ảnh giảm nhiễu.
+
+</div>
+<div>
+
+![](images/notch.png)
+
+</div>
+</div>
+
+> **Ví dụ:** Ảnh chụp từ camera an ninh bị nhiễu vân (moiré pattern) do interference với màn hình. Các đỉnh nhiễu xuất hiện đối xứng trong phổ Fourier và có thể loại bỏ bằng Notch Filter.
 
 ---
 <!--_class: subsection-->
@@ -1499,84 +1528,3 @@ F_shift = np.fft.fftshift(F)
 ```
 
 > **Ví dụ:** Thay vì tính 2D DFT trực tiếp với độ phức tạp $O(N^4)$, ta thực hiện $2N$ phép FFT 1D kích thước $N$, giảm xuống còn $O(N^2 \log N)$.
-
----
-
-# HIỂN THỊ FOURIER SPECTRUM
-
-**Vấn đề:** Magnitude có dynamic range rất lớn.
-
-**Giải pháp:** Sử dụng biến đổi log:
-$$S(u,v) = \log(1 + |F(u,v)|)$$
-
-**Trong Python:**
-```python
-spectrum = np.log(1 + np.abs(F_shift))
-```
-
-**Mục đích:**
-
-- Làm rõ các thành phần tần số yếu.
-- Giúp quan sát Fourier spectrum dễ hơn.
-
-> **Ví dụ:** Không có biến đổi log, ta chỉ thấy một điểm sáng lớn ở tâm phổ và không thấy gì ở vùng biên. Với log, ta có thể thấy cả các thành phần tần số cao ở xa tâm.
-
----
-
-# BÀI TẬP THỰC HÀNH - FFT + LOW-PASS
-
-```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-
-img = cv2.imread("input.jpg", cv2.IMREAD_GRAYSCALE)
-F = np.fft.fft2(img)
-F_shift = np.fft.fftshift(F)
-rows, cols = img.shape
-crow, ccol = rows // 2, cols // 2
-y, x = np.ogrid[:rows, :cols]
-D = np.sqrt((x - ccol)**2 + (y - crow)**2)
-D0 = 50
-mask = (D <= D0).astype(np.float32)
-F_filtered = F_shift * mask
-F_ishift = np.fft.ifftshift(F_filtered)
-result = np.fft.ifft2(F_ishift)
-result = np.abs(result)
-```
-
----
-
-# PHÂN TÍCH KẾT QUẢ LỌC TẦN SỐ
-
-**Hiển thị:** Original | Fourier Spectrum | After LPF
-
-**Quan sát:**
-
-- Chi tiết nào bị mất?
-- Biên thay đổi như thế nào?
-- Khi giảm $D_0$, ảnh thay đổi ra sao?
-- Khi tăng $D_0$, ảnh thay đổi ra sao?
-
-**Kết luận:**
-$$D_0 \downarrow \Rightarrow \text{lọc mạnh hơn} \Rightarrow \text{ảnh mờ hơn}$$
-
-> **Ví dụ:** Với $D_0 = 20$, ảnh trở nên rất mờ, chỉ còn thấy các khối màu lớn. Với $D_0 = 100$, ảnh chỉ hơi mờ và vẫn giữ được nhiều chi tiết.
-
----
-
-# SO SÁNH SPATIAL DOMAIN VÀ FREQUENCY DOMAIN
-
-|  | Spatial Domain | Frequency Domain |
-| --- | --- | --- |
-| **Làm việc với** | Pixel | Frequency components |
-| **Thao tác** | Trực tiếp | Sau Fourier Transform |
-| **Kernel nhỏ** | Hiệu quả | Có thể không cần thiết |
-| **Kernel lớn** | Có thể tốn chi phí | FFT có lợi |
-| **Nhiễu tuần hoàn** | Khó xử lý trực tiếp | Rất phù hợp |
-| **Trực quan** | Dễ hiểu | Khó hơn |
-| **Công cụ** | OpenCV filters | FFT + frequency mask |
-
-**Ghi nhớ:** Không có miền nào luôn tốt hơn. Lựa chọn miền xử lý phụ thuộc vào bài toán.
-
-> **Ví dụ:** Với kernel 3x3, spatial filtering nhanh hơn. Với kernel 100x100, frequency filtering qua FFT nhanh hơn. Với nhiễu tuần hoàn, frequency domain là lựa chọn duy nhất hiệu quả.
