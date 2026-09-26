@@ -1,196 +1,998 @@
 ---
+
 marp: true
 theme: eaut
 paginate: true
-transition: zoom
----
+transition: fade
+--------------
 
-<!-- _class: cover -->
+<!--_class: cover-->
 
 <div class="middle">
 
-# XỬ LÝ ẢNH& THỊ GIÁC MÁY TÍNH
+# XỬ LÝ ẢNH & THỊ GIÁC MÁY TÍNH
 
-## Chương 3: Nén ảnh
+## CHƯƠNG 3 - NÉN ẢNH
 
 </div>
 
 ### Giảng viên: Nguyễn Phồn Lữa
 
 ---
+<!--_class: toc-->
 
-<!-- _class: toc -->
+# NỘI DUNG CHƯƠNG
 
-# Nội dung
-
-- Giới thiệu về nén dữ liệu
-- Nén không tổn thất (Lossless)
-- Nén có tổn thất (Lossy)
-
----
-
-<!-- _class: section -->
-
-# GIỚI THIỆU VỀ NÉN DỮ LIỆU
-
+1. Giới thiệu về nén ảnh
+2. Đo lường thông tin và chất lượng ảnh
+3. Hệ thống nén ảnh
+4. Nén không tổn thất (Lossless)
+5. Nén có tổn thất (Lossy)
 ---
 <!--_class: text-sm-->
 
-# GIỚI THIỆU
+# MỤC TIÊU HỌC TẬP
 
-- **Khái niệm:** Nén ảnh là quá trình giảm dung lượng (số bit) cần thiết để biểu diễn một bức ảnh, sao cho ảnh sau khi nén vẫn đảm bảo chất lượng chấp nhận được theo mục đích sử dụng.
-- **Ví dụ:** Một bức ảnh màu 10 megapixel. Nếu lưu dạng thô, mỗi pixel gồm 3 kênh (R, G, B), mỗi kênh 8 bit.
-  - Tổng dung lượng: $10M \times 3 \times 8 = 240.000.000$ bit $\approx 30$ MB.
-  - Nén ảnh giúp giảm kích thước này xuống còn vài MB hoặc vài trăm KB mà mắt thường khó phân biệt được sự khác biệt.
+Sau khi hoàn thành chương này, sinh viên có thể:
 
-- **Tại sao cần nén dữ liệu?**
-  - **Tiết kiệm bộ nhớ lưu trữ:** Giảm dung lượng chiếm dụng trên ổ cứng, thẻ nhớ, hoặc cloud.
-  - **Tăng tốc truyền tải:** Giúp việc gửi ảnh qua mạng, tải trang web, hoặc gọi video diễn ra nhanh chóng hơn.
-  - **Giảm băng thông:** Yếu tố cực kỳ quan trọng trong các ứng dụng streaming video, hội nghị truyền hình thời gian thực.
+**Kiến thức cơ bản:**
+- Giải thích được tại sao cần nén ảnh
+- Phân biệt được dữ liệu, thông tin và dư thừa dữ liệu
+- Hiểu và tính được Entropy của một nguồn ảnh
 
----
+**Phân loại và mô hình:**
+- Giải thích được sự khác nhau giữa nén không tổn thất (Lossless) và nén có tổn thất (Lossy)
+- Mô tả được mô hình tổng quát của một hệ thống nén ảnh
 
-# Dữ liệu, thông tin, tỷ lệ nén
+**Kỹ thuật nén:**
+- Hiểu nguyên lý của các kỹ thuật: Huffman, Golomb/Golomb-Rice, Arithmetic Coding, LZW, RLE, DPCM, DCT và Block Transform Coding, Wavelet/DWT
+- Giải thích được quy trình cơ bản của JPEG
 
-- **Dữ liệu (Data):** Phương tiện mang thông tin.
-- **Thông tin (Information):** Nội dung thực sự cần truyền tải.
-- **Nén dữ liệu:** Giảm số bit dùng để biểu diễn dữ liệu nhưng vẫn giữ được thông tin quan trọng.
-- **Dư thừa dữ liệu (Redundancy - R):** Đo phần dữ liệu không cần thiết. Nếu $C$ là tỷ lệ nén $\Rightarrow R = 1 - \frac{1}{C}$. $R$ càng lớn, dữ liệu càng có nhiều phần có thể loại bỏ hoặc mã hóa hiệu quả.
-- **Tỷ lệ nén (Compression Ratio - C):** $C = \frac{b}{b'}$, với: 
-  - $b$ là số bit gốc, 
-  - $b'$ là số bit sau nén.
-- _Ví dụ:_ $C = 10:1 \Rightarrow R = 0.9$ (90% dữ liệu là dư thừa).
-
----
-
-# Các loại dư thừa dữ liệu trong ảnh số
-
-- **Dư thừa mã hóa (Coding Redundancy):** Sử dụng nhiều bit hơn mức cần thiết để biểu diễn các mức xám do phân bố xác suất không đều.
-- **Dư thừa không gian (Spatial Redundancy):** Các pixel lân cận có giá trị rất giống nhau hoặc phụ thuộc lẫn nhau mạnh. Thường được khai thác bởi RLE, DCT, hoặc các bộ lọc không gian/tần số.
-- **Thông tin không liên quan (Irrelevant Information):** Thông tin bị hệ thống thị giác con người (HVS) bỏ qua hoặc không cần thiết cho ứng dụng cụ thể. Thường bị loại bỏ trong nén mất mát (lossy).
-
----
-
-# Đo lường thông tin ảnh (Entropy)
-
-- **Entropy:** Lượng tin trung bình trên mỗi pixel, đo mức độ không chắc chắn của phân bố mức xám.
-- **Lượng tin của sự kiện E:** $I(E) = \log_2 \frac{1}{P(E)}$ (bit). Sự kiện càng ít xảy ra thì lượng tin càng cao.
-- **Entropy của nguồn:** $H = -\sum_{k=0}^{L-1} p(r_k) \log_2 p(r_k)$ (với $L$ là số mức cường độ).
-- **Ý nghĩa:** Ảnh càng đồng đều, ít quy luật thì entropy càng cao. Ảnh có nhiều vùng lặp lại thì entropy thấp.
-- **Định lý Shannon 1:** Không thể mã hóa nguồn với số bit trung bình nhỏ hơn entropy $H$.
----
-
-# Thực hành Tính Entropy của ảnh.
-
-```python
-import math
-
-def calculate_entropy(probabilities):
-    entropy = 0
-    for p in probabilities:
-        if p > 0:
-            entropy -= p * math.log2(p)
-    return entropy
-
-# Ví dụ: Ảnh có 3 mức xám với xác suất xuất hiện lần lượt là 0.5, 0.3, 0.2
-probs = [0.5, 0.3, 0.2]
-print(f"Entropy của ảnh: {calculate_entropy(probs):.4f} bits/pixel")
-```
-
----
-
-# Tiêu chuẩn đánh giá chất lượng (Fidelity Criteria)
-
-- **Đánh giá khách quan:** Dựa trên công thức đo lường.
-  - **RMSE (Root Mean Square Error):** Đo mức sai khác trung bình. $e_{rms} = \sqrt{\frac{1}{MN} \sum \sum (f(x,y) - \hat{f}(x,y))^2}$. RMSE càng nhỏ, ảnh càng gần gốc.
-  - **SNR (Signal-to-Noise Ratio):** Tỷ lệ tín hiệu trên nhiễu. SNR càng cao, chất lượng ảnh càng tốt.
-- **Đánh giá chủ quan:** Đánh giá bằng mắt thường (Thang điểm 1-6: Excellent đến Unusable).
-<gap></gap>
-
-![width:900](images/3.1.png)
-
----
-
-# Thực hành Tính RMSE và SNR.
-
-<gap></gap>
-
-```python
-import numpy as np
-
-def calculate_rmse(original, compressed):
-    return np.sqrt(np.mean((original - compressed) ** 2))
-
-def calculate_snr(original, compressed):
-    signal_power = np.mean(original ** 2)
-    noise_power = np.mean((original - compressed) ** 2)
-    return 10 * np.log10(signal_power / noise_power)
-
-# Ví dụ
-original = np.array([[100, 150], [200, 250]])
-compressed = np.array([[105, 145], [195, 255]])
-print(f"RMSE: {calculate_rmse(original, compressed):.4f}")
-print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
-```
-
----
-
-# Các loại nén ảnh
-
-- **Nén không tổn hao (Lossless):**
-  - _Nguyên lý:_ Tìm và loại bỏ sự dư thừa mà không làm mất thông tin.
-  - _Đặc điểm:_ Ảnh khôi phục giống hệt ảnh gốc. Tỷ lệ nén thấp (thường 2:1 đến 4:1).
-  - _Ứng dụng:_ Ảnh y tế, văn bản, ảnh đồ họa (logo).
-- **Nén có tổn hao (Lossy):**
-  - _Nguyên lý:_ Loại bỏ những thông tin mà mắt người khó nhận ra.
-  - _Đặc điểm:_ Ảnh khôi phục gần giống, mất một số chi tiết nhỏ. Tỷ lệ nén cao (10:1, 20:1 hoặc hơn).
-  - _Ứng dụng:_ Ảnh chụp, video, web (JPEG).
-
----
-
-# Mô hình hệ thống nén ảnh tổng quát
-
-- Hệ thống nén ảnh thường được chia thành hai khối chính: bộ mã hóa và bộ giải mã. Bộ mã hóa biến ảnh gốc thành dạng dữ liệu ngắn gọn hơn để lưu trữ hoặc truyền đi, còn bộ giải mã khôi phục lại ảnh từ dữ liệu đã nén.
-- **Bộ mã hóa (Encoder):**
-  - **Mapper:** Giảm dư thừa không gian/thời gian (biến đổi ảnh sang dạng thuận lợi hơn).
-  - **Quantizer:** Giảm thông tin không liên quan (chỉ có trong nén lossy). Làm tròn/gộp giá trị để giảm số mức biểu diễn.
-  - **Symbol Coder:** Giảm dư thừa mã hóa (sử dụng mã độ dài biến đổi, mã loạt dài...).
-- **Bộ giải mã (Decoder):** Thực hiện quá trình ngược lại.
-  - **Symbol Decoder:** Giải mã ký hiệu.
-  - **Inverse Quantizer:** Giải lượng tử hóa (chỉ có trong lossy).
-  - **Inverse Mapper:** Biến đổi ngược để khôi phục ảnh.
+**Đánh giá:**
+- Đánh giá được ảnh sau nén bằng một số tiêu chí định lượng và định tính
 
 ---
 <!--_class: section-->
 
-# NÉN KHÔNG TỔN THẤT (LOSSLESS)
+# Giới thiệu về nén ảnh
 
 ---
 
-# Định nghĩa
+# VÌ SAO CẦN NÉN ẢNH?
 
-- Các thuật toán và kỹ thuật nén ảnh bảo toàn toàn vẹn dữ liệu gốc.
-- Đảm bảo ảnh giải nén giống hệt 100% so với ảnh trước khi nén.
+**Vấn đề:** Ảnh số thường có kích thước dữ liệu rất lớn
+
+**Ví dụ minh họa:**
+- Ảnh màu có kích thước 4000 × 3000 pixel
+- Mỗi pixel gồm 3 kênh màu:
+  - R (Red): 8 bit
+  - G (Green): 8 bit
+  - B (Blue): 8 bit
+
+**Tính toán dung lượng dữ liệu thô:** $4000 \times 3000 \times 3 \times 8 = 288,000,000 \text{ bit}$
+
+hay khoảng: $36,000,000 \text{ byte} \approx 34.3 \text{ MB}$. Đây mới chỉ là dữ liệu pixel, chưa tính các thông tin bổ sung của file (metadata, header, v.v.)
+
+**Hệ quả:** Nếu lưu trữ hoặc truyền hàng triệu ảnh, lượng dữ liệu sẽ rất lớn, gây tốn kém về dung lượng lưu trữ và băng thông truyền tải.
 
 ---
 
-# Mã Huffman
+# NÉN ẢNH LÀ GÌ?
+
+**Định nghĩa:** Nén ảnh (Image Compression) là quá trình giảm số bit cần thiết để biểu diễn một ảnh.
+
+**Mục tiêu:** Giảm dung lượng dữ liệu nhưng vẫn đáp ứng yêu cầu về khả năng khôi phục và chất lượng ảnh
+
+**Phân loại theo khả năng khôi phục:**
 
 <div class="columns">
-<div class="col-2">
+<div>
 
-- **Khái niệm:** Phương pháp mã hóa độ dài thay đổi. Ký tự xuất hiện càng nhiều thì mã càng ngắn, ký tự hiếm mã càng dài. Giúp giảm số bit trung bình cần dùng.
-- **Quy trình xây dựng cây Huffman:**
-  1. Sắp xếp các ký tự theo xác suất (tần suất).
-  2. Gộp 2 xác suất nhỏ nhất thành một nút mới có giá trị bằng tổng 2 nút con.
-  3. Lặp lại cho đến khi còn lại 1 cây duy nhất.
-  4. Gán bit cho các nhánh (ví dụ: trái = 0, phải = 1).
-- **Ứng dụng:** Mã hóa các pixel theo giá trị mức xám (0-255).
+**1. Nén không tổn thất (Lossless):**
+- Ảnh sau giải nén giống hệt ảnh gốc
+- Không mất bất kỳ thông tin nào
 
 </div>
 <div>
 
-![](images/3.2.png)
+**2. Nén có tổn thất (Lossy):**
+- Ảnh sau giải nén khác ảnh gốc
+- Vẫn đạt chất lượng chấp nhận được
+- Một phần thông tin bị loại bỏ
+
+</div>
+</div>
+
+**Quy trình tổng quát:**
+
+```
+Ảnh gốc → [NÉN] → Dữ liệu nhỏ hơn → [GIẢI NÉN] → Ảnh khôi phục
+```
+
+---
+
+# TẠI SAO DỮ LIỆU ẢNH CÓ THỂ NÉN?
+
+**Nguyên lý cơ bản:** Một ảnh không phải là tập hợp các pixel hoàn toàn độc lập.
+
+**Các đặc điểm tạo ra khả năng nén:**
+
+<div class="columns">
+<div>
+
+**1. Sự lặp lại:**
+- Các giá trị pixel lặp lại trong ảnh
+- Ví dụ: Vùng trời xanh có nhiều pixel cùng giá trị
+
+**2. Tương quan không gian:**
+- Các pixel lân cận thường có giá trị tương tự nhau
+- Ví dụ: Pixel ở giữa vùng da người có giá trị gần giống pixel xung quanh
+
+</div>
+<div>
+
+**3. Phân bố không đều:**
+- Một số giá trị xuất hiện thường xuyên hơn các giá trị khác
+- Ví dụ: Trong ảnh văn bản, màu trắng xuất hiện nhiều hơn màu đen
+
+**4. Giới hạn của thị giác:**
+- Một số chi tiết ít quan trọng đối với thị giác con người
+- Mắt người không nhận biết được mọi thay đổi nhỏ
+
+</div>
+</div>
+
+**Kết luận:** Những đặc điểm này tạo ra **dư thừa dữ liệu (redundancy)**. Nén ảnh chủ yếu là quá trình khai thác và loại bỏ hoặc biểu diễn hiệu quả các dạng dư thừa này.
+
+---
+<!--_class: section-->
+
+# Đo lường thông tin và chất lượng ảnh
+
+---
+
+# DỮ LIỆU VÀ THÔNG TIN
+
+
+<div class="columns">
+<div>
+
+**Dữ liệu (Data):**
+- Là phương tiện dùng để biểu diễn và lưu trữ thông tin
+- Mang tính kỹ thuật, có thể đo đếm được
+
+**Ví dụ về dữ liệu:**
+```
+128 129 130 130 131 131 131 ...
+```
+Đây là dãy giá trị pixel của một vùng ảnh.
+
+**Thông tin (Information):**
+- Là nội dung có ý nghĩa được truyền tải bởi dữ liệu
+- Mang tính ngữ nghĩa, phụ thuộc vào ngữ cảnh
+
+</div>
+<div>
+
+**Ví dụ về thông tin:**
+- Một vùng ảnh có màu xanh
+- Một đường biên giữa hai đối tượng
+- Một ký tự trong văn bản
+- Một khuôn mặt trong ảnh chân dung
+
+**Ý tưởng cốt lõi của nén ảnh:**
+- Giảm số bit dùng để biểu diễn dữ liệu
+- Vẫn bảo toàn thông tin cần thiết theo mục đích sử dụng
+- Có thể loại bỏ dữ liệu dư thừa mà không mất thông tin quan trọng
+
+</div>
+</div>
+
+
+---
+
+# TỶ LỆ NÉN
+
+**Định nghĩa các đại lượng:**
+- $B_o$: số bit của dữ liệu gốc
+- $B_c$: số bit của dữ liệu sau nén
+
+**Tỷ lệ nén (Compression Ratio - CR):** $CR = \frac{B_o}{B_c}$
+
+<div class="columns">
+<div>
+
+**Ví dụ minh họa:**
+- Ảnh gốc: 10 MB
+- Ảnh sau nén: 2 MB
+
+</div>
+<div>
+
+<gap></gap>
+<gap></gap>
+
+$$CR = \frac{10}{2} = 5:1$$
+
+</div>
+<div class="col-2">
+</div>
+</div>
+
+**Ý nghĩa:** Dữ liệu được nén với tỷ lệ 5:1, tức là dung lượng giảm đi 5 lần.
+
+**Tỷ lệ giảm dung lượng (Space Savings - R):** $R = 1 - \frac{B_c}{B_o}$
+
+**Với ví dụ trên:** $R = 1 - \frac{2}{10} = 0.8 = 80\%$
+
+**Ý nghĩa:** Dung lượng đã giảm 80% so với ban đầu.
+
+---
+
+# DƯ THỪA DỮ LIỆU
+
+**Định nghĩa:** Dư thừa dữ liệu (Redundancy) là phần biểu diễn dữ liệu có thể được loại bỏ hoặc mã hóa hiệu quả hơn mà không làm mất thông tin cần thiết.
+
+**Cấu trúc của dữ liệu ảnh:**
+
+```
+Dữ liệu ảnh
+├── Thông tin cần thiết (giữ lại)
+└── Dư thừa (có thể loại bỏ hoặc mã hóa hiệu quả)
+    ├── Dư thừa mã hóa (Coding Redundancy)
+    ├── Dư thừa không gian (Spatial Redundancy)
+    └── Thông tin không liên quan (Irrelevant Information)
+```
+
+**Nguyên lý nén ảnh:**
+- Khai thác các dạng dư thừa
+- Biểu diễn dữ liệu hiệu quả hơn
+- Giảm số bit cần thiết mà vẫn giữ được thông tin quan trọng
+
+**Ví dụ:** Thay vì lưu từng pixel riêng lẻ, có thể lưu "100 pixel màu trắng liên tiếp" chỉ bằng một cặp giá trị (màu, số lượng).
+
+---
+
+# CÁC LOẠI DƯ THỪA TRONG ẢNH
+
+<div class="columns">
+<div>
+
+**1. Dư thừa mã hóa (Coding Redundancy)**
+
+**Định nghĩa:** Xảy ra khi dùng nhiều bit hơn mức cần thiết để biểu diễn các giá trị có xác suất xuất hiện khác nhau.
+
+**Ví dụ:** Nếu giá trị "0" xuất hiện 80% thời gian nhưng vẫn được mã hóa bằng 8 bit như các giá trị khác.
+
+**Kỹ thuật khai thác:**
+- Huffman Coding
+- Arithmetic Coding
+- Golomb Coding
+
+</div>
+<div>
+
+**2. Dư thừa không gian (Spatial Redundancy)**
+
+**Định nghĩa:** Các pixel lân cận thường có quan hệ mạnh với nhau.
+
+**Ví dụ:** Trong vùng trời xanh, các pixel liên tiếp có giá trị gần giống nhau.
+
+**Kỹ thuật khai thác:**
+- RLE (Run-Length Encoding)
+- DPCM (Differential Pulse Code Modulation)
+- Transform Coding
+
+</div>
+<div>
+
+**3. Thông tin không liên quan (Irrelevant Information)**
+
+**Định nghĩa:** Một số thông tin ít ảnh hưởng đến cảm nhận của con người hoặc không cần thiết cho ứng dụng.
+
+**Ví dụ:** Các chi tiết rất nhỏ mà mắt người không nhận ra.
+
+**Kỹ thuật khai thác:**
+- Quantization (Lượng tử hóa)
+- JPEG
+- Wavelet compression
+
+</div>
+</div>
+
+---
+
+# BA HƯỚNG TIẾP CẬN CHÍNH
+
+Có thể nhìn toàn bộ chương thông qua ba câu hỏi cốt lõi:
+
+<div style="color:red">
+
+**Câu hỏi 1: Có thể dùng ít bit hơn để biểu diễn cùng thông tin không?**
+
+</div>
+
+- **Hướng tiếp cận:** Coding (Mã hóa thống kê)
+- **Ví dụ:** Huffman, Arithmetic Coding, Golomb
+- **Nguyên lý:** Gán mã ngắn cho ký hiệu xuất hiện thường xuyên, mã dài cho ký hiệu hiếm.
+
+<div style="color:red">
+
+**Câu hỏi 2: Có thể biểu diễn phần thay đổi thay vì toàn bộ dữ liệu không?**
+
+</div>
+
+- **Hướng tiếp cận:** Prediction / Transform (Dự đoán / Biến đổi)
+- **Ví dụ:** DPCM, DCT (Discrete Cosine Transform)
+- **Nguyên lý:** Chỉ mã hóa sự khác biệt hoặc biến đổi, không mã hóa toàn bộ giá trị.
+
+<div style="color:red">
+
+**Câu hỏi 3: Có thông tin nào ít quan trọng có thể bỏ qua không?**
+
+</div>
+
+- **Hướng tiếp cận:** Quantization (Lượng tử hóa)
+- **Ví dụ:** JPEG, JPEG 2000
+- **Nguyên lý:** Loại bỏ hoặc làm mịn các chi tiết không quan trọng.
+
+---
+
+# PHÂN BỐ MỨC XÁM
+
+**Định nghĩa:** Đối với ảnh mức xám, mỗi pixel có một giá trị trong khoảng từ 0 đến L-1.
+
+**Ký hiệu:**
+- $x \in \{0, 1, \ldots, L-1\}$
+- $L$ là số mức xám
+
+**Ví dụ:** Ảnh 8 bit có $L = 256$ mức xám (từ 0 đến 255).
+
+**Xác suất xuất hiện:**
+- Mỗi mức xám $x_i$ có xác suất xuất hiện $P(x_i)$
+- Tổng xác suất: $\sum_i P(x_i) = 1$
+
+**Ý nghĩa:**
+- Phân bố xác suất này là cơ sở để đánh giá lượng thông tin
+- Là nền tảng để thiết kế các mã nén hiệu quả
+- Giúp xác định mức độ dư thừa trong ảnh
+
+---
+
+# LƯỢNG TIN CỦA MỘT SỰ KIỆN
+
+**Định nghĩa:** Lượng tin (Information Content) đo lượng thông tin mà một sự kiện mang lại.
+
+**Công thức:** Giả sử một sự kiện $x$ có xác suất $P(x)$, lượng tin của sự kiện là:
+
+$$I(x) = -\log_2 P(x)$$
+
+**Đơn vị:** bit
+
+**Ý nghĩa:**
+- Sự kiện thường gặp (xác suất cao) → lượng tin nhỏ
+- Sự kiện hiếm gặp (xác suất thấp) → lượng tin lớn
+
+**Ví dụ minh họa:**
+
+- $P(x) = 0.5$, $I(x) = -\log_2 0.5 = 1 \text{ bit}$
+- $P(x) = 0.125$, $I(x) = -\log_2 0.125 = 3 \text{ bit}$
+
+Một sự kiện càng khó dự đoán (xác suất thấp) thì khi xảy ra, nó mang càng nhiều thông tin. Ngược lại, sự kiện dễ dự đoán mang ít thông tin hơn.
+
+---
+
+# ENTROPY
+
+**Định nghĩa:** Entropy biểu diễn lượng thông tin trung bình của một nguồn dữ liệu.
+
+**Công thức:** Với các giá trị $x_1, x_2, \ldots, x_L$:
+
+$$H(X) = -\sum_{i=1}^{L} P(x_i) \log_2 P(x_i)$$
+
+**Đơn vị:** bit/symbol (bit trên mỗi ký hiệu)
+
+**Đối với ảnh:** Symbol có thể là một pixel hoặc một mức xám hoặc một ký hiệu sau biến đổi
+
+**Ý nghĩa:**
+- Entropy đo mức độ không chắc chắn của nguồn
+- Là giới hạn lý thuyết cho việc nén dữ liệu
+- Cho biết số bit trung bình tối thiểu cần thiết để mã hóa nguồn
+
+**Ví dụ:** Nếu entropy là 2.5 bit/pixel, thì về lý thuyết, ta có thể nén ảnh xuống còn trung bình 2.5 bit cho mỗi pixel.
+
+---
+
+# Ý NGHĨA CỦA ENTROPY
+
+Entropy phản ánh mức độ không chắc chắn / khó dự đoán của nguồn dữ liệu.
+
+**Trường hợp 1: Entropy cao**
+
+**Đặc điểm:**
+- Các giá trị có xác suất tương đối đồng đều
+- Khó dự đoán giá trị tiếp theo
+- Khó nén bằng các phương pháp thống kê đơn giản
+
+**Ví dụ:** Ảnh nhiễu ngẫu nhiên, các mức xám xuất hiện với xác suất gần bằng nhau.
+
+**Trường hợp 2: Entropy thấp**
+
+**Đặc điểm:**
+- Một số giá trị xuất hiện áp đảo
+- Dễ dự đoán giá trị tiếp theo
+- Có khả năng mã hóa bằng ít bit hơn
+
+**Ví dụ:** Ảnh văn bản, vùng ảnh đồng nhất, các pixel có giá trị tương tự nhau.
+
+**Kết luận:** Entropy thấp thường tạo nhiều cơ hội cho nén thống kê.
+
+---
+
+# VÍ DỤ TÍNH ENTROPY
+
+**Bài toán:** Giả sử ảnh chỉ có ba mức xám $x_1$, $x_2$, $x_3$ với xác suất: $P(x_1)=0.5, P(x_2)=0.3, P(x_3)=0.2$
+
+**Tính entropy:**
+
+$$H = -(0.5 \log_2 0.5 + 0.3 \log_2 0.3 + 0.2 \log_2 0.2)$$
+
+**Tính toán từng thành phần:**
+- $0.5 \log_2 0.5 = 0.5 \times (-1) = -0.5$
+- $0.3 \log_2 0.3 = 0.3 \times (-1.737) = -0.521$
+- $0.2 \log_2 0.2 = 0.2 \times (-2.322) = -0.464$
+
+$$H = -(-0.5 - 0.521 - 0.464) = 1.485 \text{ bit/pixel}$$
+
+**So sánh với phân bố đều:**
+Nếu ba mức xám xuất hiện bằng nhau ($P(x_i) = \frac{1}{3}$): $H = \log_2 3 \approx 1.585 \text{ bit/pixel}$
+
+**Nhận xét:** Phân bố đều hơn → entropy cao hơn. Khi một mức xám chiếm ưu thế (xác suất cao), entropy giảm xuống.
+
+---
+<!--_class: text-xs-->
+
+# ĐÁNH GIÁ CHẤT LƯỢNG ẢNH SAU NÉN
+
+**Vấn đề:** Khi nén Lossy, ảnh giải nén có thể khác ảnh gốc. Do đó cần đánh giá mức độ sai khác.
+
+**Hai nhóm tiêu chí đánh giá:**
+
+<div class="columns">
+<div class="col-5">
+
+**1. Đánh giá khách quan (Objective Assessment)**
+
+**Đặc điểm:** Dựa trên các đại lượng tính toán được từ dữ liệu
+
+**Các chỉ số phổ biến:**
+- **MSE** (Mean Squared Error): Sai số bình phương trung bình
+- **RMSE** (Root Mean Squared Error): Căn bậc hai của MSE
+- **SNR** (Signal-to-Noise Ratio): Tỷ lệ tín hiệu trên nhiễu
+- **PSNR** (Peak Signal-to-Noise Ratio): Tỷ lệ tín hiệu đỉnh trên nhiễu
+
+**Ưu điểm:** Khách quan, có thể tự động tính toán
+**Nhược điểm:** Không phải lúc nào cũng phản ánh chính xác cảm nhận thị giác
+
+</div>
+<div class="col-4">
+
+**2. Đánh giá chủ quan (Subjective Assessment)**
+
+**Đặc điểm:** Dựa trên quan sát và cảm nhận của con người
+
+**Các yếu tố đánh giá:**
+- Độ sắc nét của ảnh
+- Chi tiết được giữ lại
+- Mức độ nhiễu
+- Artifact (các biến dạng do nén)
+- Khả năng nhận biết nội dung
+
+**Ưu điểm:** Phản ánh cảm nhận thực tế
+**Nhược điểm:** Chủ quan, tốn thời gian, khó tự động hóa
+
+</div>
+</div>
+
+---
+
+# SAI SỐ BÌNH PHƯƠNG TRUNG BÌNH - MSE
+
+**Định nghĩa:** MSE (Mean Squared Error) đo mức sai khác bình phương trung bình giữa hai ảnh.
+
+**Công thức:** Với ảnh gốc $f$ và ảnh khôi phục $g$, có $N$ pixel: $MSE = \frac{1}{N} \sum_{i=1}^{N} (f_i - g_i)^2$
+
+<div class="columns">
+<div>
+
+**Trong đó:**
+- $f_i$: giá trị pixel thứ $i$ của ảnh gốc
+- $g_i$: giá trị pixel thứ $i$ của ảnh khôi phục
+- $N$: tổng số pixel
+
+**Ý nghĩa:**
+- $MSE = 0$: Hai ảnh giống hệt nhau
+- MSE càng nhỏ: sai khác càng nhỏ, chất lượng càng cao
+- MSE càng lớn: sai khác càng lớn, chất lượng càng thấp
+
+</div>
+<div>
+
+**Ưu điểm:**
+- Dễ tính toán
+- Được sử dụng rộng rãi
+
+**Nhược điểm:**
+- Không phản ánh hoàn toàn cảm nhận của con người
+- Hai ảnh có cùng MSE có thể có chất lượng thị giác khác nhau
+
+</div>
+</div>
+
+---
+
+# RMSE VÀ SNR
+
+<span style="color:red">
+
+**RMSE (Root Mean Squared Error):**
+
+</span>
+
+**Công thức:** $RMSE = \sqrt{MSE}$$
+
+<div class="columns">
+<div class="col-2">
+
+**Đặc điểm:**
+- Có cùng đơn vị với giá trị pixel
+- RMSE càng nhỏ → ảnh khôi phục càng gần ảnh gốc
+- Dễ hiểu hơn MSE vì cùng đơn vị với dữ liệu gốc
+
+</div>
+<div>
+
+**Ví dụ:** Nếu RMSE = 5, nghĩa là sai số trung bình khoảng 5 đơn vị mức xám.
+
+</div>
+</div>
+<span style="color:red">
+
+**SNR (Signal-to-Noise Ratio):**
+
+</span>
+<div class="columns">
+<div class="col-5">
+
+**Công thức:** $SNR = 10 \log_{10} \left( \frac{P_{signal}}{P_{noise}} \right)$
+
+**Trong đó:** $P_{noise} = \frac{1}{N} \sum_i (f_i - g_i)^2 = MSE$
+**Ý nghĩa:**
+- SNR càng cao → tỷ lệ tín hiệu so với sai số càng lớn
+
+</div>
+<div class="col-4">
+
+- Chất lượng ảnh càng tốt
+- Đơn vị: dB (decibel)
+
+**So sánh:**
+- MSE/RMSE: Đo sai số tuyệt đối
+- SNR: Đo tỷ lệ giữa tín hiệu và nhiễu
+- Cả hai đều là chỉ số khách quan
+
+</div>
+</div>
+
+---
+
+# PSNR
+
+**Định nghĩa:** PSNR (Peak Signal-to-Noise Ratio) là một chỉ số rất phổ biến trong đánh giá nén ảnh.
+
+**Công thức:** Với ảnh $B$ bit: $MAX_I = 2^B - 1$,  $PSNR = 10 \log_{10} \left( \frac{MAX_I^2}{MSE} \right)$
+
+**Ví dụ:** Với ảnh 8 bit: $MAX_I = 2^8 - 1 = 255$
+
+**Ý nghĩa:**
+- MSE càng nhỏ → PSNR càng lớn
+- PSNR lớn thường tương ứng với sai khác pixel nhỏ hơn
+- Đơn vị: dB (decibel)
+
+**Ngưỡng tham khảo:**
+- PSNR > 40 dB: Chất lượng rất tốt, khó nhận biết sai khác
+- PSNR 30-40 dB: Chất lượng tốt
+- PSNR 20-30 dB: Chất lượng chấp nhận được
+- PSNR < 20 dB: Chất lượng kém, có thể nhận biết rõ sai khác.
+
+---
+<!--_class: text-sm-->
+
+# ĐÁNH GIÁ CHỦ QUAN
+
+**Vấn đề:** Hai ảnh có thể có MSE hoặc PSNR tương tự nhau nhưng cảm nhận của con người khác nhau.
+
+**Các yếu tố cần quan sát khi đánh giá trực quan:**
+
+<div class="columns">
+<div>
+
+**1. Biên ảnh (Edges):**
+- Biên có bị mờ không?
+- Biên có bị răng cưa không?
+
+**2. Chi tiết nhỏ:**
+- Các chi tiết nhỏ có được giữ lại không?
+- Texture có bị mất không?
+
+**3. Vùng chuyển sắc:**
+- Các vùng chuyển màu có mượt mà không?
+- Có xuất hiện hiện tượng banding không?
+
+</div>
+<div>
+
+**4. Nhiễu và Artifact:**
+- **Blocking artifact:** Các khối 8×8 trở nên rõ rệt (trong JPEG)
+- **Ringing artifact:** Dao động hoặc viền quanh các cạnh mạnh
+- **Blurring:** Ảnh bị mờ, mất chi tiết
+
+**5. Khả năng nhận biết:**
+- Đối tượng chính có dễ nhận biết không?
+- Nội dung ảnh có còn rõ ràng không?
+
+</div>
+</div>
+
+**Kết luận:** Đánh giá chủ quan bổ sung cho đánh giá khách quan, giúp hiểu rõ hơn về chất lượng thực tế của ảnh nén.
+
+---
+<!--_class: section-->
+
+# HỆ THỐNG NÉN DỮ ẢNH
+
+---
+
+# Hai nhóm phương pháp nén chính
+
+<div class="columns">
+<div>
+
+**1. Lossless (Không tổn thất)**
+
+**Định nghĩa:** Sau giải nén, ảnh khôi phục giống hệt ảnh gốc theo từng pixel.
+
+**Công thức:** $\text{Ảnh}_{reconstructed} = \text{Ảnh}_{original}$
+
+**Đặc điểm:**
+- Không mất bất kỳ thông tin nào
+- Tỷ lệ nén thường thấp hơn
+- Phù hợp với dữ liệu cần bảo toàn tuyệt đối
+
+</div>
+<div>
+
+**2. Lossy (Có tổn thất)**
+
+**Định nghĩa:** Sau giải nén, ảnh khôi phục chỉ xấp xỉ ảnh gốc, một phần thông tin đã bị loại bỏ.
+
+**Công thức:** $\text{Ảnh}_{reconstructed} \approx \text{Ảnh}_{original}$
+
+**Đặc điểm:**
+- Có mất thông tin
+- Tỷ lệ nén cao hơn
+- Chất lượng phụ thuộc vào mức độ nén
+
+</div>
+</div>
+
+**Lựa chọn phương pháp:**
+- Cần bảo toàn tuyệt đối → Lossless
+- Chấp nhận mất một phần để đạt tỷ lệ nén cao → Lossy
+
+---
+
+# NÉN KHÔNG TỔN THẤT - LOSSLESS
+
+<div class="columns">
+<div class="col-3">
+
+**Nguyên lý:** Loại bỏ dư thừa, không loại bỏ thông tin cần thiết, mọi thông tin đều được giữ lại
+
+**Ưu điểm:**
+- Khôi phục chính xác ảnh gốc
+- Không tạo sai số do quá trình nén
+- Có thể nén và giải nén nhiều lần mà không tích lũy sai số
+
+**Nhược điểm:**
+- Tỷ lệ nén thường thấp hơn Lossy
+- Thường chỉ đạt 2:1 đến 5:1
+
+</div>
+<div class="col-4">
+
+**Ứng dụng:**
+- **Ảnh y tế:** Cần bảo toàn mọi chi tiết để chẩn đoán
+- **Tài liệu:** Văn bản, hợp đồng cần giữ nguyên
+- **Đồ họa:** Logo, icon cần biên sắc nét
+- **Dữ liệu khoa học:** Cần độ chính xác tuyệt đối
+
+**Ví dụ định dạng:**
+- **PNG:** Phổ biến cho đồ họa web
+- **Một số chế độ của JPEG 2000:** Hỗ trợ lossless
+- **GIF:** Cho ảnh đơn giản
+- **TIFF:** Cho ảnh chất lượng cao
+
+</div>
+</div>
+
+---
+<!--_class: text-xs-->
+# NÉN CÓ TỔN THẤT - LOSSY
+
+<div class="columns">
+<div>
+
+**Nguyên lý:** Chấp nhận loại bỏ một phần thông tin.
+
+**Các nguồn thông tin có thể loại bỏ:**
+
+**1. Đặc điểm của hệ thống thị giác:**
+- Mắt người không nhạy với mọi thay đổi nhỏ
+- Không nhận biết được một số chi tiết rất nhỏ
+
+**2. Thành phần tần số:**
+- Thành phần tần số cao ít quan trọng hơn tần số thấp
+- Có thể loại bỏ hoặc làm mịn
+
+**3. Chi tiết khó nhận biết:**
+- Các chi tiết nhỏ trong vùng phức tạp
+- Thay đổi màu sắc rất nhỏ
+
+**Ưu điểm:**
+- Tỷ lệ nén cao (có thể đạt 10:1, 20:1 hoặc hơn)
+- Giảm đáng kể dung lượng lưu trữ
+
+</div>
+<div>
+
+**Nhược điểm:**
+- Ảnh khôi phục không hoàn toàn giống ảnh gốc
+- Chất lượng phụ thuộc mức độ nén
+- Nén nhiều lần có thể tích lũy sai số
+
+**Ứng dụng:**
+- Ảnh chụp (photography)
+- Ảnh web, multimedia
+- Streaming video
+- Các ứng dụng không yêu cầu độ chính xác tuyệt đối
+
+**Ví dụ định dạng:**
+- **JPEG:** Phổ biến nhất cho ảnh chụp
+- **JPEG 2000:** Chuẩn mới hơn
+- **WebP:** Cho web hiện đại
+
+</div>
+</div>
+
+---
+
+# SO SÁNH LOSSLESS VÀ LOSSY
+
+| Đặc điểm | Lossless | Lossy |
+|----------|----------|-------|
+| **Mất thông tin** | Không | Có |
+| **Khôi phục chính xác** | Có | Không |
+| **Tỷ lệ nén** | Thường thấp hơn (2:1 - 5:1) | Thường cao hơn (10:1 - 50:1) |
+| **Chất lượng ảnh** | Giữ nguyên 100% | Có thể giảm tùy mức nén |
+| **Ảnh y tế** | Phù hợp | Cần cân nhắc kỹ |
+| **Ảnh web** | Có thể dùng | Rất phổ biến |
+| **JPEG** | Không (thông thường) | Có |
+| **PNG** | Có | Không |
+
+Lựa chọn phụ thuộc vào mục đích sử dụng, yêu cầu chất lượng, giới hạn dung lượng.
+
+---
+
+# HỆ THỐNG NÉN NÉN ẢNH
+
+**Một hệ thống nén ảnh gồm hai phần chính:**
+
+<div class="columns">
+<div>
+
+**1. Encoder (Bộ mã hóa):**
+- Biến dữ liệu ảnh thành biểu diễn ngắn gọn hơn
+- Thực hiện quá trình nén
+
+**2. Decoder (Bộ giải mã):**
+- Khôi phục ảnh từ biểu diễn đã nén
+- Thực hiện quá trình giải nén
+
+</div>
+<div>
+
+**Các thành phần trong Encoder:**
+- Mapper/Transform: Biến đổi dữ liệu
+- Quantizer: Lượng tử hóa (chỉ trong Lossy)
+- Symbol Coder: Mã hóa ký hiệu
+
+**Các thành phần trong Decoder:**
+- Symbol Decoder: Giải mã ký hiệu
+- Inverse Quantizer: Lượng tử hóa ngược (chỉ trong Lossy)
+- Inverse Mapper: Biến đổi ngược
+
+</div>
+</div>
+
+---
+<!--_class: section-->
+
+# NÉN KHÔNG TỔN THẤT
+
+---
+
+# CÁC KỸ THUẬT TIÊU BIỂU
+
+**Các kỹ thuật Lossless phổ biến:**
+
+<div class="columns">
+<div>
+
+**1. Huffman Coding**
+- Mã hóa độ dài thay đổi
+- Gán mã ngắn cho ký hiệu phổ biến
+
+**2. Golomb / Golomb-Rice**
+- Phù hợp với số nguyên có phân bố lệch
+- Hiệu quả với dữ liệu có nhiều giá trị nhỏ
+
+**3. Arithmetic Coding**
+- Mã hóa chuỗi bằng khoảng số thực
+- Đạt hiệu quả gần giới hạn entropy
+
+**4. LZW (Lempel-Ziv-Welch)**
+- Sử dụng từ điển chuỗi
+- Khai thác chuỗi lặp lại
+
+</div>
+<div>
+
+**5. Run-Length Encoding (RLE)**
+- Mã hóa chuỗi giá trị giống nhau
+- Hiệu quả với vùng đồng nhất
+
+**6. JBIG2**
+- Chuyên cho ảnh nhị phân
+- Phù hợp với tài liệu
+
+**7. Bit-plane coding**
+- Tách ảnh thành các mặt phẳng bit
+- Xử lý từng mặt phẳng riêng
+
+**Nguyên lý chung:** Tất cả các kỹ thuật này đều khai thác các dạng dư thừa khác nhau để giảm số bit mà không mất thông tin.
+
+</div>
+</div>
+
+---
+
+# HUFFMAN CODING
+
+<div class="columns">
+<div>
+
+**Định nghĩa:** Huffman Coding là phương pháp mã hóa độ dài thay đổi.
+
+**Nguyên tắc:**
+- Ký hiệu xuất hiện càng thường xuyên → mã càng ngắn
+- Ký hiệu hiếm → mã dài hơn
+
+**Ví dụ minh họa:**
+
+| Ký hiệu | Tần suất | Mã Huffman |
+|---------|----------|------------|
+| A       | Cao      | 0          |
+| B       | Trung bình | 10       |
+| C       | Thấp     | 110        |
+| D       | Rất thấp | 111        |
+
+</div>
+<div>
+
+**Lợi ích:**
+- Giảm số bit trung bình cần thiết
+- Tối ưu hóa theo phân bố xác suất
+
+**Đặc điểm quan trọng:**
+- Mã prefix: Không có mã nào là tiền tố của mã khác
+- Có thể giải mã duy nhất
+- Không cần dấu phân cách giữa các ký hiệu
+
+**Ví dụ:** Chuỗi "ABCA" được mã hóa thành "0 10 110 0" và có thể giải mã ngược lại mà không cần biết ranh giới giữa các ký hiệu.
+
+</div>
+</div>
+
+---
+
+# XÂY DỰNG CÂY HUFFMAN
+
+<div class="columns">
+<div class="col-2">
+
+**Quy trình xây dựng cây Huffman:**
+
+**Bước 1: Tính tần suất**
+- Đếm tần suất hoặc xác suất của các ký hiệu
+
+**Bước 2: Sắp xếp**
+- Sắp xếp các ký hiệu theo tần suất tăng dần
+
+**Bước 3: Chọn hai nút nhỏ nhất**
+- Chọn hai nút có tần suất nhỏ nhất
+
+</div>
+<div class="col-3">
+
+**Bước 4: Gộp nút**
+- Gộp hai nút thành một nút mới
+- Tần suất nút mới = tổng tần suất hai nút con
+
+**Bước 5: Lặp lại**
+- Lặp lại bước 3-4 cho đến khi còn một nút gốc
+
+**Bước 6: Gán mã**
+- Nhánh trái → 0
+- Nhánh phải → 1
+- Mã của ký hiệu là đường đi từ gốc đến nút lá
+
+</div>
+</div>
+
+<gap></gap>
+
+**Ví dụ:** Với 4 ký hiệu A, B, C, D có tần suất khác nhau, ta xây dựng cây nhị phân từ dưới lên, gán mã 0/1 cho mỗi nhánh, và đọc mã từ gốc đến lá.
+
+---
+
+# HUFFMAN - MÃ HÓA VÀ GIẢI MÃ
+
+<div class="columns">
+<div>
+
+**Quá trình mã hóa:**
+
+```
+Ký hiệu
+   │
+   ▼
+Tra bảng mã
+   │
+   ▼
+Chuỗi bit
+```
+
+**Ví dụ:**
+- A → 0
+- B → 10
+- C → 110
+
+Chuỗi "ABCA" được thay bằng: "0 10 110 0"
+
+</div>
+<div>
+
+**Quá trình giải mã:** Sử dụng cây Huffman:
+- Bắt đầu từ gốc cây
+- Đọc từng bit:
+  - Bit 0: đi sang nhánh trái
+  - Bit 1: đi sang nhánh phải
+- Khi đến nút lá → thu được một ký hiệu
+- Quay lại gốc và tiếp tục
+
+**Ưu điểm:** Giải mã duy nhất, không cần dấu phân cách
+
 </div>
 </div>
 
@@ -217,10 +1019,10 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
 <div class="columns">
 <div class="col-2">
 
-- **Các bước thực hiện:**
-  1. Tính tần suất xuất hiện của từng ký tự.
-  2. Sắp xếp theo xác suất giảm dần.
-  3. Xây dựng cây Huffman bằng cách gộp 2 nút có tần suất nhỏ nhất.
+**Các bước thực hiện:**
+1. Tính tần suất xuất hiện của từng ký tự (**bước 1**).
+2. Sắp xếp theo xác suất giảm dần (**bước 2**).
+3. Xây dựng cây Huffman bằng cách gộp 2 nút có tần suất nhỏ nhất (**bước 3,4,5**).
 
 </div>
 <div class="col-5">
@@ -229,69 +1031,57 @@ print(f"SNR: {calculate_snr(original, compressed):.2f} dB")
 
 </div>
 </div>
-<ul>
 
-4. Gán bit 0 cho nhánh trái, 1 cho nhánh phải.
-5. Đọc đường đi từ gốc đến lá để ra mã của từng ký tự.
-
-</ul>
+4. Gán bit 0 cho nhánh trái, 1 cho nhánh phải (**bước 6**).
+5. Đọc đường đi từ gốc đến lá để ra mã của từng ký tự (**giải mã**).
 
 ---
 
-# Thực hành Xây dựng cây Huffman và mã hóa chuỗi.
-<gap></gap>
-```python
-import heapq
+# HUFFMAN TRONG NÉN ẢNH
 
-class Node:
-    def __init__(self, char, freq):
-        self.char = char
-        self.freq = freq
-        self.left = None
-        self.right = None
-    def __lt__(self, other):
-        return self.freq < other.freq
+**Áp dụng cho ảnh mức xám:**
 
-def build_huffman_tree(text):
-    freq = {}
-    for char in text:
-        freq[char] = freq.get(char, 0) + 1
-    heap = [Node(char, f) for char, f in freq.items()]
-    heapq.heapify(heap)
-    while len(heap) > 1:
-        left = heapq.heappop(heap)
-        right = heapq.heappop(heap)
-        merged = Node(None, left.freq + right.freq)
-        merged.left = left
-        merged.right = right
-        heapq.heappush(heap, merged)
-    return heap[0]
+<div class="columns">
+<div>
 
-def generate_codes(node, prefix="", code_map={}):
-    if node is not None:
-        if node.char is not None:
-            code_map[node.char] = prefix
-        generate_codes(node.left, prefix + "0", code_map)
-        generate_codes(node.right, prefix + "1", code_map)
-    return code_map
+**Quy trình:**
 
-text = "aabbc"
-tree = build_huffman_tree(text)
-codes = generate_codes(tree)
-print("Mã Huffman:", codes)
+```
+Ảnh
+  │
+  ▼
+Phân tích tần suất mức xám
+  │
+  ▼
+Xây dựng Huffman Tree
+  │
+  ▼
+Tạo bảng mã
+  │
+  ▼
+Mã hóa pixel
+  │
+  ▼
+Bitstream
 ```
 
----
+</div>
+<div class="col-2">
 
-# Giải mã Huffman
+**Hạn chế:**
+- Nếu pixel được xem độc lập, hiệu quả có thể hạn chế
+- Không khai thác được tương quan không gian
 
-- **Nguyên lý:** Dựa vào cây Huffman đã được xây dựng để dịch ngược chuỗi bit về ký tự.
-- **Quy trình:**
-  1. Đọc lần lượt từng bit từ luồng dữ liệu nén.
-  2. Bắt đầu từ nút gốc (root) của cây Huffman.
-  3. Gặp bit 0 rẽ trái, gặp bit 1 rẽ phải.
-  4. Khi đến nút lá (leaf), ta được một ký tự gốc. Xuất ký tự này ra.
-  5. Quay lại nút gốc và tiếp tục đọc bit tiếp theo cho đến hết luồng dữ liệu.
+**Giải pháp trong thực tế:**
+- Huffman thường được áp dụng sau các bước biến đổi hoặc dự đoán
+- Tạo ra dữ liệu có phân bố thuận lợi hơn
+
+**Ví dụ:**
+- Ảnh có vùng đồng nhất → nhiều pixel cùng giá trị → Huffman hiệu quả
+- Ảnh nhiễu ngẫu nhiên → phân bố đều → Huffman kém hiệu quả
+
+</div>
+</div>
 
 ---
 
@@ -318,7 +1108,6 @@ print("Mã Huffman:", codes)
 </div>
 </div>
 
-
 ---
 
 # Giải mã Golomb & Golomb-Rice
@@ -328,34 +1117,6 @@ print("Mã Huffman:", codes)
   1. Đọc các bit cho đến khi gặp bit 1 đầu tiên. Số lượng bit 0 đếm được chính là Thương ($q$).
   2. Đọc tiếp $k$ bit tiếp theo để lấy Số dư ($r$).
   3. Khôi phục giá trị gốc: $N = q \times 2^k + r$.
----
-
-# Thực hành Mã hóa và giải mã Golomb-Rice.
-<gap></gap>
-```python
-def golomb_rice_encode(n, k):
-    M = 2 ** k
-    q = n // M
-    r = n % M
-    quotient_bits = '0' * q + '1'
-    remainder_bits = f"{r:0{k}b}"
-    return quotient_bits + remainder_bits
-
-def golomb_rice_decode(bits, k):
-    q = 0
-    for bit in bits:
-        if bit == '0': q += 1
-        else: break
-    r_bits = bits[q+1 : q+1+k]
-    r = int(r_bits, 2)
-    return q * (2 ** k) + r
-
-n = 13
-k = 2
-encoded = golomb_rice_encode(n, k)
-print(f"Mã hóa {n} với k={k}: {encoded}")
-print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
-```
 
 ---
 
@@ -418,30 +1179,6 @@ print(f"Giải mã: {golomb_rice_decode(encoded, k)}")
   3. Kiểm tra xem con số giải mã nằm trong khoảng con của ký tự nào $\rightarrow$ Xuất ký tự đó.
   4. Thu hẹp khoảng hiện tại thành đúng khoảng con vừa tìm được.
   5. Lặp lại cho đến khi giải mã đủ số lượng ký tự.
----
-
-# Thực hành Mã hóa số học.
-<gap></gap>
-
-```python
-def arithmetic_encode(message, probs):
-    low, high = 0.0, 1.0
-    for char in message:
-        range_size = high - low
-        cum_prob = 0
-        for c, p in probs.items():
-            if c == char:
-                high = low + range_size * (cum_prob + p)
-                low = low + range_size * cum_prob
-                break
-            cum_prob += p
-    return (low + high) / 2
-
-probs = {'A': 0.5, 'B': 0.3, 'C': 0.2}
-message = "AB"
-encoded_value = arithmetic_encode(message, probs)
-print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
-```
 
 ---
 
@@ -498,33 +1235,6 @@ print(f"Giá trị mã hóa số học của '{message}': {encoded_value}")
      - _TH1:_ Mã đã có $\rightarrow$ Xuất chuỗi. Thêm vào từ điển `Chuỗi_trước` + Ký tự đầu của chuỗi hiện tại.
      - _TH2 (Đặc biệt):_ Mã chưa có $\rightarrow$ Thêm `Chuỗi_trước` + Ký tự đầu của `Chuỗi_trước`, sau đó xuất chuỗi này.
   4. Cập nhật `Chuỗi_trước` = chuỗi vừa xuất. Lặp lại.
----
-
-# Thực hành Nén LZW.
-<gap></gap>
-
-```python
-def lzw_compress(text):
-    dict_size = 256
-    dictionary = {chr(i): i for i in range(dict_size)}
-    w = ""
-    compressed = []
-    for c in text:
-        wc = w + c
-        if wc in dictionary:
-            w = wc
-        else:
-            compressed.append(dictionary[w])
-            dictionary[wc] = dict_size
-            dict_size += 1
-            w = c
-    if w:
-        compressed.append(dictionary[w])
-    return compressed
-
-text = "ABAABABA"
-print("Mã LZW:", lzw_compress(text))
-```
 
 ---
 
@@ -551,6 +1261,68 @@ print("Mã LZW:", lzw_compress(text))
 <gap></gap>
 
 ![width:1000](images/3.10.png)
+
+---
+
+# RLE TRÊN ẢNH
+
+**RLE đặc biệt hiệu quả khi ảnh có:**
+
+<div class="columns">
+<div>
+
+**1. Vùng lớn cùng màu:**
+- Bầu trời xanh
+- Tường trắng
+- Nền đồng nhất
+
+**2. Nhiều pixel giống nhau liên tiếp:**
+- Ảnh nhị phân (đen/trắng)
+- Tài liệu scan
+- Logo, icon
+
+**Ví dụ:**
+
+Ảnh có vùng trắng lớn:
+```
+████████████
+████████████
+████████████
+```
+
+</div>
+<div>
+
+Có thể biểu diễn rất ngắn bằng RLE:
+```
+(Trắng, 36)
+```
+
+**Ứng dụng thực tế:**
+- Ảnh fax
+- Tài liệu văn bản scan
+- Ảnh đồ họa đơn giản
+- Định dạng BMP (tùy chọn)
+
+**Hạn chế:**
+
+Nếu ảnh chứa nhiều thay đổi:
+```
+101101001011010...
+```
+
+</div>
+<div>
+
+**Kết quả:**
+- RLE không giúp giảm kích thước
+- Thậm chí làm dữ liệu lớn hơn
+- Mỗi pixel cần 2 giá trị (giá trị + độ dài)
+
+**Kết luận:** RLE chỉ hiệu quả với dữ liệu có nhiều chuỗi lặp dài.
+
+</div>
+</div>
 
 ---
 
@@ -591,14 +1363,84 @@ print("Mã LZW:", lzw_compress(text))
 ---
 <!--_class: section-->
 
-# NÉN CÓ TỔN THẤT (LOSSY)
+# NÉN CÓ TỔN THẤT
 
 ---
 
-# Định nghĩa
+# NÉN CÓ TỔN THẤT - LOSSY
 
-- Các phương pháp nén chấp nhận loại bỏ một phần thông tin để đạt tỷ lệ nén cao.
-- Tận dụng các đặc điểm của hệ thống thị giác con người (HVS) để loại bỏ thông tin ít nhạy cảm.
+**Mục tiêu:** Đạt tỷ lệ nén cao bằng cách loại bỏ những thông tin ít quan trọng hoặc khó nhận biết.
+
+**Các hướng tiếp cận chính:**
+
+<div class="columns">
+<div>
+
+**1. Transform Coding (Mã hóa biến đổi):**
+- Biến đổi dữ liệu sang miền khác
+- Tập trung năng lượng vào ít hệ số
+- Ví dụ: DCT, DWT
+
+**2. Quantization (Lượng tử hóa):**
+- Giảm số mức biểu diễn
+- Loại bỏ chi tiết nhỏ
+- Là bước chính gây mất mát
+
+**3. Predictive Coding (Mã hóa dự đoán):**
+- Dự đoán giá trị pixel
+- Chỉ mã hóa sai số
+
+</div>
+<div>
+
+**4. Wavelet Coding (Mã hóa wavelet):**
+- Phân tích đa phân giải
+- Biểu diễn ở nhiều mức chi tiết
+- Ví dụ: JPEG 2000
+
+**Nguyên lý chung:**
+- Khai thác giới hạn của thị giác con người
+- Loại bỏ thông tin không quan trọng
+- Đánh đổi chất lượng để đạt tỷ lệ nén cao
+
+</div>
+</div>
+
+---
+
+# TẠI SAO CÓ THỂ LOẠI BỎ THÔNG TIN?
+
+**Cơ sở sinh học:** Hệ thống thị giác con người không nhạy như nhau với mọi loại thông tin.
+
+**Các giới hạn của thị giác:**
+
+<div class="columns">
+<div>
+
+
+**1. Nhạy cảm với thay đổi màu sắc:**
+- Khó nhận ra một số thay đổi rất nhỏ về màu sắc
+- Đặc biệt trong vùng tối hoặc vùng quá sáng
+
+**2. Thành phần tần số:**
+- Thành phần tần số cao (chi tiết nhỏ) ít quan trọng hơn tần số thấp (cấu trúc lớn)
+- Mắt người nhạy với tần số trung bình hơn
+
+</div>
+<div>
+
+**3. Độ phân giải:**
+- Một số chi tiết nhỏ có thể bị bỏ qua trong ảnh có độ phân giải thấp
+- Không nhận biết được chi tiết nhỏ hơn ngưỡng
+
+**4. Vùng quan tâm:**
+- Mắt tập trung vào vùng trung tâm
+- Vùng ngoại vi ít được chú ý
+
+⇒ Có thể giữ lại các thông tin quan trọng trong ảnh và bỏ đi các thông tin ít quan trọng.
+
+</div>
+</div>
 
 ---
 
@@ -681,31 +1523,6 @@ print("Mã LZW:", lzw_compress(text))
   2. Tính giá trị dự đoán $\hat{f}(n)$ từ các pixel đã giải nén trước đó.
   3. Khôi phục pixel gốc: $f(n) = \hat{f}(n) + e(n)$.
   4. Lưu $f(n)$ vào bộ nhớ đệm để làm dữ liệu dự đoán cho pixel $n+1$.
----
-
-# Thực hành mã hóa và giải mã DPCM.
-<gap></gap>
-```python
-def dpcm_encode(signal):
-    encoded = [signal[0]]
-    for i in range(1, len(signal)):
-        predicted = signal[i-1]
-        error = signal[i] - predicted
-        encoded.append(error)
-    return encoded
-
-def dpcm_decode(encoded):
-    decoded = [encoded[0]]
-    for i in range(1, len(encoded)):
-        predicted = decoded[i-1]
-        decoded.append(predicted + encoded[i])
-    return decoded
-
-signal = [150, 152, 149, 151]
-encoded = dpcm_encode(signal)
-print("Mã hóa DPCM:", encoded)
-print("Giải mã DPCM:", dpcm_decode(encoded))
-```
 
 ---
 
@@ -746,3 +1563,53 @@ print("Giải mã DPCM:", dpcm_decode(encoded))
   2. **Giải lượng tử hóa:** Nhân các hệ số với bước lượng tử (hoặc dùng bước = 1 nếu là lossless).
   3. **Biến đổi Wavelet ngược (IDWT):** Tổng hợp lại ảnh từ các băng con (sub-bands) tần số thấp và cao để tạo ra ảnh ở độ phân giải gốc.
 - **Ưu điểm:** Quá trình này không gây ra hiệu ứng khối (blocking artifact) như JPEG thông thường, cho phép nén tỷ lệ cao mà vẫn giữ được độ mượt của ảnh.
+
+---
+
+# BỨC TRANH TỔNG THỂ CỦA NÉN ẢNH
+
+**Ba ý tưởng nền tảng:**
+
+<div class="columns">
+<div>
+
+**1. Coding Redundancy (Dư thừa mã hóa):**
+- Khai thác phân bố xác suất không đều
+- Phương pháp: Statistical coding (Huffman, Arithmetic, Golomb)
+- Nguyên lý: Gán mã ngắn cho ký hiệu phổ biến
+
+</div>
+<div>
+
+**2. Spatial Redundancy (Dư thừa không gian):**
+- Khai thác tương quan giữa các pixel lân cận
+- Phương pháp: Prediction / RLE (DPCM, RLE)
+- Nguyên lý: Chỉ mã hóa sự khác biệt
+
+</div>
+<div>
+
+**3. Irrelevant Information (Thông tin không liên quan):**
+- Loại bỏ thông tin ít quan trọng
+- Phương pháp: Quantization (JPEG, JPEG 2000)
+- Nguyên lý: Đánh đổi chất lượng để đạt tỷ lệ nén cao
+
+</div>
+</div>
+
+**Kết luận:** Mọi kỹ thuật nén đều dựa trên ba ý tưởng này, kết hợp theo cách khác nhau.
+
+---
+
+# SO SÁNH CÁC KỸ THUẬT TIÊU BIỂU
+
+| Kỹ thuật | Lossless | Lossy | Ý tưởng chính |
+|----------|----------|-------|---------------|
+| **Huffman** | ✓ | | Mã độ dài biến đổi theo tần suất |
+| **Arithmetic** | ✓ | | Mã hóa chuỗi bằng khoảng số thực |
+| **Golomb-Rice** | ✓ | | Mã hóa số nguyên nhỏ hiệu quả |
+| **LZW** | ✓ | | Từ điển chuỗi lặp lại |
+| **RLE** | ✓ | | Chuỗi giá trị giống nhau liên tiếp |
+| **DPCM** | ✓ | ✓ | Mã hóa sai số dự đoán |
+| **DCT** | | ✓ | Biến đổi sang miền tần số |
+| **DWT** | ✓* | ✓ | Biến đổi wavelet đa phân giải |
