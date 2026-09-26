@@ -488,7 +488,7 @@ $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} * I
 
 ---
 
-# SLIDE 20. SO SÁNH ROBERTS – PREWITT – SOBEL (here)
+# SO SÁNH ROBERTS – PREWITT – SOBEL
 
 **Bảng so sánh:**
 
@@ -505,7 +505,7 @@ $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} * I
 
 ---
 
-# SLIDE 21. ĐỘ LỚN GRADIENT
+# ĐỘ LỚN GRADIENT
 
 **Công thức tính:**
 Sau khi tính $G_x$ và $G_y$:
@@ -521,9 +521,14 @@ $$M(x,y) = \sqrt{G_x^2(x,y) + G_y^2(x,y)}$$
 
 ---
 
-# SLIDE 22. KẾT HỢP GRADIENT VỚI PHÂN NGƯỠNG
+# KẾT HỢP GRADIENT VỚI PHÂN NGƯỠNG
+
+Việc phát hiện biên bằng các toán tử đạo hàm chỉ cho ra bức ảnh gradient độ xám (chứa các mức độ đậm nhạt thể hiện cường độ biên). Để tách hẳn đối tượng hoặc tạo ra đường biên nhị phân rõ ràng cần kết hợp gradient với kỹ thuật phân ngưỡng (Thresholding).
 
 **Mục tiêu:** Chuyển ảnh gradient $M(x,y)$ thành ảnh biên nhị phân
+
+<div class="columns">
+<div>
 
 **Công thức:**
 $$E(x,y) = \begin{cases} 1, & M(x,y) > T \\ 0, & M(x,y) \leq T \end{cases}$$
@@ -533,36 +538,17 @@ $$E(x,y) = \begin{cases} 1, & M(x,y) > T \\ 0, & M(x,y) \leq T \end{cases}$$
 - $E(x,y) = 0$: pixel không được xem là biên
 - $T$: ngưỡng biên
 
-**Lưu ý khi hiển thị với OpenCV:**
-- Ảnh nhị phân thường được biểu diễn bằng: $0 \rightarrow 0$ (nền), $1 \rightarrow 255$ (biên)
+</div>
+<div class="col-2">
+
+![](images/gradient-thresholding.png)
+
+</div>
+</div>
 
 ---
 
-# SLIDE 23. THỰC HÀNH: SOBEL + THRESHOLD
-
-**Code mẫu:**
-```python
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-
-img = cv2.imread("sample.jpg", cv2.IMREAD_GRAYSCALE)
-
-sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=5)
-sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=5)
-
-magnitude = np.sqrt(sobelx**2 + sobely**2)
-magnitude = np.uint8(magnitude / magnitude.max() * 255)
-
-_, edges = cv2.threshold(magnitude, 50, 255, cv2.THRESH_BINARY)
-```
-
-**Yêu cầu thực hành:**
-- Hiển thị: Ảnh gốc, Gradient $G_x$, Gradient $G_y$, Magnitude, Ảnh biên sau threshold
-
----
-
-# SLIDE 24. LAPLACIAN VÀ PHÁT HIỆN BIÊN
+# LAPLACIAN VÀ PHÁT HIỆN BIÊN
 
 **Định nghĩa:**
 Laplacian của ảnh $I(x,y)$ là đạo hàm bậc hai:
@@ -582,164 +568,95 @@ $$\nabla^2 I = \frac{\partial^2 I}{\partial x^2} + \frac{\partial^2 I}{\partial 
 
 ---
 
-# SLIDE 25. LOG – LAPLACIAN OF GAUSSIAN
+# LOG – LAPLACIAN OF GAUSSIAN
 
 **Vấn đề:** Laplacian nhạy với nhiễu
 
 **Giải pháp - LoG (Laplacian of Gaussian):**
 1. Làm trơn ảnh bằng Gaussian: $I_s = G_\sigma * I$
 2. Tính Laplacian: $L = \nabla^2 I_s = \nabla^2 (G_\sigma * I)$
-3. Tìm các zero-crossing của $L$
+3. Tìm các điểm cắt 0 (zero-crossing) của $L$
 
-**Quy trình:**
-$$I \rightarrow G_\sigma * I \rightarrow \nabla^2 I_s \rightarrow \text{Zero-crossing} \rightarrow \text{Edge}$$
+**Quy trình:** $I \rightarrow G_\sigma * I \rightarrow \nabla^2 I_s \rightarrow \text{Zero-crossing} \rightarrow \text{Edge}$
 
 **Ý nghĩa:**
 - Gaussian giúp giảm nhiễu trước khi áp dụng đạo hàm bậc hai
 - Kết hợp ưu điểm của cả hai phương pháp
 
+![height:220](images/log.png)
+
 ---
 
-# SLIDE 26. CANNY EDGE DETECTOR
+# CANNY EDGE DETECTOR
 
 **Mục tiêu:** Tạo ra biên mảnh, rõ, ít nhiễu, liên tục
 
 **Canny là một quy trình gồm nhiều bước:**
 
+<div class="columns">
+<div>
+
 **Quy trình 5 bước:**
-1. Làm trơn Gaussian (Gaussian Blur)
-2. Tính Gradient
-3. Non-Maximum Suppression
-4. Double Threshold
-5. Hysteresis
+1. **Làm trơn Gaussian (Gaussian Blur)** → giảm nhiễu, chi tiết rất nhỏ, biến thiên không mong muốn
+2. **Tính Gradient** → mỗi pixel có độ mạnh của biên ($M$) và hướng gradient ($\theta$)
+3. **Non-Maximum Suppression** → biến các vùng biên dày thành các đường biên mảnh
+
+</div>
+<div>
+
+![](images/canny.png)
+
+</div>
+</div>
+
+4. **Double Threshold** → Phân loại pixel thành ba nhóm để xử lý khác nhau ở bước tiếp theo
+5. **Hysteresis** → Biên cuối cùng rõ hơn, ít nhiễu hơn, liên tục hơn
 
 **Kết quả:** Biên cuối cùng chất lượng cao
 
 ---
+<!--_class: text-xs-->
+# CHI TIẾT 5 BƯỚC
 
-# SLIDE 27. BƯỚC 1 – GAUSSIAN BLUR
+<div class="columns">
+<div class="col-4">
 
-**Mục đích:**
-- Giảm nhiễu, chi tiết rất nhỏ, biến thiên không mong muốn
+**Bước 1: Làm mượt ảnh (Gaussian Filtering)**
 
-**Công thức:**
-Ảnh sau khi làm trơn:
-$$I_s(x,y) = G_\sigma(x,y) * I(x,y)$$
+* **Thao tác:** Áp dụng bộ lọc Gaussian ($3\times 3$ hoặc $5\times 5$).
+* **Ý nghĩa:** Khử nhiễu cao tần (noise), ngăn chặn việc sinh ra các đường biên giả do điểm ảnh lỗi.
 
-**Trong đó:**
-- $G_\sigma$: Gaussian kernel
-- $\sigma$: tham số điều khiển mức độ làm trơn
+**Bước 2: Tính toán Gradient (Intensity Gradient)**
 
-**Ảnh hưởng của $\sigma$:**
-- $\sigma$ nhỏ $\rightarrow$ giữ nhiều chi tiết
-- $\sigma$ lớn $\rightarrow$ ảnh mượt hơn nhưng có thể mất biên nhỏ
+* **Thao tác:** Dùng toán tử Sobel ($G_x, G_y$) để tính biên độ và hướng biên tại mỗi pixel.
+* **Ý nghĩa:** Xác định các vùng có sự thay đổi độ sáng đột ngột (rìa đối tượng).
 
----
+**Bước 3: Triệt tiêu cực đại phi cực (Non-Maximum Suppression - NMS)**
 
-# SLIDE 28. BƯỚC 2 – TÍNH GRADIENT
+* **Thao tác:** So sánh biên độ pixel hiện tại với các pixel lân cận theo hướng biên.
+* **Ý nghĩa:** Loại bỏ các pixel không phải cực đại cục bộ, giúp **làm mỏng đường biên** xuống đúng độ dày $1$ pixel.
 
-**Từ ảnh đã làm trơn $I_s$:**
+</div>
+<div class="col-3">
 
-**Tính gradient theo hai hướng:**
-$$G_x = \frac{\partial I_s}{\partial x}$$
-$$G_y = \frac{\partial I_s}{\partial y}$$
+**Bước 4: Phân ngưỡng kép (Double Thresholding)**
 
-**Độ lớn gradient:**
-$$M = \sqrt{G_x^2 + G_y^2}$$
+* **Thao tác:** Sử dụng 2 ngưỡng ($T_{high}$ và $T_{low}$) để chia pixel thành 3 nhóm:
+* **Biên mạnh ($\ge T_{high}$):** Giữ lại chắc chắn.
+* **Biên yếu ($T_{low} - T_{high}$):** Xem xét liên kết.
+* **Không phải biên ($< T_{low}$):** Xóa bỏ.
 
-**Hướng gradient:**
-$$\theta = \operatorname{atan2}(G_y, G_x)$$
+**Bước 5: Theo dõi biên bằng trễ (Hysteresis Edge Tracking)**
 
-**Kết quả:**
-- Mỗi pixel có độ mạnh của biên ($M$) và hướng gradient ($\theta$)
-- Thông tin này được sử dụng ở bước tiếp theo
+* **Thao tác:** Kiểm tra các biên yếu. Nếu chúng **nằm liền kề** với biên mạnh $\rightarrow$ Giữ lại; ngược lại $\rightarrow$ Xóa.
+* **Ý nghĩa:** Nối liền các đoạn biên bị đứt gãy, đảm bảo đường biên khép kín và sạch sẽ.
 
----
-
-# SLIDE 29. BƯỚC 3 – NON-MAXIMUM SUPPRESSION
-
-**Vấn đề:** Gradient thường tạo ra một vùng biên dày vài pixel
-
-**Mục tiêu:** Biến các vùng biên dày thành các đường biên mảnh, thường gần một pixel
-
-**Ý tưởng:**
-- Với mỗi pixel, xét theo hướng gradient $\theta$
-- Chỉ giữ pixel nếu $M(x,y)$ là **cực đại cục bộ** theo hướng gradient
-- Các pixel không phải cực đại: $M(x,y) \rightarrow 0$
-
-**Minh họa:**
-```text
-      x
-      ↑ (hướng gradient)
-   x  X  x
-```
-- Nếu X lớn nhất $\rightarrow$ giữ X
-- Nếu không $\rightarrow$ loại X
+</div>
+</div>
 
 ---
 
-# SLIDE 30. BƯỚC 4 – DOUBLE THRESHOLD
-
-**Sử dụng hai ngưỡng:** $T_L < T_H$
-
-**Phân loại pixel:**
-
-1. **Biên mạnh:** $M > T_H$
-   - Chắc chắn là biên
-2. **Biên yếu:** $T_L \leq M \leq T_H$
-   - Có khả năng là biên
-3. **Không phải biên:** $M < T_L$
-   - Loại bỏ
-
-**Ý nghĩa:** Phân loại pixel thành ba nhóm để xử lý khác nhau ở bước tiếp theo
-
----
-
-# SLIDE 31. BƯỚC 5 – HYSTERESIS
-
-**Vấn đề:** Biên yếu có thể là biên thật hoặc là nhiễu
-
-**Nguyên tắc:**
-- Biên mạnh được giữ lại
-- Biên yếu chỉ được giữ nếu có liên kết với một biên mạnh thông qua các pixel biên lân cận
-
-**Công thức:**
-$$E(x,y) = \begin{cases} 1, & M(x,y) > T_H \\ 1, & T_L \leq M(x,y) \leq T_H \text{ và liên thông với biên mạnh} \\ 0, & M(x,y) < T_L \\ 0, & \text{biên yếu không liên thông với biên mạnh} \end{cases}$$
-
-**Kết quả:** Biên cuối cùng rõ hơn, ít nhiễu hơn, liên tục hơn
-
----
-
-# SLIDE 32. THỰC HÀNH: CANNY
-
-**Code mẫu:**
-```python
-import cv2
-import matplotlib.pyplot as plt
-
-img = cv2.imread("sample.jpg", cv2.IMREAD_GRAYSCALE)
-
-edges = cv2.Canny(img, threshold1=100, threshold2=200)
-
-plt.figure(figsize=(10, 4))
-plt.subplot(1, 2, 1)
-plt.imshow(img, cmap="gray")
-plt.title("Original")
-plt.axis("off")
-
-plt.subplot(1, 2, 2)
-plt.imshow(edges, cmap="gray")
-plt.title("Canny Edges")
-plt.axis("off")
-plt.show()
-```
-
-**Thử nghiệm:**
-- Thay đổi threshold1, threshold2 và quan sát: số lượng biên, mức nhiễu, tính liên tục của biên
-
----
-
-# SLIDE 33. NỐI CÁC ĐIỂM BIÊN
+# NỐI CÁC ĐIỂM BIÊN
 
 **Vấn đề:**
 - Sau khi phát hiện biên, các đoạn biên có thể bị đứt, nhiễu, thiếu pixel
@@ -753,12 +670,12 @@ plt.show()
 
 ---
 
-# SLIDE 34. HOUGH TRANSFORM
+# HOUGH TRANSFORM
 
-**Ứng dụng:** Đặc biệt hiệu quả để phát hiện đường thẳng
+**Nguyên Lý Cốt Lõi:**
 
-**Biểu diễn đường thẳng:**
-$$\rho = x\cos\theta + y\sin\theta$$
+* **Không gian ảnh ($x, y$):** Một điểm ảnh có thể thuộc về vô số đường thẳng khác nhau đi qua nó.
+* **Không gian cực $(\rho, \theta)$:** Để tránh lỗi với đường thẳng đứng, phương trình đường thẳng được biểu diễn dưới dạng tọa độ cực: $\rho = x \cos(\theta) + y \sin(\theta)$
 
 **Trong đó:**
 - $\rho$: khoảng cách từ gốc tọa độ đến đường thẳng
@@ -778,13 +695,11 @@ Edge Image $\rightarrow$ Các điểm biên $\rightarrow$ Hough Space $(\rho, \t
 
 ---
 
-# SLIDE 35. KHÁI NIỆM PHÂN NGƯỠNG
+# KHÁI NIỆM PHÂN NGƯỠNG
 
-**Định nghĩa:**
-- Thresholding là kỹ thuật phân loại pixel dựa trên giá trị cường độ
+**Định nghĩa:** Thresholding là kỹ thuật phân loại pixel dựa trên giá trị cường độ
 
-**Công thức:**
-Với ảnh mức xám $I(x,y)$, ảnh nhị phân:
+**Công thức:** Với ảnh mức xám $I(x,y)$, ảnh nhị phân:
 $$B(x,y) = \begin{cases} 1, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 
 **Trong đó:**
@@ -797,13 +712,24 @@ $$B(x,y) = \begin{cases} 255, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 
 ---
 
-# SLIDE 36. HISTOGRAM VÀ PHÂN NGƯỠNG
+# HISTOGRAM VÀ PHÂN NGƯỠNG
+
+<div class="columns">
+<div>
 
 **Quan sát:**
 - Nếu ảnh gồm nền tối và vật thể sáng, histogram có thể có hai đỉnh
 
 **Ý tưởng:**
 - Chọn $T$ nằm giữa hai nhóm
+
+</div>
+<div>
+
+![width:150](images/4.6.png)
+
+</div>
+</div>
 
 **Thực tế:**
 - Histogram có thể bị ảnh hưởng bởi: nhiễu, chiếu sáng không đều, bóng, phản xạ, vật thể có nhiều mức sáng
@@ -813,7 +739,7 @@ $$B(x,y) = \begin{cases} 255, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 
 ---
 
-# SLIDE 37. PHÂN NGƯỠNG TOÀN CỤC
+# PHÂN NGƯỠNG TOÀN CỤC
 
 **Định nghĩa:**
 - Sử dụng một ngưỡng duy nhất cho toàn bộ ảnh: $T(x,y) = T$
@@ -829,7 +755,7 @@ $$B(x,y) = \begin{cases} 1, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 
 ---
 
-# SLIDE 38. PHÂN NGƯỠNG CỤC BỘ (ADAPTIVE)
+# PHÂN NGƯỠNG CỤC BỘ (ADAPTIVE)
 
 **Định nghĩa:**
 - Ngưỡng được tính riêng cho từng vùng lân cận: $T = T(x,y)$
@@ -848,11 +774,14 @@ $$T(x,y) = \text{WeightedMean}(N(x,y)) - C$$
 
 ---
 
-# SLIDE 39. OTSU THRESHOLDING
+# OTSU THRESHOLDING
 
 **Mục tiêu:** Tự động tìm ngưỡng $T$ sao cho hai lớp (Background và Foreground) được phân tách tốt nhất
 
-**Phương pháp:**
+<div class="columns">
+<div>
+
+**Phương pháp:** 
 Với một ngưỡng $T$, histogram được chia thành hai lớp:
 - $C_0 = \{I(x,y) \leq T\}$
 - $C_1 = \{I(x,y) > T\}$
@@ -863,17 +792,13 @@ Với một ngưỡng $T$, histogram được chia thành hai lớp:
 - $\mu_0(T)$: trung bình lớp $C_0$
 - $\mu_1(T)$: trung bình lớp $C_1$
 
+</div>
+<div>
+
 **Phương sai giữa hai lớp:**
 $$\sigma_B^2(T) = \omega_0(T)\omega_1(T)[\mu_0(T) - \mu_1(T)]^2$$
 
-**Ngưỡng Otsu:**
-$$T^* = \arg\max_T \sigma_B^2(T)$$
-
-*Ý nghĩa:* Chọn ngưỡng làm cho hai lớp có sự khác biệt thống kê lớn nhất
-
----
-
-# SLIDE 40. ĐIỀU KIỆN CỦA OTSU
+**Ngưỡng Otsu:** $T^* = \arg\max_T \sigma_B^2(T)$
 
 **Otsu hoạt động tốt khi:**
 - Histogram có hai lớp tương đối rõ
@@ -884,44 +809,23 @@ $$T^* = \arg\max_T \sigma_B^2(T)$$
 - Chiếu sáng không đồng đều
 - Các lớp có mức xám chồng lấn mạnh
 
-**Ghi nhớ:**
-- Otsu là phương pháp tự động chọn $T$, không phải phương pháp bảo đảm phân đoạn tối ưu cho mọi ảnh
+</div>
+</div>
 
 ---
 
-# SLIDE 41. THỰC HÀNH: OTSU VÀ ADAPTIVE THRESHOLD
+# VÍ DỤ OTSU THRESHOLDING
 
-**Code mẫu:**
-```python
-import cv2
-import matplotlib.pyplot as plt
-
-img = cv2.imread("sample.jpg", cv2.IMREAD_GRAYSCALE)
-
-# Otsu thresholding
-_, otsu = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-# Adaptive thresholding
-adaptive = cv2.adaptiveThreshold(
-    img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-    cv2.THRESH_BINARY, 11, 2
-)
-```
-
-**So sánh:**
-- Hiển thị: Ảnh gốc, Global/Otsu, Adaptive
-
-**Câu hỏi thảo luận:**
-- Phương pháp nào tốt hơn khi ánh sáng không đồng đều?
-- Điều gì xảy ra khi thay đổi kích thước vùng lân cận?
-- Điều gì xảy ra khi thay đổi $C$?
+![](images/outsu.png)
 
 ---
 
-# SLIDE 42. ĐA NGƯỠNG (MULTI-THRESHOLDING)
+# ĐA NGƯỠNG (MULTI-THRESHOLDING)
 
-**Khi nào cần:**
-- Khi ảnh chứa nhiều nhóm mức xám, một ngưỡng duy nhất có thể không đủ
+**Khi nào cần:** Khi ảnh chứa nhiều nhóm mức xám, một ngưỡng duy nhất có thể không đủ
+
+<div class="columns">
+<div>
 
 **Công thức:**
 Với $K$ mức phân đoạn, cần $K-1$ ngưỡng:
@@ -932,6 +836,14 @@ $$T_1 < T_2 < \cdots < T_{K-1}$$
 - $R_2 = \{T_1 < I \leq T_2\}$
 - $\vdots$
 - $R_K = \{I > T_{K-1}\}$
+
+</div>
+<div>
+
+![](images/dalop.png)
+
+</div>
+</div>
 
 **Lưu ý:**
 - Vector các ngưỡng được ký hiệu là: $\mathbf{T} = (T_1, T_2, \ldots, T_{K-1})$
@@ -946,7 +858,7 @@ $$T_1 < T_2 < \cdots < T_{K-1}$$
 
 ---
 
-# SLIDE 43. PHƯƠNG PHÁP DỰA TRÊN VÙNG
+# PHƯƠNG PHÁP DỰA TRÊN VÙNG (here)
 
 **Đặc điểm:**
 - Không tập trung trực tiếp vào sự thay đổi tại biên
