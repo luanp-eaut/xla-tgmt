@@ -2,7 +2,7 @@
 marp: true
 theme: eaut
 paginate: true
-transition: zoom
+transition: fade
 ---
 
 <!-- _class: cover -->
@@ -22,12 +22,12 @@ transition: zoom
 
 # Nội dung
 
-- Giới thiệu tổng quan về bài toán phân đoạn ảnh
-- Phát hiện điểm, đường và biên trong ảnh
-- Kỹ thuật phân ngưỡng (Thresholding)
-- Phân đoạn dựa trên vùng: Region Growing, Split & Merge
-- Phân đoạn dựa trên phân cụm: K-Means, Superpixels, SLIC
-- Ứng dụng thực tế với OpenCV
+1. Giới thiệu tổng quan về bài toán phân đoạn ảnh
+2. Phát hiện điểm, đường và biên
+3. Kỹ thuật phân ngưỡng (Thresholding)
+4. Phân đoạn dựa trên vùng: Region Growing, Split & Merge
+5. Phân đoạn dựa trên phân cụm: K-Means, Superpixels, SLIC
+6. Ứng dụng thực tế với OpenCV
 
 ---
 
@@ -47,10 +47,13 @@ Sau khi hoàn thành chương này sinh viên có thể
 
 ---
 
-# SLIDE 2. BÀI TOÁN PHÂN ĐOẠN ẢNH
+# BÀI TOÁN PHÂN ĐOẠN ẢNH
 
 **Định nghĩa:**
 - **Phân đoạn ảnh (Image Segmentation)** là quá trình chia một ảnh thành các vùng có ý nghĩa, sao cho các pixel trong cùng một vùng có đặc điểm tương đồng
+
+<div class="columns">
+<div>
 
 **Ví dụ minh họa:**
 - Ảnh giao thông: phân tách thành đường, xe, người, cây cối, bầu trời
@@ -58,21 +61,40 @@ Sau khi hoàn thành chương này sinh viên có thể
 - Ảnh sản phẩm: tách sản phẩm và nền
 - Ảnh tài liệu: tách chữ và nền
 
+</div>
+<div>
+
+![height:260](images/segmentation.png)
+
+</div>
+</div>
+
 **Mục tiêu cốt lõi:**
 - Thay vì xử lý từng pixel riêng lẻ, hệ thống chuyển ảnh thành tập hợp các vùng hoặc đối tượng có ý nghĩa
 - Trả lời câu hỏi: *"Pixel nào thuộc cùng một vùng/đối tượng?"*
 
 ---
 
-# SLIDE 3. KHÁI NIỆM REGION, BOUNDARY VÀ SEGMENTATION
+# KHÁI NIỆM REGION, BOUNDARY VÀ SEGMENTATION
 
 **Region (Vùng ảnh):**
 - Là tập hợp các pixel có những đặc điểm tương đồng
 - Các đặc điểm có thể bao gồm: cường độ sáng, màu sắc, kết cấu (texture), đặc trưng hình học
 
+<div class="columns">
+<div>
+
 **Boundary (Biên):**
 - Là ranh giới giữa hai vùng có đặc tính khác nhau
 - Ví dụ: ranh giới phân cách giữa Vùng A và Vùng B trong ảnh
+
+</div>
+<div class="col-2">
+
+![](images/boundary2.png)
+
+</div>
+</div>
 
 **Segmentation (Phân đoạn):**
 - Là quá trình xác định các region và/hoặc boundary trong ảnh
@@ -80,7 +102,7 @@ Sau khi hoàn thành chương này sinh viên có thể
 
 ---
 
-# SLIDE 4. ĐIỀU KIỆN CỦA MỘT PHÂN ĐOẠN ẢNH
+# ĐIỀU KIỆN PHÂN ĐOẠN ẢNH
 
 Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldots, R_n$ thỏa mãn 5 điều kiện:
 
@@ -97,7 +119,7 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 
 ---
 
-# SLIDE 5. TẠI SAO CẦN PHÂN ĐOẠN ẢNH?
+# TẠI SAO CẦN PHÂN ĐOẠN ẢNH?
 
 **Vai trò trong quy trình xử lý:**
 - Phân đoạn là bước trung gian quan trọng giữa ảnh thô và đối tượng có ý nghĩa
@@ -105,13 +127,24 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 **Quy trình xử lý ảnh điển hình:**
 - Ảnh đầu vào $\rightarrow$ Tiền xử lý $\rightarrow$ **Phân đoạn** $\rightarrow$ Các vùng/đối tượng $\rightarrow$ Trích xuất đặc trưng $\rightarrow$ Nhận dạng/Phân tích
 
+<div class="columns">
+<div>
+
 **Ví dụ minh họa (Ảnh CT y tế):**
 - Sau khi phân đoạn, ta thu được: nền, mô, cơ quan, vùng bất thường
 - Hệ thống mới có thể thực hiện: đo kích thước, xác định hình dạng, phát hiện bất thường, hỗ trợ chẩn đoán
 
+</div>
+<div>
+
+![](images/4.2.png)
+
+</div>
+</div>
+
 ---
 
-# SLIDE 6. ỨNG DỤNG CỦA PHÂN ĐOẠN ẢNH
+# ỨNG DỤNG CỦA PHÂN ĐOẠN ẢNH
 
 **Lĩnh vực Y tế:**
 - Phân vùng khối u, cơ quan, mạch máu, phân tích tế bào
@@ -127,7 +160,7 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 
 ---
 
-# SLIDE 7. CÁC HƯỚNG TIẾP CẬN CHÍNH
+# CÁC HƯỚNG TIẾP CẬN CHÍNH
 
 **1. Dựa trên biên:** Tìm nơi cường độ ảnh thay đổi mạnh (Ví dụ: Sobel, Canny, LoG)
 **2. Dựa trên ngưỡng:** Tách pixel dựa trên cường độ hoặc màu sắc (Ví dụ: Global Thresholding, Otsu, Adaptive Thresholding)
@@ -138,15 +171,18 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 ---
 <!--_class: section-->
 
-# <!--fit-->Phát hiện điểm, đường và biên trong ảnh
+# Phát hiện điểm, đường và biên
 
 ---
 
-# SLIDE 8. KHÁI NIỆM ĐIỂM, ĐƯỜNG VÀ BIÊN
+# KHÁI NIỆM ĐIỂM, ĐƯỜNG VÀ BIÊN
 
 **Điểm (Point):**
 - Một pixel có giá trị khác biệt rõ rệt so với các pixel lân cận
 - *Ví dụ:* điểm sáng trên nền tối, điểm tối trên nền sáng, nhiễu dạng đốm
+
+<div class="columns">
+<div>
 
 **Đường (Line):**
 - Một chuỗi pixel tạo thành cấu trúc kéo dài theo một hướng
@@ -156,13 +192,24 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 - Vị trí có sự thay đổi đáng kể về cường độ hoặc màu sắc
 - *Ví dụ:* ranh giới vật thể, ranh giới giữa hai vùng, sự thay đổi cấu trúc trong ảnh
 
+</div>
+<div>
+
+![height:420](images/4.4.png)
+
+</div>
+</div>
+
 ---
 
-# SLIDE 9. TỪ CƯỜNG ĐỘ ẢNH ĐẾN BIÊN
+# TỪ CƯỜNG ĐỘ ẢNH ĐẾN BIÊN
 
 **Quan sát trên ảnh một chiều:**
 - Ở vùng phẳng (đồng nhất): đạo hàm $\frac{\partial I}{\partial x} \approx 0$
 - Tại biên: $\left|\frac{\partial I}{\partial x}\right|$ có giá trị lớn
+
+<div class="columns">
+<div>
 
 **Ý tưởng cốt lõi:**
 - Biên có thể được phát hiện bằng cách tìm nơi cường độ ảnh thay đổi mạnh
@@ -171,9 +218,17 @@ Cho không gian ảnh $R$, một phân đoạn gồm $n$ vùng: $R_1, R_2, \ldot
 **Minh họa:**
 - Khi cường độ ảnh thay đổi đột ngột từ giá trị thấp sang cao (hoặc ngược lại), đó chính là vị trí biên
 
+</div>
+<div>
+
+![height:420](images/4.4.png)
+
+</div>
+</div>
+
 ---
 
-# SLIDE 10. PHÁT HIỆN ĐIỂM BIỆT LẬP
+# PHÁT HIỆN ĐIỂM BIỆT LẬP
 
 **Mục tiêu:** Phát hiện pixel có giá trị khác biệt rõ rệt so với vùng lân cận
 
@@ -192,7 +247,7 @@ $$R(x,y) = (W * I)(x,y)$$
 
 ---
 
-# SLIDE 11. TRỰC QUAN HÓA PHÁT HIỆN ĐIỂM
+# TRỰC QUAN HÓA PHÁT HIỆN ĐIỂM
 
 **Ví dụ minh họa:**
 - Nền đồng nhất với một điểm sáng ở giữa:
@@ -215,16 +270,38 @@ $$R(x,y) = (W * I)(x,y)$$
 
 ---
 
-# SLIDE 12. PHÁT HIỆN ĐƯỜNG
+# PHÁT HIỆN ĐƯỜNG
 
 **Mục tiêu:** Phát hiện các đường có hướng xác định (ngang, dọc, chéo +45°, chéo -45°)
 
 **Phương pháp:** Mỗi hướng sử dụng một mặt nạ riêng
 
-**Ví dụ - Mặt nạ phát hiện đường ngang:**
+**Ví dụ - Mặt nạ phát hiện đường ngang, dọc, chéo:**
+
+<div class="columns">
+<div>
+
 $$W_h = \begin{bmatrix} -1 & -1 & -1 \\ 2 & 2 & 2 \\ -1 & -1 & -1 \end{bmatrix}$$
 
-**Đáp ứng:**
+</div>
+<div>
+
+$$W_v = \begin{bmatrix} -1 & 2 & -1 \\ -1 & 2 & -1 \\ -1 & 2 & -1 \end{bmatrix}$$
+
+</div>
+<div>
+
+$$W_{d_1} = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}$$
+
+</div>
+<div>
+
+$$W_{d_2} = \begin{bmatrix} -1 & -1 & 2 \\ -1 & 2 & -1 \\ 2 & -1 & -1 \end{bmatrix}$$
+
+</div>
+</div>
+
+**Đáp ứng đường ngang:**
 $$R_h(x,y) = (W_h * I)(x,y)$$
 
 **Quy tắc phát hiện:**
@@ -233,22 +310,12 @@ $$R_h(x,y) = (W_h * I)(x,y)$$
 
 ---
 
-# SLIDE 13. TẠI SAO MẶT NẠ CÓ THỂ PHÁT HIỆN ĐƯỜNG?
+# TẠI SAO MẶT NẠ CÓ THỂ PHÁT HIỆN ĐƯỜNG?
 
 **Nguyên lý hoạt động:**
 - Khi tích chập mặt nạ với ảnh:
   - Pixel phù hợp với cấu trúc đường $\rightarrow$ đóng góp lớn vào kết quả
   - Pixel không phù hợp $\rightarrow$ các thành phần dương và âm triệt tiêu nhau
-
-**Minh họa:**
-```text
-Ảnh:                  Mặt nạ:
-████████              - - -
-████████      ×       + + +
-████████              - - -
-       ↓
-Đáp ứng lớn
-```
 
 **Ý nghĩa:**
 - Mặt nạ hoạt động giống một bộ lọc chuyên biệt cho một hướng cụ thể
@@ -256,15 +323,26 @@ $$R_h(x,y) = (W_h * I)(x,y)$$
 
 ---
 
-# SLIDE 14. KHÁI NIỆM BIÊN
+# BIÊN
 
 **Định nghĩa:**
 - Biên là vùng trong ảnh tại đó cường độ thay đổi nhanh trong một khoảng không gian nhỏ
+
+<div class="columns">
+<div>
 
 **Biên thường xuất hiện tại:**
 - Ranh giới giữa vật thể và nền
 - Ranh giới giữa hai vật thể
 - Vị trí thay đổi bề mặt, độ sâu, hoặc chiếu sáng
+
+</div>
+<div>
+
+![](images/boundary.png)
+
+</div>
+</div>
 
 **Hai cách tiếp cận toán học chính:**
 1. **Đạo hàm bậc nhất $\rightarrow$ Gradient:** Đo tốc độ thay đổi của cường độ, cho biết độ mạnh và hướng của biên
@@ -272,28 +350,34 @@ $$R_h(x,y) = (W_h * I)(x,y)$$
 
 ---
 
-# SLIDE 15. GRADIENT CỦA ẢNH
+# GRADIENT CỦA ẢNH
 
 **Định nghĩa gradient:**
 Với ảnh mức xám $I(x,y)$, gradient là:
 $$\nabla I(x,y) = \begin{bmatrix} G_x(x,y) \\ G_y(x,y) \end{bmatrix}$$
 
 **Trong đó:**
-$$G_x(x,y) = \frac{\partial I(x,y)}{\partial x}$$
-$$G_y(x,y) = \frac{\partial I(x,y)}{\partial y}$$
+$$G_x(x,y) = \frac{\partial I(x,y)}{\partial x}, G_y(x,y) = \frac{\partial I(x,y)}{\partial y}$$
 
 **Độ lớn gradient:**
 $$M(x,y) = |\nabla I(x,y)| = \sqrt{G_x^2(x,y) + G_y^2(x,y)}$$
 
 **Hướng gradient:**
 $$\theta(x,y) = \operatorname{atan2}(G_y(x,y), G_x(x,y))$$
-*(Lưu ý: Dùng $\operatorname{atan2}$ thay cho $\tan^{-1}(G_y/G_x)$ để xác định hướng đúng trong cả bốn góc phần tư và tránh trường hợp $G_x = 0$)*
+
+<gap></gap>
+
+>**Lưu ý**: Dùng $\operatorname{atan2}$ thay cho $\tan^{-1}(G_y/G_x)$ để xác định hướng đúng trong cả bốn góc phần tư và tránh trường hợp $G_x = 0$
 
 ---
 
-# SLIDE 16. HƯỚNG CỦA GRADIENT
+# HƯỚNG CỦA GRADIENT
 
 **Ý nghĩa của gradient:**
+
+<div class="columns">
+<div>
+
 - **Magnitude (độ lớn $M$):** Cho biết biên mạnh hay yếu
 - **Direction (hướng $\theta$):** Cho biết hướng thay đổi mạnh nhất
 
@@ -301,16 +385,27 @@ $$\theta(x,y) = \operatorname{atan2}(G_y(x,y), G_x(x,y))$$
 - Gradient luôn **vuông góc** với hướng của biên
 - Ví dụ: Nếu biên chạy ngang, gradient sẽ hướng dọc
 
+</div>
+<div>
+
+![](images/bien_color.png)
+
+</div>
+</div>
+
 **Ứng dụng:**
 - Thông tin này rất quan trọng trong các thuật toán như Canny, giúp làm mỏng biên (non-maximum suppression)
 
 ---
 
-# SLIDE 17. TOÁN TỬ ROBERTS
+# TOÁN TỬ ROBERTS
 
 **Đặc điểm:**
 - Sử dụng các mặt nạ 2×2 để xấp xỉ gradient
 - Là toán tử đơn giản nhất trong các toán tử phát hiện biên
+
+<div class="columns">
+<div>
 
 **Hai mặt nạ Roberts:**
 $$G_x = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} * I$$
@@ -319,12 +414,23 @@ $$G_y = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} * I$$
 **Độ lớn gradient:**
 $$M = \sqrt{G_x^2 + G_y^2}$$
 
+</div>
+<div>
+
+![](images/roberts.png)
+
+</div>
+</div>
+
 **Ưu điểm:** Đơn giản, tính toán nhanh
 **Nhược điểm:** Nhạy với nhiễu, khả năng ổn định kém hơn Sobel
 
 ---
 
-# SLIDE 18. TOÁN TỬ PREWITT
+# TOÁN TỬ PREWITT
+
+<div class="columns">
+<div>
 
 **Đặc điểm:**
 - Sử dụng mặt nạ 3×3
@@ -334,33 +440,55 @@ $$M = \sqrt{G_x^2 + G_y^2}$$
 $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 \end{bmatrix} * I$$
 $$G_y = \begin{bmatrix} -1 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & 1 & 1 \end{bmatrix} * I$$
 
-**Độ lớn gradient:**
-$$M = \sqrt{G_x^2 + G_y^2}$$
+**Độ lớn gradient:** $M = \sqrt{G_x^2 + G_y^2}$
+
+</div>
+<div>
+
+![](images/brewitt.png)
+
+</div>
+</div>
 
 **Ứng dụng:** Phù hợp cho ảnh có ít nhiễu, cần tính toán nhanh
 
 ---
 
-# SLIDE 19. TOÁN TỬ SOBEL
+# TOÁN TỬ SOBEL
+
+<div class="columns">
+<div>
 
 **Đặc điểm:**
 - Tương tự Prewitt nhưng tăng trọng số ở hàng/cột trung tâm
 - Kết hợp cả đạo hàm và làm trơn theo một hướng
 
 **Hai mặt nạ Sobel:**
-$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} * I$$
-$$G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix} * I$$
+$$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} * I, G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix} * I$$
 
-**Độ lớn gradient:**
-$$M = \sqrt{G_x^2 + G_y^2}$$
+<gap></gap>
 
-**Xấp xỉ trong thực tế:**
-$$M \approx |G_x| + |G_y|$$
+<gap></gap>
+
+**Độ lớn gradient:** $M = \sqrt{G_x^2 + G_y^2}$$
+
+<gap></gap>
+
+**Xấp xỉ trong thực tế:** $M \approx |G_x| + |G_y|$
+
+</div>
+<div>
+
+![height:500](images/sobel2.png)
+
+</div>
+</div>
+
 *Ưu điểm:* Ổn định hơn Prewitt khi ảnh có nhiễu
 
 ---
 
-# SLIDE 20. SO SÁNH ROBERTS – PREWITT – SOBEL
+# SLIDE 20. SO SÁNH ROBERTS – PREWITT – SOBEL (here)
 
 **Bảng so sánh:**
 
