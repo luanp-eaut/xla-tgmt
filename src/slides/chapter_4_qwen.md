@@ -712,16 +712,30 @@ $$B(x,y) = \begin{cases} 255, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 
 ---
 
-# HISTOGRAM VÀ PHÂN NGƯỠNG
+# PHÂN NGƯỠNG TOÀN CỤC
+
+**Định nghĩa:** Sử dụng một ngưỡng duy nhất cho toàn bộ ảnh: $T(x,y) = T$
+
+**Kết quả:** $B(x,y) = \begin{cases} 1, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$
+
+**Ưu điểm:** Đơn giản, nhanh, dễ cài đặt
+
+**Phù hợp khi:** Nền tương đối đồng nhất, ánh sáng đồng đều, histogram có sự phân tách rõ
+
+**Không phù hợp khi:** Ảnh có bóng, ánh sáng không đều, nền thay đổi mạnh
+
+### HISTOGRAM VÀ PHÂN NGƯỠNG
 
 <div class="columns">
-<div>
+<div class="col-3">
 
-**Quan sát:**
-- Nếu ảnh gồm nền tối và vật thể sáng, histogram có thể có hai đỉnh
+**Quan sát:** Nếu ảnh gồm nền tối và vật thể sáng, histogram có thể có hai đỉnh
 
-**Ý tưởng:**
-- Chọn $T$ nằm giữa hai nhóm
+**Ý tưởng:** Chọn $T$ nằm giữa hai nhóm
+
+**Thực tế:** Histogram có thể bị ảnh hưởng bởi: nhiễu, chiếu sáng không đều, bóng, phản xạ, vật thể có nhiều mức sáng
+
+**Thách thức:** Không phải lúc nào cũng dễ dàng chọn ngưỡng $T$ thủ công
 
 </div>
 <div>
@@ -731,27 +745,7 @@ $$B(x,y) = \begin{cases} 255, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 </div>
 </div>
 
-**Thực tế:**
-- Histogram có thể bị ảnh hưởng bởi: nhiễu, chiếu sáng không đều, bóng, phản xạ, vật thể có nhiều mức sáng
 
-**Thách thức:**
-- Không phải lúc nào cũng dễ dàng chọn ngưỡng $T$ thủ công
-
----
-
-# PHÂN NGƯỠNG TOÀN CỤC
-
-**Định nghĩa:**
-- Sử dụng một ngưỡng duy nhất cho toàn bộ ảnh: $T(x,y) = T$
-
-**Kết quả:**
-$$B(x,y) = \begin{cases} 1, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
-
-**Ưu điểm:** Đơn giản, nhanh, dễ cài đặt
-
-**Phù hợp khi:** Nền tương đối đồng nhất, ánh sáng đồng đều, histogram có sự phân tách rõ
-
-**Không phù hợp khi:** Ảnh có bóng, ánh sáng không đều, nền thay đổi mạnh
 
 ---
 
@@ -763,7 +757,12 @@ $$B(x,y) = \begin{cases} 1, & I(x,y) > T \\ 0, & I(x,y) \leq T \end{cases}$$
 **Công thức tổng quát:**
 $$B(x,y) = \begin{cases} 1, & I(x,y) > T(x,y) \\ 0, & I(x,y) \leq T(x,y) \end{cases}$$
 
+<gap></gap>
+
 **Ví dụ Gaussian adaptive threshold trong OpenCV:**
+
+<gap></gap>
+
 $$T(x,y) = \text{WeightedMean}(N(x,y)) - C$$
 
 **Trong đó:**
